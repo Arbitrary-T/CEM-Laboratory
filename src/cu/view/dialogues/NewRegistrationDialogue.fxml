@@ -7,7 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<DialogPane xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.dialogues.NewRegistrationDialogueController">
+<DialogPane minHeight="65.0" minWidth="280.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.dialogues.NewRegistrationDialogueController">
     <content>
       <AnchorPane>
          <children>
@@ -49,7 +49,7 @@
       <HBox style="-fx-background-color: e2e2e2;">
          <children>
             <Region layoutX="364.0" layoutY="10.0" prefHeight="81.0" prefWidth="28.0" />
-            <Label prefHeight="55.0" prefWidth="279.0" text="Please enter your details below:">
+            <Label text="Please enter your details below:">
                <font>
                   <Font size="20.0" />
                </font>

@@ -33,11 +33,6 @@ public class NewRegistrationDialogueController
 
     private Stage dialogStage;
 
-    @FXML
-    private void initialize() {
-
-    }
-
     public void setDialogStage(Stage dialogStage)
     {
         this.dialogStage = dialogStage;
