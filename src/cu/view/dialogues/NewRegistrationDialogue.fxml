@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<DialogPane xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
+    <content>
+      <AnchorPane>
+         <children>
+            <Label layoutX="21.0" layoutY="16.0" text="Student Name:">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="21.0" layoutY="46.0" text="Student ID:">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="21.0" layoutY="76.0" text="Student Course:">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="21.0" layoutY="106.0" text="Student Email:">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="21.0" layoutY="136.0" text="Student Phone Number:">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <TextField layoutX="240.0" layoutY="17.0" prefHeight="25.0" prefWidth="230.0" promptText="Name as shown on SID" />
+            <TextField layoutX="240.0" layoutY="47.0" prefWidth="230.0" promptText="SID" />
+            <TextField layoutX="240.0" layoutY="77.0" prefWidth="230.0" promptText="Your enrolled course" />
+            <TextField layoutX="240.0" layoutY="107.0" prefWidth="230.0" promptText="Your university email address" />
+            <TextField layoutX="240.0" layoutY="137.0" prefWidth="230.0" promptText="UK phone number" />
+            <Button layoutX="240.0" layoutY="173.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="110.0" text="Submit" />
+            <Button layoutX="360.0" layoutY="173.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="110.0" text="Cancel" />
+         </children></AnchorPane>
+    </content>
+   <header>
+      <HBox style="-fx-background-color: e2e2e2;">
+         <children>
+            <Region layoutX="364.0" layoutY="10.0" prefHeight="81.0" prefWidth="28.0" />
+            <Label prefHeight="55.0" prefWidth="279.0" text="Please enter your details below:">
+               <font>
+                  <Font size="20.0" />
+               </font>
+               <padding>
+                  <Insets top="25.0" />
+               </padding>
+            </Label>
+            <Region prefHeight="81.0" prefWidth="105.0" HBox.hgrow="ALWAYS" />
+            <ImageView fitHeight="71.0" fitWidth="89.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../resources/images/add_user.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+   </header>
+</DialogPane>

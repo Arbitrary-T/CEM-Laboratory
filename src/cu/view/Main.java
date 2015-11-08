@@ -1,14 +1,12 @@
-package cu.gui;
+package cu.view;
 
 import cu.listeners.CardInterface;
 import cu.listeners.CardListener;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 //import javafx.
 
 
@@ -18,14 +16,10 @@ public class Main extends Application implements CardInterface
     @Override
     public void start(Stage primaryStage) throws Exception
     {
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("MainView.fxml"));
         primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
-        /*primaryStage.setOnCloseRequest((WindowEvent event) ->
-        {
-            Platform.exit();
-            System.exit(0);
-        });*/
+        primaryStage.setScene(new Scene(root));
+
         primaryStage.show();
         CardListener.activateAgent(this);
         cardListenerThread = new Thread(new CardListener());
