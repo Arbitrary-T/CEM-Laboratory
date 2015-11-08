@@ -1,4 +1,4 @@
-package cu.view;
+package cu;
 
 import cu.listeners.CardInterface;
 import cu.listeners.CardListener;
@@ -13,11 +13,13 @@ import javafx.stage.Stage;
 public class Main extends Application implements CardInterface
 {
     Thread cardListenerThread;
+    public static Stage primaryStage;
     @Override
     public void start(Stage primaryStage) throws Exception
     {
-        Parent root = FXMLLoader.load(getClass().getResource("MainView.fxml"));
-        primaryStage.setTitle("Hello World");
+        Parent root = FXMLLoader.load(getClass().getResource("view/MainView.fxml"));
+        this.primaryStage = primaryStage;
+        primaryStage.setTitle("CU CEM Laboratory Management");
         primaryStage.setScene(new Scene(root));
 
         primaryStage.show();
