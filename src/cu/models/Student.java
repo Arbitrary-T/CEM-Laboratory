@@ -1,4 +1,4 @@
-package cu.objects;
+package cu.models;
 
 /**
  * Created by T on 05/10/2015.
