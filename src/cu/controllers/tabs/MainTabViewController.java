@@ -8,8 +8,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DialogPane;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -29,12 +27,11 @@ public class MainTabViewController
         try {
             // Load the fxml file and create a new stage for the popup
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("view/dialogues/NewRegistrationDialogue.fxml"));
-            DialogPane page = (DialogPane) loader.load();
+            DialogPane page = loader.load();
             Stage dialogStage = new Stage();
             Scene scene = new Scene(page);
             dialogStage.setScene(scene);
             dialogStage.setTitle("New Student Registration");
-            dialogStage.initOwner(Main.primaryStage);
 
             NewRegistrationDialogueController controller = loader.getController();
             controller.setDialogStage(dialogStage);

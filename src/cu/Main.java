@@ -7,18 +7,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-//import javafx.
 
 
 public class Main extends Application implements CardInterface
 {
     Thread cardListenerThread;
-    public static Stage primaryStage;
     @Override
     public void start(Stage primaryStage) throws Exception
     {
         Parent root = FXMLLoader.load(getClass().getResource("view/MainView.fxml"));
-        this.primaryStage = primaryStage;
         primaryStage.setTitle("CU CEM Laboratory Management");
         primaryStage.setScene(new Scene(root));
 
