@@ -5,20 +5,19 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <HBox xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.tabs.MainTabViewController">
    <children>
       <AnchorPane HBox.hgrow="ALWAYS">
          <children>
-            <SplitPane fx:id="mainVerticalSplitPane" dividerPositions="0.3" layoutX="174.0" layoutY="65.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <SplitPane fx:id="mainVerticalSplitPane" dividerPositions="0.3" layoutX="174.0" layoutY="65.0" prefHeight="720" prefWidth="1280" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <items>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                  <AnchorPane fx:id="leftAP" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
                      <children>
                         <SplitPane dividerPositions="0.3" layoutY="78.0" orientation="VERTICAL" prefHeight="398.0" prefWidth="175.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <items>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                              <AnchorPane fx:id="imageAP" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                  <children>
-                                    <ImageView fx:id="studentCardBack" fitHeight="128.0" fitWidth="185.0" layoutX="16.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <ImageView fx:id="studentCardBack" fitHeight="140.0" fitWidth="234.0" layoutX="16.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <image>
                                           <Image url="@../../../resources/images/deviantart_id_card_template_by_etorathu.jpg" />
                                        </image>
@@ -27,14 +26,19 @@
                               </AnchorPane>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                  <children>
-                                    <ListView fx:id="equipmentListView" layoutX="-13.0" layoutY="-30.0" prefHeight="195.0" prefWidth="173.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <TextField style="-fx-background-image: url('resources/images/download2.png'); -fx-background-repeat: no-repeat; -fx-background-position: right center;" VBox.vgrow="ALWAYS" />
+                                          <ListView fx:id="equipmentListView" VBox.vgrow="ALWAYS" />
+                                       </children>
+                                    </VBox>
                                  </children>
                               </AnchorPane>
                            </items>
                         </SplitPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" SplitPane.resizableWithParent="false">
                      <children>
                         <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="398.0" prefWidth="417.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <items>
