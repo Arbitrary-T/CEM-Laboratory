@@ -60,7 +60,7 @@ public class CardListener implements Runnable
                 if(!Arrays.equals(byteHistory, response.getBytes()))
                 {
                     byteHistory = response.getBytes();
-                    agent.cardDetected(DatatypeConverter.printHexBinary(byteHistory));
+                    agent.onCardScanned(DatatypeConverter.printHexBinary(byteHistory));
                 }
                 Thread.sleep(1000);
             }

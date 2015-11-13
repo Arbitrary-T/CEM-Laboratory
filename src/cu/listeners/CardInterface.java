@@ -5,5 +5,5 @@ package cu.listeners;
  */
 public interface CardInterface
 {
-    void cardDetected(String cardUID);
+    void onCardScanned(String cardUID);
 }
