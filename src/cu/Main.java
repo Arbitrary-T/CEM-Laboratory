@@ -3,6 +3,7 @@ package cu;
 import cu.controllers.tabs.MainTabViewController;
 import cu.listeners.CardInterface;
 import cu.listeners.CardListener;
+import cu.models.Student;
 import cu.models.StudentDatabase;
 import javafx.application.Application;
 
@@ -17,6 +18,9 @@ import javafx.stage.Stage;
 public class Main extends Application
 {
     Thread cardListenerThread;
+    public static Student currentStudent;
+    public static StudentDatabase studentDatabase;
+    public static boolean isRegistrationWindowOpen = false;
 
     @Override
     public void start(Stage primaryStage) throws Exception
@@ -28,8 +32,7 @@ public class Main extends Application
         cardListenerThread = new Thread(new CardListener());
         cardListenerThread.setDaemon(true);
         cardListenerThread.start();
-        StudentDatabase studentDatabase = new StudentDatabase("students");
-
+        studentDatabase = new StudentDatabase("students");
     }
 
 

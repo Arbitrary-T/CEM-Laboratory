@@ -1,5 +1,7 @@
 package cu.controllers.dialogues;
 
+import cu.Main;
+import cu.models.Student;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -12,29 +14,141 @@ public class NewRegistrationDialogueController
 {
     @FXML
     private TextField stdName;
-
     @FXML
     private TextField stdID;
-
     @FXML
     private TextField stdCourse;
-
     @FXML
     private TextField stdEmail;
-
     @FXML
     private TextField stdPhoneNumber;
-
     @FXML
     private Button submitButton;
-
     @FXML
     private Button cancelButton;
-
+    //
     private Stage dialogStage;
+    private String cardUID;
 
-    public void setDialogStage(Stage dialogStage)
+    @FXML
+    void initialize()
     {
+        submitButton.setDisable(true);
+        stdName.textProperty().addListener(((observable, oldValue, newValue) ->
+        {
+            if(newValue.isEmpty())
+            {
+                submitButton.setDisable(true);
+                stdName.setStyle("-fx-background-color: #DBB1B1, #FFF0F0;");
+            }
+            else
+            {
+                validateFields();
+                stdName.setStyle("-fx-background-color: #B1DBB1, #F0FFF0;");
+            }
+        }));
+
+        stdEmail.textProperty().addListener(((observable, oldValue, newValue) ->
+        {
+            if(newValue.isEmpty())
+            {
+                submitButton.setDisable(true);
+                stdEmail.setStyle("-fx-background-color: #DBB1B1, #FFF0F0;");
+
+            }
+            else
+            {
+                validateFields();
+                stdEmail.setStyle("-fx-background-color: #B1DBB1, #F0FFF0;");
+
+            }
+        }));
+        stdID.textProperty().addListener(((observable, oldValue, newValue) ->
+        {
+            if(!newValue.matches("\\d*") || newValue.length() < 7)
+            {
+                stdID.setText(newValue.replaceAll("[^\\d]", ""));
+                stdID.setStyle("-fx-background-color: #DBB1B1, #FFF0F0;");
+                submitButton.setDisable(true);
+            }
+            if(newValue.length() > 6)
+            {
+                validateFields();
+                stdID.setStyle("-fx-background-color: #B1DBB1, #F0FFF0;");
+
+            }
+        }));
+        stdCourse.textProperty().addListener(((observable, oldValue, newValue) ->
+        {
+            if(newValue.isEmpty())
+            {
+                submitButton.setDisable(true);
+                stdCourse.setStyle("-fx-background-color: #DBB1B1, #FFF0F0;");
+            }
+            else
+            {
+                validateFields();
+                stdCourse.setStyle("-fx-background-color: #B1DBB1, #F0FFF0;");
+            }
+
+        }));
+        stdPhoneNumber.textProperty().addListener(((observable, oldValue, newValue) ->
+        {
+            if(!newValue.matches("\\d*") || newValue.length() < 11)
+            {
+                stdPhoneNumber.setText(newValue.replaceAll("[^\\d]", ""));
+                stdPhoneNumber.setStyle("-fx-background-color: #DBB1B1, #FFF0F0;");
+                submitButton.setDisable(true);
+            }
+            if(newValue.length() == 11)
+            {
+                validateFields();
+                stdPhoneNumber.setStyle("-fx-background-color: #B1DBB1, #F0FFF0;");
+            }
+        }));
+    }
+    @FXML
+    private void onSubmit()
+    {
+        if(stdName.getText().isEmpty() || stdPhoneNumber.getText().isEmpty() || stdCourse.getText().isEmpty() || stdCourse.getText().isEmpty())
+        if(Main.studentDatabase != null)
+        {
+            if(!Main.studentDatabase.addStudentEntry(new Student(cardUID, stdName.getText(), Integer.parseInt(stdID.getText()), stdEmail.getText(), stdCourse.getText(), stdPhoneNumber.getText())))
+            {
+                System.out.println("Error: could not maintain a connection to the database!");
+            }
+            else
+            {
+                System.out.print("Successfully added " + stdName.getText() + " to the 'Students' database.");
+            }
+            dialogStage.close();
+            Main.isRegistrationWindowOpen = false;
+        }
+    }
+    @FXML
+    private void onCancel()
+    {
+        dialogStage.close();
+        Main.isRegistrationWindowOpen = false;
+        System.out.println("Canceled by user.");
+    }
+
+    public boolean studentExists(String cardUID)
+    {
+        Main.studentDatabase.searchDatabase(cardUID);
+        return false;
+    }
+    public void configureDialogStage(Stage dialogStage, String cardUID)
+    {
+        studentExists(cardUID);
         this.dialogStage = dialogStage;
+        this.cardUID = cardUID;
+    }
+    private void validateFields()
+    {
+        if(!(stdID.getText().length() < 6  || stdName.getText().isEmpty() || stdEmail.getText().isEmpty() || stdCourse.getText().isEmpty() || stdPhoneNumber.getText().length() != 11))
+        {
+            submitButton.setDisable(false);
+        }
     }
 }

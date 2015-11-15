@@ -36,13 +36,13 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <TextField fx:id="stdName" layoutX="220.0" layoutY="14.0" minWidth="230.0" promptText="Name as shown on SID" AnchorPane.rightAnchor="58.0" />
-            <TextField fx:id="stdID" layoutX="220.0" layoutY="44.0" minWidth="230.0" promptText="SID" AnchorPane.rightAnchor="58.0" />
-            <TextField fx:id="stdCourse" layoutX="220.0" layoutY="74.0" minWidth="230.0" promptText="Enrolled course" AnchorPane.rightAnchor="58.0" />
-            <TextField fx:id="stdEmail" layoutX="220.0" layoutY="104.0" minWidth="230.0" promptText="University email address" AnchorPane.rightAnchor="58.0" />
-            <TextField fx:id="stdPhoneNumber" layoutX="220.0" layoutY="134.0" minWidth="230.0" promptText="UK phone number" AnchorPane.rightAnchor="58.0" />
-            <Button fx:id="submitButton" layoutX="240.0" layoutY="173.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="110.0" text="Submit" AnchorPane.rightAnchor="178.0" />
-            <Button fx:id="cancelButton" layoutX="360.0" layoutY="173.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="110.0" text="Cancel" AnchorPane.rightAnchor="58.0" />
+            <TextField fx:id="stdName" layoutX="220.0" layoutY="14.0" minWidth="230.0" promptText="Name as shown on SID" style="-fx-text-box-border: DBB1B1; -fx-control-inner-background: FFF0F0;" AnchorPane.rightAnchor="58.0" />
+            <TextField fx:id="stdID" layoutX="220.0" layoutY="44.0" minWidth="230.0" promptText="SID" style="-fx-text-box-border: DBB1B1; -fx-control-inner-background: FFF0F0;" AnchorPane.rightAnchor="58.0" />
+            <TextField fx:id="stdCourse" layoutX="220.0" layoutY="74.0" minWidth="230.0" promptText="Enrolled course" style="fx-text-box-border: DBB1B1; -fx-control-inner-background: FFF0F0;" AnchorPane.rightAnchor="58.0" />
+            <TextField fx:id="stdEmail" layoutX="220.0" layoutY="104.0" minWidth="230.0" promptText="University email address" style="-fx-control-inner-background: FFF0F0; -fx-text-box-border: DBB1B1;" AnchorPane.rightAnchor="58.0" />
+            <TextField fx:id="stdPhoneNumber" layoutX="220.0" layoutY="134.0" minWidth="230.0" promptText="UK phone number" style="-fx-text-box-border: dbb1b1; -fx-control-inner-background: FFF0F0;" AnchorPane.rightAnchor="58.0" />
+            <Button fx:id="submitButton" layoutX="240.0" layoutY="173.0" mnemonicParsing="false" onAction="#onSubmit" prefHeight="25.0" prefWidth="110.0" text="Submit" AnchorPane.rightAnchor="178.0" />
+            <Button fx:id="cancelButton" layoutX="360.0" layoutY="173.0" mnemonicParsing="false" onAction="#onCancel" prefHeight="25.0" prefWidth="110.0" text="Cancel" AnchorPane.rightAnchor="58.0" />
          </children></AnchorPane>
     </content>
    <header>
