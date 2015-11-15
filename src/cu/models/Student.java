@@ -9,10 +9,10 @@ public class Student
     private String studentName = "";
     private String studentEmail = "";
     private String studentCourse = "";
-    private String studentPhoneNumber = "";
+    private int studentPhoneNumber;
     private int studentID;
 
-    public Student(String cardUID, String studentName, int studentID, String studentEmail, String studentCourse, String studentPhoneNumber)
+    public Student(String cardUID, String studentName, int studentID, String studentEmail, String studentCourse, int studentPhoneNumber)
     {
         setUID(cardUID);
         setName(studentName);
@@ -37,7 +37,7 @@ public class Student
         this.studentCourse = studentCourse;
     }
 
-    public void setPhoneNumber(String studentPhoneNumber)
+    public void setPhoneNumber(int studentPhoneNumber)
     {
         this.studentPhoneNumber = studentPhoneNumber;
     }

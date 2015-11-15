@@ -3,6 +3,7 @@ package cu;
 import cu.controllers.tabs.MainTabViewController;
 import cu.listeners.CardInterface;
 import cu.listeners.CardListener;
+import cu.models.StudentDatabase;
 import javafx.application.Application;
 
 import javafx.beans.value.ChangeListener;
@@ -27,6 +28,8 @@ public class Main extends Application
         cardListenerThread = new Thread(new CardListener());
         cardListenerThread.setDaemon(true);
         cardListenerThread.start();
+        StudentDatabase studentDatabase = new StudentDatabase("students");
+
     }
 
 
