@@ -1,6 +1,7 @@
 package cu.controllers.dialogues;
 
 import cu.Main;
+import cu.controllers.MainController;
 import cu.models.Student;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -12,6 +13,7 @@ import javafx.stage.Stage;
  */
 public class NewRegistrationDialogueController
 {
+    private MainController mainController;
     @FXML
     private TextField stdName;
     @FXML
@@ -110,7 +112,6 @@ public class NewRegistrationDialogueController
     @FXML
     private void onSubmit()
     {
-        if(stdName.getText().isEmpty() || stdPhoneNumber.getText().isEmpty() || stdCourse.getText().isEmpty() || stdCourse.getText().isEmpty())
         if(Main.studentDatabase != null)
         {
             if(!Main.studentDatabase.addStudentEntry(new Student(cardUID, stdName.getText(), Integer.parseInt(stdID.getText()), stdEmail.getText(), stdCourse.getText(), stdPhoneNumber.getText())))
@@ -150,5 +151,9 @@ public class NewRegistrationDialogueController
         {
             submitButton.setDisable(false);
         }
+    }
+    public void init(MainController mainController)
+    {
+
     }
 }

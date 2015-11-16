@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.Group?>
 
-<HBox xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.tabs.MainTabViewController">
+<HBox xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.tabs.LeaseTabViewController">
    <children>
       <AnchorPane HBox.hgrow="ALWAYS">
          <children>
@@ -15,13 +19,46 @@
                      <children>
                         <SplitPane dividerPositions="0.3" layoutY="78.0" orientation="VERTICAL" prefHeight="398.0" prefWidth="175.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <items>
-                              <AnchorPane fx:id="imageAP" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                              <AnchorPane fx:id="imageAP" minHeight="0.0" minWidth="0.0">
                                  <children>
-                                    <ImageView fx:id="studentCardBack" fitHeight="140.0" fitWidth="234.0" layoutX="16.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <ImageView fx:id="studentCardBack" layoutY="0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../../../resources/images/studentid.png" />
                                        </image>
                                     </ImageView>
+                                    <Group fx:id="textGroup" layoutX="2978.0" layoutY="-10.0">
+                                       <children>
+                                          <VBox fx:id="labelsVBox" layoutX="10.0" layoutY="-5.0">
+                                             <children>
+                                                <Label fx:id="stdNameLabel">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="stdIDLabel">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="stdEmailLabel">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="stdCourseLabel">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="stdPhoneNumberLabel">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </Group>
                                  </children>
                               </AnchorPane>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">

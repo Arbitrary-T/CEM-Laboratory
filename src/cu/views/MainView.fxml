@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.Controller">
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.MainController">
    <children>
       <MenuBar AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
@@ -28,7 +29,7 @@
         <tabs>
           <Tab text="Lease Manager">
                <content>
-                  <fx:include source="tabs/MainTabView.fxml" />
+                  <fx:include source="tabs/LeaseTabView.fxml" />
                </content>
           </Tab>
           <Tab text="Database Management">
