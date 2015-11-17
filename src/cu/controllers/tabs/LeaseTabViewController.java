@@ -66,7 +66,7 @@ public class LeaseTabViewController implements CardInterface
     private AnchorPane bottomLeftAP;
     @FXML
     private SplitPane leftSplitPane;
-    private double variableWidth;
+
     @FXML
     void initialize()
     {
@@ -74,12 +74,12 @@ public class LeaseTabViewController implements CardInterface
         leftAP.maxWidthProperty().bind(mainVerticalSplitPane.widthProperty().multiply(0.2));
         studentCardBack.fitHeightProperty().bind(imageAP.heightProperty());
         studentCardBack.fitWidthProperty().bind(imageAP.widthProperty());
+
         studentCardBack.boundsInParentProperty().addListener(((observable, oldValue, newValue) ->
         {
-            textGroup.setLayoutX(imageAP.widthProperty().get() / 3);
+            textGroup.setLayoutX(studentCardBack.layoutBoundsProperty().get().getWidth() / 3);
             textGroup.setLayoutY(textGroup.layoutBoundsProperty().get().getHeight());
             textGroup.getTransforms().clear();
-
             double scale_x = (studentCardBack.getBoundsInParent().getWidth() * 0.5) / 75;
             double scale_y = (studentCardBack.getBoundsInParent().getHeight() * 0.5) / 85;
             double scale_factor = Math.min(scale_x, scale_y);
