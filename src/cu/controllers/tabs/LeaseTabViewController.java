@@ -13,6 +13,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -21,6 +23,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.controlsfx.control.ListSelectionView;
 
 
 import java.io.IOException;
@@ -35,19 +38,13 @@ public class LeaseTabViewController implements CardInterface
     private MainController mainController;
     //View related variables
     @FXML
-    private AnchorPane imageAP;
-    @FXML
     private AnchorPane leftAP;
     @FXML
     private SplitPane mainVerticalSplitPane;
     @FXML
     private ImageView studentCardBack;
     @FXML
-    private ListView equipmentListView;
-    @FXML
     private TableView leasedItemsTableView;
-    @FXML
-    private TextField searchEquipment;
     @FXML
     private Label stdNameLabel;
     @FXML
@@ -57,24 +54,29 @@ public class LeaseTabViewController implements CardInterface
     @FXML
     private Label stdCourseLabel;
     @FXML
+    private ListSelectionView listSelectionView;
+    @FXML
     private Label stdPhoneNumberLabel;
     @FXML
     private VBox labelsVBox;
     @FXML
     private Group textGroup;
     @FXML
-    private AnchorPane bottomLeftAP;
+    private AnchorPane mainBottomAP;
     @FXML
-    private SplitPane leftSplitPane;
-
+    private PieChart pieChart;
     @FXML
     void initialize()
     {
         CardListener.activateAgent(this);
-        leftAP.maxWidthProperty().bind(mainVerticalSplitPane.widthProperty().multiply(0.2));
-        studentCardBack.fitHeightProperty().bind(imageAP.heightProperty());
-        studentCardBack.fitWidthProperty().bind(imageAP.widthProperty());
+        for(int i = 0; i < 10; i++)
+        listSelectionView.getSourceItems().add(i);
 
+        pieChart.setUserData("yes");
+        leftAP.maxWidthProperty().bind(mainVerticalSplitPane.widthProperty().multiply(0.2));
+        pieChart.maxWidthProperty().bind(leftAP.widthProperty());
+        studentCardBack.fitHeightProperty().bind(leftAP.heightProperty());
+        studentCardBack.fitWidthProperty().bind(leftAP.widthProperty());
         studentCardBack.boundsInParentProperty().addListener(((observable, oldValue, newValue) ->
         {
             textGroup.setLayoutX(studentCardBack.layoutBoundsProperty().get().getWidth() / 3);
