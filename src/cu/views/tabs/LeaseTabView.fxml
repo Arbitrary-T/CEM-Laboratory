@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.chart.*?>
 <?import org.controlsfx.control.*?>
 <?import java.lang.*?>
@@ -9,7 +10,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.tabs.LeaseTabViewController">
+<HBox fx:id="mainPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.tabs.LeaseTabViewController">
    <children>
       <AnchorPane HBox.hgrow="ALWAYS">
          <children>
@@ -23,10 +24,21 @@
                                  <image>
                                     <Image url="@../../../resources/images/studentid.png" />
                                  </image>
+                                 <VBox.margin>
+                                    <Insets top="1.0" />
+                                 </VBox.margin>
                               </ImageView>
-                              <PieChart fx:id="pieChart" />
+                              <Region prefHeight="87.0" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
+                        <BarChart fx:id="barChart" layoutX="10.0" layoutY="318.0" prefHeight="400.0" prefWidth="338.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                          <xAxis>
+                            <CategoryAxis side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis side="LEFT" />
+                          </yAxis>
+                        </BarChart>
                         <Group fx:id="textGroup">
                            <children>
                               <VBox fx:id="labelsVBox" layoutX="10.0" layoutY="-5.0">
@@ -68,11 +80,11 @@
                            <center>
                               <TableView fx:id="leasedItemsTableView" prefHeight="195.0" prefWidth="415.0" BorderPane.alignment="CENTER">
                                  <columns>
-                                    <TableColumn prefWidth="89.0" text="Item" />
+                                    <TableColumn prefWidth="89.0" text="Item(s)" />
                                     <TableColumn prefWidth="115.0" text="Leased To" />
                                     <TableColumn prefWidth="115.0" text="Leased On" />
                                     <TableColumn prefWidth="115.0" text="Time Left" />
-                                    <TableColumn prefWidth="115.0" text="Notes" />
+                                    <TableColumn prefWidth="115.0" text="Remarks" />
                                  </columns>
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -82,7 +94,32 @@
                            <bottom>
                               <AnchorPane fx:id="mainBottomAP" BorderPane.alignment="CENTER">
                                  <children>
-                                    <ListSelectionView fx:id="listSelectionView" />
+                                    <BorderPane layoutX="436.0" layoutY="14.0" prefHeight="237.0" prefWidth="828.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <left>
+                                          <ListSelectionView fx:id="listSelectionView" />
+                                       </left>
+                                       <center>
+                                          <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                             <children>
+                                                <Label layoutX="25.0" layoutY="6.0" text="Remarks" AnchorPane.topAnchor="10.0">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextArea layoutX="25.0" layoutY="36.0" prefHeight="181.0" prefWidth="182.0" wrapText="true" AnchorPane.bottomAnchor="20.0" />
+                                                <ComboBox layoutX="231.0" layoutY="36.0" prefWidth="140.0" />
+                                                <Button layoutX="231.0" layoutY="192.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Clear" />
+                                                <Button layoutX="312.0" layoutY="192.0" mnemonicParsing="false" text="Confirm" />
+                                                <TextField layoutX="231.0" layoutY="73.0" prefWidth="140.0" promptText="Custom time" />
+                                                <ImageView fx:id="coventryLogo" fitHeight="79.0" fitWidth="117.0" layoutX="244.0" layoutY="104.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="244.0" AnchorPane.rightAnchor="33.230552673339844">
+                                                   <image>
+                                                      <Image url="@../../../resources/images/logo.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </children>
+                                          </AnchorPane>
+                                       </center>
+                                    </BorderPane>
                                  </children>
                               </AnchorPane>
                            </bottom>

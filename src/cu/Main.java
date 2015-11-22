@@ -2,7 +2,6 @@ package cu;
 
 import cu.listeners.CardListener;
 import cu.models.Student;
-import cu.models.StudentDatabase;
 import javafx.application.Application;
 
 import javafx.fxml.FXMLLoader;
@@ -13,10 +12,10 @@ import javafx.stage.Stage;
 
 public class Main extends Application
 {
-    Thread cardListenerThread;
+    private Thread cardListenerThread;
+
+    //maybe change to context..?
     public static Student currentStudent;
-    public static StudentDatabase studentDatabase;
-    public static boolean isRegistrationWindowOpen = false;
 
     @Override
     public void start(Stage primaryStage) throws Exception
@@ -28,7 +27,6 @@ public class Main extends Application
         cardListenerThread = new Thread(new CardListener());
         cardListenerThread.setDaemon(true);
         cardListenerThread.start();
-        studentDatabase = new StudentDatabase("students");
     }
 
 

@@ -1,19 +1,20 @@
 package cu.controllers.dialogues;
 
 import cu.Main;
-import cu.controllers.MainController;
 import cu.models.Student;
+import cu.models.StudentDatabase;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * Created by T on 08/11/2015.
  */
 public class NewRegistrationDialogueController
 {
-    private MainController mainController;
+    private StudentDatabase studentDatabase= new StudentDatabase("students");
     @FXML
     private TextField stdName;
     @FXML
@@ -28,8 +29,9 @@ public class NewRegistrationDialogueController
     private Button submitButton;
     @FXML
     private Button cancelButton;
-    //
+
     private Stage dialogStage;
+
     private String cardUID;
 
     @FXML
@@ -108,35 +110,40 @@ public class NewRegistrationDialogueController
                 stdPhoneNumber.setStyle("-fx-background-color: #B1DBB1, #F0FFF0;");
             }
         }));
+
     }
     @FXML
     private void onSubmit()
     {
-        if(Main.studentDatabase != null)
+        if(studentDatabase != null)
         {
-            if(!Main.studentDatabase.addStudentEntry(new Student(cardUID, stdName.getText(), Integer.parseInt(stdID.getText()), stdEmail.getText(), stdCourse.getText(), stdPhoneNumber.getText())))
+            Student newStudent = new Student(cardUID, stdName.getText(), Integer.parseInt(stdID.getText()), stdEmail.getText(), stdCourse.getText(), stdPhoneNumber.getText());
+            if(!studentDatabase.addStudentEntry(newStudent))
             {
                 System.out.println("Error: could not maintain a connection to the database!");
             }
             else
             {
-                System.out.print("Successfully added " + stdName.getText() + " to the 'Students' database.");
+                System.out.println("Successfully added " + stdName.getText() + " to the 'Students' database.");
+                Main.currentStudent = newStudent;
+                //Platform.runLater(configureStudentCard);
             }
+            dialogStage.fireEvent(new WindowEvent(dialogStage, WindowEvent.WINDOW_CLOSE_REQUEST));
             dialogStage.close();
-            Main.isRegistrationWindowOpen = false;
+            //Main.isRegistrationWindowOpen = false;
         }
     }
     @FXML
     private void onCancel()
     {
+        dialogStage.fireEvent(new WindowEvent(dialogStage, WindowEvent.WINDOW_CLOSE_REQUEST));
         dialogStage.close();
-        Main.isRegistrationWindowOpen = false;
         System.out.println("Canceled by user.");
     }
 
     public boolean studentExists(String cardUID)
     {
-        Main.studentDatabase.searchDatabase(cardUID);
+        studentDatabase.searchDatabase(cardUID);
         return false;
     }
     public void configureDialogStage(Stage dialogStage, String cardUID)
@@ -152,8 +159,5 @@ public class NewRegistrationDialogueController
             submitButton.setDisable(false);
         }
     }
-    public void init(MainController mainController)
-    {
 
-    }
 }

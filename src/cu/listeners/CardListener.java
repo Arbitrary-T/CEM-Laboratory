@@ -3,21 +3,21 @@ package cu.listeners;
 import javax.smartcardio.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.SynchronousQueue;
 import javax.xml.bind.DatatypeConverter;
-/**
- * Created by T on 05/10/2015.
- */
+
 public class CardListener implements Runnable
 {
-    TerminalFactory terminalFactory;
-    List<CardTerminal> availableTerminals;
-    CardTerminal firstReader;
-    Card scannedCard;
-    CardChannel cardChannel;
-    CommandAPDU getChallenge;
-    ResponseAPDU response;
-    static CardInterface agent;
-    byte[] byteHistory = {0x00};
+    private TerminalFactory terminalFactory;
+    private List<CardTerminal> availableTerminals;
+    private CardTerminal firstReader;
+    private Card scannedCard;
+    private CardChannel cardChannel;
+    private CommandAPDU getChallenge;
+    private ResponseAPDU response;
+    private long pastTime = System.currentTimeMillis() - 2000;
+    private  static CardInterface agent;
+    private  byte[] byteHistory = {0x00};
 
     public static void activateAgent(CardInterface mainAgent)
     {
@@ -57,8 +57,9 @@ public class CardListener implements Runnable
                 cardChannel = scannedCard.getBasicChannel();
                 getChallenge = new CommandAPDU(new byte[]{(byte)0xFF,(byte)0xCA,(byte)0x00,(byte)0x00,(byte)0x04});
                 response = cardChannel.transmit(getChallenge);
-                if(!Arrays.equals(byteHistory, response.getBytes()))
+                if((System.currentTimeMillis() - pastTime) > 3000)
                 {
+                    pastTime = System.currentTimeMillis();
                     byteHistory = response.getBytes();
                     agent.onCardScanned(DatatypeConverter.printHexBinary(byteHistory));
                 }

@@ -11,7 +11,6 @@ public class Student
     private String studentCourse = "";
     private String studentPhoneNumber;
     private int studentID;
-
     public Student(String cardUID, String studentName, int studentID, String studentEmail, String studentCourse, String studentPhoneNumber)
     {
         setUID(cardUID);
@@ -20,6 +19,10 @@ public class Student
         setCourse(studentCourse);
         setEmail(studentEmail);
         setPhoneNumber(studentPhoneNumber);
+    }
+    public Student()
+    {
+
     }
 
     public void setUID(String cardUID)
