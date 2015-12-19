@@ -3,11 +3,17 @@ package cu.controllers.dialogues;
 import cu.Main;
 import cu.models.Student;
 import cu.models.StudentDatabase;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+
+import javax.swing.text.View;
 
 /**
  * Created by T on 08/11/2015.
@@ -34,10 +40,27 @@ public class NewRegistrationDialogueController
 
     private String cardUID;
 
+    private void setTextFieldStyles(TextField textField)
+    {
+        textField.textProperty().addListener((observable, oldValue, newValue) ->
+        {
+            if(newValue.isEmpty())
+            {
+                submitButton.setDisable(true);
+                textField.setStyle("-fx-background-color: #DBB1B1, #FFF0F0;");
+            }
+            else
+            {
+                validateFields();
+                textField.setStyle("-fx-background-color: #B1DBB1, #F0FFF0;");
+            }
+        });
+    }
     @FXML
     void initialize()
     {
         submitButton.setDisable(true);
+
         stdName.textProperty().addListener(((observable, oldValue, newValue) ->
         {
             if(newValue.isEmpty())
@@ -154,7 +177,7 @@ public class NewRegistrationDialogueController
     }
     private void validateFields()
     {
-        if(!(stdID.getText().length() < 6  || stdName.getText().isEmpty() || stdEmail.getText().isEmpty() || stdCourse.getText().isEmpty() || stdPhoneNumber.getText().length() != 11))
+        if(!(stdID.getText().length() < 6  && stdName.getText().isEmpty() && stdEmail.getText().isEmpty() && stdCourse.getText().isEmpty() && stdPhoneNumber.getText().length() == 11))
         {
             submitButton.setDisable(false);
         }

@@ -6,6 +6,8 @@ import cu.listeners.CardInterface;
 import cu.listeners.CardListener;
 import cu.models.StudentDatabase;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
@@ -27,14 +29,16 @@ import java.io.IOException;
  * Created by T on 08/11/2015.
  */
 
-public class LeaseTabViewController implements CardInterface {
+public class LeaseTabViewController implements CardInterface
+{
     //Non-view related variables
     private StudentDatabase studentDatabase = new StudentDatabase("students");
+    private boolean isRegistrationWindowOpen = false;
+    private ObservableList<String> timeComboBoxOptions = FXCollections.observableArrayList("1 Hour", "2 Hours", "3 Hours", "CUSTOM");
+
     //View related variables
     @FXML
-    private HBox mainPane;
-    @FXML
-    private AnchorPane leftAP;
+    private AnchorPane leftAnchorPane;
     @FXML
     private SplitPane mainVerticalSplitPane;
     @FXML
@@ -50,41 +54,62 @@ public class LeaseTabViewController implements CardInterface {
     @FXML
     private Label stdCourseLabel;
     @FXML
-    private ListSelectionView listSelectionView;
-    @FXML
     private Label stdPhoneNumberLabel;
+    @FXML
+    private ListSelectionView equipmentListSelectionView;
     @FXML
     private VBox labelsVBox;
     @FXML
-    private Group textGroup;
-    @FXML
-    private AnchorPane mainBottomAP;
+    private Group studentDetailsTextGroup;
     @FXML
     private BarChart barChart;
     @FXML
     private ImageView coventryLogo;
-    private boolean isRegistrationWindowOpen = false;
+    @FXML
+    private TextArea remarksTextArea;
+    @FXML
+    private ComboBox timeComboBox;
+    @FXML
+    private TextField customTimeTextField;
+    @FXML
+    private Button confirmLeaseButton;
+    @FXML
+    private Button clearOptionsButton;
+
     @FXML
     void initialize()
     {
+        timeComboBox.valueProperty().addListener((observable1, oldValue1, newValue1) ->
+        {
+            if(newValue1.equals("CUSTOM"))
+            {
+                customTimeTextField.setDisable(false);
+            }
+            else
+            {
+                customTimeTextField.setDisable(true);
+            }
+        });
         CardListener.activateAgent(this);
+        timeComboBox.setItems(timeComboBoxOptions);
+        timeComboBox.setValue(timeComboBoxOptions.get(2));
         for (int i = 0; i < 20; i++)
-            listSelectionView.getSourceItems().add(i);
-        leftAP.maxWidthProperty().bind(mainVerticalSplitPane.widthProperty().multiply(0.2));
-        barChart.maxWidthProperty().bind(leftAP.widthProperty());
-        studentCardBack.fitHeightProperty().bind(leftAP.heightProperty());
-        studentCardBack.fitWidthProperty().bind(leftAP.widthProperty());
+            equipmentListSelectionView.getSourceItems().add(i);
+        leftAnchorPane.maxWidthProperty().bind(mainVerticalSplitPane.widthProperty().multiply(0.2));
+        barChart.maxWidthProperty().bind(leftAnchorPane.widthProperty());
+        studentCardBack.fitHeightProperty().bind(leftAnchorPane.heightProperty());
+        studentCardBack.fitWidthProperty().bind(leftAnchorPane.widthProperty());
         studentCardBack.boundsInParentProperty().addListener(((observable, oldValue, newValue) ->
         {
-            textGroup.setLayoutX(studentCardBack.layoutBoundsProperty().get().getWidth() / 3);
-            textGroup.setLayoutY(textGroup.layoutBoundsProperty().get().getHeight());
-            textGroup.getTransforms().clear();
+            studentDetailsTextGroup.setLayoutX(studentCardBack.layoutBoundsProperty().get().getWidth() / 3);
+            studentDetailsTextGroup.setLayoutY(studentDetailsTextGroup.layoutBoundsProperty().get().getHeight());
+            studentDetailsTextGroup.getTransforms().clear();
             double scale_x = (studentCardBack.getBoundsInParent().getWidth() * 0.5) / 75;
             double scale_y = (studentCardBack.getBoundsInParent().getHeight() * 0.5) / 85;
             double scale_factor = Math.min(scale_x, scale_y);
-            double pivot_y = (textGroup.getBoundsInLocal().getMinY() - textGroup.getBoundsInLocal().getMaxY());
+            double pivot_y = (studentDetailsTextGroup.getBoundsInLocal().getMinY() - studentDetailsTextGroup.getBoundsInLocal().getMaxY());
             Scale scale = new Scale(scale_factor, scale_factor, 0, pivot_y);
-            textGroup.getTransforms().add(scale);
+            studentDetailsTextGroup.getTransforms().add(scale);
         }));
     }
 
@@ -97,7 +122,7 @@ public class LeaseTabViewController implements CardInterface {
         Runnable configureStudentCard = () ->
         {
             stdNameLabel.setText(Main.currentStudent.getStudentName());
-            stdIDLabel.setText("" + Main.currentStudent.getStudentID());
+            stdIDLabel.setText(""+ Main.currentStudent.getStudentID());
             stdEmailLabel.setText(Main.currentStudent.getStudentEmail());
             stdCourseLabel.setText(Main.currentStudent.getStudentCourse());
             stdPhoneNumberLabel.setText(Main.currentStudent.getStudentPhoneNumber());

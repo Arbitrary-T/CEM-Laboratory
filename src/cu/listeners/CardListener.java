@@ -52,18 +52,21 @@ public class CardListener implements Runnable
         {
             try
             {
-                firstReader.waitForCardPresent(0);
-                scannedCard = firstReader.connect("*");
-                cardChannel = scannedCard.getBasicChannel();
-                getChallenge = new CommandAPDU(new byte[]{(byte)0xFF,(byte)0xCA,(byte)0x00,(byte)0x00,(byte)0x04});
-                response = cardChannel.transmit(getChallenge);
-                if((System.currentTimeMillis() - pastTime) > 3000)
+                if (firstReader != null)
                 {
-                    pastTime = System.currentTimeMillis();
-                    byteHistory = response.getBytes();
-                    agent.onCardScanned(DatatypeConverter.printHexBinary(byteHistory));
+                    firstReader.waitForCardPresent(0);
+                    scannedCard = firstReader.connect("*");
+                    cardChannel = scannedCard.getBasicChannel();
+                    getChallenge = new CommandAPDU(new byte[]{(byte) 0xFF, (byte) 0xCA, (byte) 0x00, (byte) 0x00, (byte) 0x04});
+                    response = cardChannel.transmit(getChallenge);
+                    if ((System.currentTimeMillis() - pastTime) > 3000)
+                    {
+                        pastTime = System.currentTimeMillis();
+                        byteHistory = response.getBytes();
+                        agent.onCardScanned(DatatypeConverter.printHexBinary(byteHistory));
+                    }
+                    Thread.sleep(1000);
                 }
-                Thread.sleep(1000);
             }
             catch (Exception e)
             {

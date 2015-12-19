@@ -10,13 +10,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox fx:id="mainPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.tabs.LeaseTabViewController">
+<HBox fx:id="mainPane" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.tabs.LeaseTabViewController">
    <children>
       <AnchorPane HBox.hgrow="ALWAYS">
          <children>
             <SplitPane fx:id="mainVerticalSplitPane" dividerPositions="0.35" prefHeight="720" prefWidth="1280" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <items>
-                  <AnchorPane fx:id="leftAP" minHeight="0.0" minWidth="0.0" SplitPane.resizableWithParent="false">
+                  <AnchorPane fx:id="leftAnchorPane" minHeight="0.0" minWidth="0.0" SplitPane.resizableWithParent="false">
                      <children>
                         <VBox>
                            <children>
@@ -25,7 +25,7 @@
                                     <Image url="@../../../resources/images/studentid.png" />
                                  </image>
                                  <VBox.margin>
-                                    <Insets top="1.0" />
+                                    <Insets left="1.0" right="1.0" top="1.0" />
                                  </VBox.margin>
                               </ImageView>
                               <Region prefHeight="87.0" VBox.vgrow="ALWAYS" />
@@ -39,7 +39,7 @@
                             <NumberAxis side="LEFT" />
                           </yAxis>
                         </BarChart>
-                        <Group fx:id="textGroup">
+                        <Group fx:id="studentDetailsTextGroup">
                            <children>
                               <VBox fx:id="labelsVBox" layoutX="10.0" layoutY="-5.0">
                                  <children>
@@ -92,11 +92,11 @@
                               </TableView>
                            </center>
                            <bottom>
-                              <AnchorPane fx:id="mainBottomAP" BorderPane.alignment="CENTER">
+                              <AnchorPane fx:id="bottomRightAnchorPane" BorderPane.alignment="CENTER">
                                  <children>
                                     <BorderPane layoutX="436.0" layoutY="14.0" prefHeight="237.0" prefWidth="828.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <left>
-                                          <ListSelectionView fx:id="listSelectionView" />
+                                          <ListSelectionView fx:id="equipmentListSelectionView" />
                                        </left>
                                        <center>
                                           <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
@@ -106,16 +106,21 @@
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <TextArea layoutX="25.0" layoutY="36.0" prefHeight="181.0" prefWidth="182.0" wrapText="true" AnchorPane.bottomAnchor="20.0" />
-                                                <ComboBox layoutX="231.0" layoutY="36.0" prefWidth="140.0" />
-                                                <Button layoutX="231.0" layoutY="192.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Clear" />
-                                                <Button layoutX="312.0" layoutY="192.0" mnemonicParsing="false" text="Confirm" />
-                                                <TextField layoutX="231.0" layoutY="73.0" prefWidth="140.0" promptText="Custom time" />
+                                                <TextArea fx:id="remarksTextArea" layoutX="25.0" layoutY="36.0" prefHeight="181.0" prefWidth="182.0" wrapText="true" AnchorPane.bottomAnchor="20.0" />
+                                                <ComboBox fx:id="timeComboBox" layoutX="231.0" layoutY="36.0" prefWidth="140.0" />
+                                                <Button fx:id="clearOptionsButton" layoutX="231.0" layoutY="192.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Clear" />
+                                                <Button fx:id="confirmLeaseButton" layoutX="312.0" layoutY="192.0" mnemonicParsing="false" text="Confirm" />
+                                                <TextField fx:id="customTimeTextField" disable="true" layoutX="231.0" layoutY="73.0" prefWidth="140.0" promptText="Custom time (hours)" />
                                                 <ImageView fx:id="coventryLogo" fitHeight="79.0" fitWidth="117.0" layoutX="244.0" layoutY="104.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="244.0" AnchorPane.rightAnchor="33.230552673339844">
                                                    <image>
                                                       <Image url="@../../../resources/images/logo.png" />
                                                    </image>
                                                 </ImageView>
+                                                <Label layoutX="230.0" layoutY="10.0" text="Lease Time" AnchorPane.topAnchor="10.0">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
                                              </children>
                                           </AnchorPane>
                                        </center>
