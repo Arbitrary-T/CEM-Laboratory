@@ -1,5 +1,7 @@
 package cu.models;
 
+import cu.listeners.DatabaseInterface;
+
 import java.io.File;
 import java.sql.*;
 
@@ -14,11 +16,19 @@ public class EquipmentDatabase
     PreparedStatement updateItem;
     PreparedStatement searchItem;
 
+    private  static DatabaseInterface agent;
+
+    public static void activateAgent(DatabaseInterface mainAgent)
+    {
+        agent = mainAgent;
+    }
+
     public EquipmentDatabase(String database)
     {
         loadDatabase(database);
         try
         {
+            activateAgent(agent);
             insertItem = databaseConnection.prepareStatement("INSERT INTO Equipment VALUES (?,?,?,?,?,?)");
             deleteItem = databaseConnection.prepareStatement("DELETE FROM Equipment WHERE itemID = ?");
             //updateItem = databaseConnection.prepareStatement("INSERT INTO Students VALUES (?,?,?,?,?,?)"); /////

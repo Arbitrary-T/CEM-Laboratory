@@ -1,6 +1,7 @@
 package cu.models;
 
 import cu.Main;
+import cu.listeners.DatabaseInterface;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -19,14 +20,22 @@ public class StudentDatabase
     private PreparedStatement searchStudent;
     private PreparedStatement getAllStudents;
     public boolean firstRun = true;
+
+    private static DatabaseInterface databaseAgent;
+
+    public static void activateAgent(DatabaseInterface mainAgent)
+    {
+        databaseAgent = mainAgent;
+    }
     public StudentDatabase(String database)
     {
+        activateAgent(databaseAgent);
         loadDatabase(database);
         try
         {
             insertStudent = databaseConnection.prepareStatement("INSERT INTO Students VALUES (?,?,?,?,?,?)");
             deleteStudent = databaseConnection.prepareStatement("DELETE FROM Students WHERE studentID = ?");
-            //updateStudent = databaseConnection.prepareStatement("INSERT INTO Students VALUES (?,?,?,?,?,?)"); /////
+            updateStudent = databaseConnection.prepareStatement("UPDATE Students SET studentName=? , studentEmail=?, studentCourse=?, studentPhoneNumber=? WHERE studentID = ?");
             searchStudent = databaseConnection.prepareStatement("SELECT * FROM Students WHERE cardUID = ?"); /////
             getAllStudents = databaseConnection.prepareStatement("SELECT * FROM Students");
         }
@@ -35,6 +44,46 @@ public class StudentDatabase
             e.printStackTrace();
         }
 
+    }
+    public boolean editStudentEntry(Student studentData)
+    {
+        if(databaseConnection != null)
+        {
+            try
+            {
+                updateStudent.setString(1, studentData.getStudentName());
+                updateStudent.setString(2, studentData.getStudentEmail());
+                updateStudent.setString(3, studentData.getStudentCourse());
+                updateStudent.setString(4, studentData.getStudentPhoneNumber());
+                updateStudent.setInt(5, studentData.getStudentID());
+                return true;
+            }
+            catch(SQLException e)
+            {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return false;
+    }
+    public boolean deleteStudentEntry(int studentID)
+    {
+        if(databaseConnection != null)
+        {
+            try
+            {
+                deleteStudent.setInt(1, studentID);
+                deleteStudent.executeUpdate();
+                databaseAgent.onStudentDatabaseUpdate();
+                return true;
+            }
+            catch (SQLException e)
+            {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return false;
     }
     public boolean addStudentEntry(Student studentData)
     {
@@ -50,6 +99,7 @@ public class StudentDatabase
                 insertStudent.setString(5, studentData.getStudentCourse());
                 insertStudent.setString(6, studentData.getStudentPhoneNumber());
                 insertStudent.executeUpdate();
+                databaseAgent.onStudentDatabaseUpdate();
                 return true;
             }
             catch(SQLException e)
@@ -57,6 +107,7 @@ public class StudentDatabase
                 e.printStackTrace();
                 return false;
             }
+
         }
         return false;
     }
@@ -70,7 +121,6 @@ public class StudentDatabase
             {
                     while (resultSet.next())
                     {
-                        System.out.println(resultSet.getString(1) + resultSet.getString(2) + resultSet.getInt(3) + resultSet.getString(4) + resultSet.getString(5) + resultSet.getString(6));
                         studentsFromDatabase.add(new Student(resultSet.getString(1), resultSet.getString(2), resultSet.getInt(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6)));
                     }
             }
@@ -140,6 +190,7 @@ public class StudentDatabase
                         "studentPhoneNumber VARCHAR(256))");
                 firstRunStatement.close();
                 System.out.println("Successfully connected to newly created 'Students' database.");
+                activateAgent(databaseAgent);
                 return true;
             }
             catch (SQLException e)
