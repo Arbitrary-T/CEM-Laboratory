@@ -1,10 +1,7 @@
 package cu.models;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * Created by T on 22/11/2015.
@@ -12,10 +9,25 @@ import java.sql.Statement;
 public class EquipmentDatabase
 {
     Connection databaseConnection;
+    PreparedStatement insertItem;
+    PreparedStatement deleteItem;
+    PreparedStatement updateItem;
+    PreparedStatement searchItem;
 
     public EquipmentDatabase(String database)
     {
         loadDatabase(database);
+        try
+        {
+            insertItem = databaseConnection.prepareStatement("INSERT INTO Equipment VALUES (?,?,?,?,?,?)");
+            deleteItem = databaseConnection.prepareStatement("DELETE FROM Equipment WHERE itemID = ?");
+            //updateItem = databaseConnection.prepareStatement("INSERT INTO Students VALUES (?,?,?,?,?,?)"); /////
+            searchItem = databaseConnection.prepareStatement("SELECT * FROM Equipment WHERE itemID = ?"); /////
+        }
+        catch (SQLException e)
+        {
+
+        }
     }
 
     private boolean loadDatabase(String database)

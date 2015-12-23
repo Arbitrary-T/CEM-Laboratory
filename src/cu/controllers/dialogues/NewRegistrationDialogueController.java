@@ -40,27 +40,11 @@ public class NewRegistrationDialogueController
 
     private String cardUID;
 
-    private void setTextFieldStyles(TextField textField)
-    {
-        textField.textProperty().addListener((observable, oldValue, newValue) ->
-        {
-            if(newValue.isEmpty())
-            {
-                submitButton.setDisable(true);
-                textField.setStyle("-fx-background-color: #DBB1B1, #FFF0F0;");
-            }
-            else
-            {
-                validateFields();
-                textField.setStyle("-fx-background-color: #B1DBB1, #F0FFF0;");
-            }
-        });
-    }
+
     @FXML
     void initialize()
     {
         submitButton.setDisable(true);
-
         stdName.textProperty().addListener(((observable, oldValue, newValue) ->
         {
             if(newValue.isEmpty())
@@ -77,7 +61,7 @@ public class NewRegistrationDialogueController
 
         stdEmail.textProperty().addListener(((observable, oldValue, newValue) ->
         {
-            if(newValue.isEmpty())
+            if(!isValidEmail(newValue))
             {
                 submitButton.setDisable(true);
                 stdEmail.setStyle("-fx-background-color: #DBB1B1, #FFF0F0;");
@@ -121,7 +105,7 @@ public class NewRegistrationDialogueController
         }));
         stdPhoneNumber.textProperty().addListener(((observable, oldValue, newValue) ->
         {
-            if(!newValue.matches("\\d*") || newValue.length() < 11)
+            if(!newValue.matches("\\d*") || newValue.length() != 11)
             {
                 stdPhoneNumber.setText(newValue.replaceAll("[^\\d]", ""));
                 stdPhoneNumber.setStyle("-fx-background-color: #DBB1B1, #FFF0F0;");
@@ -149,11 +133,9 @@ public class NewRegistrationDialogueController
             {
                 System.out.println("Successfully added " + stdName.getText() + " to the 'Students' database.");
                 Main.currentStudent = newStudent;
-                //Platform.runLater(configureStudentCard);
             }
             dialogStage.fireEvent(new WindowEvent(dialogStage, WindowEvent.WINDOW_CLOSE_REQUEST));
             dialogStage.close();
-            //Main.isRegistrationWindowOpen = false;
         }
     }
     @FXML
@@ -177,10 +159,17 @@ public class NewRegistrationDialogueController
     }
     private void validateFields()
     {
-        if(!(stdID.getText().length() < 6  && stdName.getText().isEmpty() && stdEmail.getText().isEmpty() && stdCourse.getText().isEmpty() && stdPhoneNumber.getText().length() == 11))
+        if(stdID.getText().length() < 6  || stdName.getText().isEmpty() || !isValidEmail(stdEmail.getText()) || stdCourse.getText().isEmpty() || stdPhoneNumber.getText().length() != 11)
+        {
+            submitButton.setDisable(true);
+        }
+        else
         {
             submitButton.setDisable(false);
         }
     }
-
+    private boolean isValidEmail(String email)
+    {
+        return email.endsWith("@coventry.ac.uk");
+    }
 }

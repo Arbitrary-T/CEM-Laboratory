@@ -1,82 +1,82 @@
 package cu.models;
 
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+
 /**
  * Created by T on 05/10/2015.
  */
 public class Student
 {
-    private String cardUID = "";
-    private String studentName = "";
-    private String studentEmail = "";
-    private String studentCourse = "";
-    private String studentPhoneNumber;
-    private int studentID;
+    private SimpleStringProperty cardUID ;
+    private SimpleStringProperty studentName ;
+    private SimpleStringProperty studentEmail ;
+    private SimpleStringProperty studentCourse ;
+    private SimpleStringProperty studentPhoneNumber;
+    private SimpleIntegerProperty studentID;
+
     public Student(String cardUID, String studentName, int studentID, String studentEmail, String studentCourse, String studentPhoneNumber)
     {
-        setUID(cardUID);
-        setName(studentName);
-        setID(studentID);
-        setCourse(studentCourse);
-        setEmail(studentEmail);
-        setPhoneNumber(studentPhoneNumber);
-    }
-    public Student()
-    {
-
+        this.cardUID = new SimpleStringProperty(cardUID);
+        this.studentID = new SimpleIntegerProperty(studentID);
+        this.studentName = new SimpleStringProperty(studentName);
+        this.studentEmail = new SimpleStringProperty(studentEmail);
+        this.studentCourse = new SimpleStringProperty(studentCourse);
+        this.studentPhoneNumber = new SimpleStringProperty(studentPhoneNumber);
     }
 
-    public void setUID(String cardUID)
+    public void setCardUID(String cardUID)
     {
-        this.cardUID = cardUID;
+        this.cardUID.set(cardUID);
     }
 
-    public void setEmail(String studentEmail)
+    public void setStudentEmail(String studentEmail)
     {
-        this.studentEmail = studentEmail;
+        this.studentEmail.set(studentEmail);
     }
 
-    public void setCourse(String studentCourse)
+    public void setStudentCourse(String studentCourse)
     {
-        this.studentCourse = studentCourse;
+        this.studentCourse.set(studentCourse);
     }
 
     public void setPhoneNumber(String studentPhoneNumber)
     {
-        this.studentPhoneNumber = studentPhoneNumber;
+        this.studentPhoneNumber.set(studentPhoneNumber);
     }
 
-    public void setName(String studentName)
+    public void setStudentName(String studentName)
     {
-        this.studentName = studentName;
+        this.studentName.set(studentName);
     }
 
     public void setID(int studentID)
     {
-        this.studentID = studentID;
+        this.studentID.set(studentID);
     }
 
     public String getCardUID()
     {
-        return cardUID;
+        return cardUID.get();
     }
     public String getStudentName()
     {
-        return studentName;
+        return studentName.get();
     }
     public String getStudentEmail()
     {
-        return studentEmail;
+        return studentEmail.get();
     }
     public String getStudentCourse()
     {
-        return studentCourse;
+        return studentCourse.get();
     }
     public String getStudentPhoneNumber()
     {
-        return studentPhoneNumber;
+        return this.studentPhoneNumber.get();
     }
     public int getStudentID()
     {
-        return studentID;
+        return this.studentID.get();
     }
 }

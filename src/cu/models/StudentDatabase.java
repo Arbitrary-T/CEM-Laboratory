@@ -1,6 +1,8 @@
 package cu.models;
 
 import cu.Main;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.io.File;
 import java.sql.*;
@@ -11,11 +13,12 @@ import java.sql.*;
 public class StudentDatabase
 {
     private Connection databaseConnection;
-    PreparedStatement insertStudent;
-    PreparedStatement deleteStudent;
-    PreparedStatement updateStudent;
-    PreparedStatement searchStudent;
-    //todo other statements for the future :?...
+    private PreparedStatement insertStudent;
+    private PreparedStatement deleteStudent;
+    private PreparedStatement updateStudent;
+    private PreparedStatement searchStudent;
+    private PreparedStatement getAllStudents;
+    public boolean firstRun = true;
     public StudentDatabase(String database)
     {
         loadDatabase(database);
@@ -25,8 +28,9 @@ public class StudentDatabase
             deleteStudent = databaseConnection.prepareStatement("DELETE FROM Students WHERE studentID = ?");
             //updateStudent = databaseConnection.prepareStatement("INSERT INTO Students VALUES (?,?,?,?,?,?)"); /////
             searchStudent = databaseConnection.prepareStatement("SELECT * FROM Students WHERE cardUID = ?"); /////
+            getAllStudents = databaseConnection.prepareStatement("SELECT * FROM Students");
         }
-        catch (Exception e)
+        catch (SQLException e)
         {
             e.printStackTrace();
         }
@@ -55,6 +59,28 @@ public class StudentDatabase
             }
         }
         return false;
+    }
+    public ObservableList<Student> getAllStudents()
+    {
+        ObservableList<Student> studentsFromDatabase = FXCollections.observableArrayList();
+        try
+        {
+            ResultSet resultSet = getAllStudents.executeQuery();
+            if (resultSet != null)
+            {
+                    while (resultSet.next())
+                    {
+                        System.out.println(resultSet.getString(1) + resultSet.getString(2) + resultSet.getInt(3) + resultSet.getString(4) + resultSet.getString(5) + resultSet.getString(6));
+                        studentsFromDatabase.add(new Student(resultSet.getString(1), resultSet.getString(2), resultSet.getInt(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6)));
+                    }
+            }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+        return studentsFromDatabase;
     }
     public Student searchDatabase(String cardUID)
     {
@@ -90,6 +116,7 @@ public class StudentDatabase
             {
                 databaseConnection = DriverManager.getConnection(existsDatabaseURL);
                 System.out.println("Successfully connected to existing 'Students' database.");
+                firstRun = false;
                 return true;
             }
             catch (SQLException e)
