@@ -3,13 +3,15 @@ package cu.controllers.tabs;
 import cu.listeners.DatabaseInterface;
 import cu.models.Student;
 import cu.models.StudentDatabase;
+import cu.validations.TextValidation;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.converter.IntegerStringConverter;
+
 import java.util.Optional;
 
 
@@ -43,6 +45,9 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
 
     StudentDatabase studentDatabase = new StudentDatabase("students");
 
+    TextValidation validation = new TextValidation();
+
+    Student tempStudent;
     @FXML
     void initialize()
     {
@@ -52,45 +57,55 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
         studentsObservableList = studentDatabase.getAllStudents();
 
         studentIDColumn.setCellValueFactory(new PropertyValueFactory<>("studentID"));
-        studentIDColumn.setEditable(false);
-
+        studentIDColumn.setCellFactory(TextFieldTableCell.<Student,Integer>forTableColumn(new IntegerStringConverter()));
+        studentIDColumn.setOnEditCommit((CellEditEvent<Student, Integer> event) ->
+        {
+            tempStudent = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            if(validation.isValidStudentID(event.getNewValue().toString()))
+                tempStudent.setID(Integer.parseInt(event.getNewValue().toString()));
+            studentDatabase.editStudentEntry(tempStudent);
+        });
         studentNameColumn.setCellValueFactory(new PropertyValueFactory<>("studentName"));
         studentNameColumn.setCellFactory(TextFieldTableCell.<Student>forTableColumn());
         studentNameColumn.setOnEditCommit((CellEditEvent<Student, String> event) ->
         {
-            Student a = event.getTableView().getItems().get(event.getTablePosition().getRow());
-            a.setStudentName(event.getNewValue().toString());
-            studentDatabase.editStudentEntry(a);
+            tempStudent = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            if(!event.getNewValue().isEmpty())
+                tempStudent.setStudentName(event.getNewValue().toString());
+            studentDatabase.editStudentEntry(tempStudent);
         });
 
         studentCourseColumn.setCellValueFactory(new PropertyValueFactory<>("studentCourse"));
         studentCourseColumn.setCellFactory(TextFieldTableCell.<Student>forTableColumn());
         studentCourseColumn.setOnEditCommit((CellEditEvent<Student, String> event) ->
         {
-            Student a = event.getTableView().getItems().get(event.getTablePosition().getRow());
-            a.setStudentCourse(event.getNewValue().toString());
-            studentDatabase.editStudentEntry(a);
+            tempStudent = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            if(!event.getNewValue().isEmpty())
+                tempStudent.setStudentCourse(event.getNewValue().toString());
+            studentDatabase.editStudentEntry(tempStudent);
         });
 
         studentEmailColumn.setCellValueFactory(new PropertyValueFactory<>("studentEmail"));
         studentEmailColumn.setCellFactory(TextFieldTableCell.<Student>forTableColumn());
         studentEmailColumn.setOnEditCommit((CellEditEvent<Student, String> event) ->
         {
-            Student a = event.getTableView().getItems().get(event.getTablePosition().getRow());
-            a.setStudentEmail(event.getNewValue().toString());
-            studentDatabase.editStudentEntry(a);
+            tempStudent = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            if(validation.checkValidEmail(event.getNewValue()))
+                tempStudent.setStudentEmail(event.getNewValue().toString());
+            studentDatabase.editStudentEntry(tempStudent);
         });
         studentPhoneNumberColumn.setCellValueFactory(new PropertyValueFactory<>("studentPhoneNumber"));
         studentPhoneNumberColumn.setCellFactory(TextFieldTableCell.<Student>forTableColumn());
         studentPhoneNumberColumn.setOnEditCommit((CellEditEvent<Student, String> event) ->
         {
-            Student a = event.getTableView().getItems().get(event.getTablePosition().getRow());
-            a.setPhoneNumber(event.getNewValue().toString());
-            studentDatabase.editStudentEntry(a);
+            tempStudent = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            if(validation.isValidPhoneNumber(event.getNewValue()))
+                tempStudent.setPhoneNumber(event.getNewValue().toString());
+            studentDatabase.editStudentEntry(tempStudent);
         });
 
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem editMenuItem = new MenuItem("Edit cell");
+        MenuItem editMenuItem = new MenuItem("Modify cell");
         editMenuItem.setOnAction(event ->
                 databaseTableView.getSelectionModel().getTableView().edit(databaseTableView.getFocusModel().getFocusedCell().getRow(),databaseTableView.getFocusModel().getFocusedCell().getTableColumn()));
         MenuItem deleteMenuItem = new MenuItem("Delete student");
@@ -106,7 +121,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
             {
                 for(Student students : databaseTableView.getSelectionModel().getSelectedItems())
                 {
-                    studentDatabase.deleteStudentEntry(students.getStudentID());
+                    studentDatabase.deleteStudentEntry(students.getCardUID());
                 }
             }
         });
@@ -123,7 +138,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
                 {
                     for(Student students : databaseTableView.getSelectionModel().getSelectedItems())
                     {
-                        studentDatabase.deleteStudentEntry(students.getStudentID());
+                        studentDatabase.deleteStudentEntry(students.getCardUID());
                     }
                 }
                 event.consume();

@@ -3,17 +3,13 @@ package cu.controllers.dialogues;
 import cu.Main;
 import cu.models.Student;
 import cu.models.StudentDatabase;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.beans.value.ChangeListener;
+import cu.validations.TextValidation;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Pagination;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import javax.swing.text.View;
 
 /**
  * Created by T on 08/11/2015.
@@ -40,7 +36,7 @@ public class NewRegistrationDialogueController
 
     private String cardUID;
 
-
+    private TextValidation validation = new TextValidation();
     @FXML
     void initialize()
     {
@@ -61,11 +57,10 @@ public class NewRegistrationDialogueController
 
         stdEmail.textProperty().addListener(((observable, oldValue, newValue) ->
         {
-            if(!isValidEmail(newValue))
+            if(!validation.checkValidEmail(newValue))
             {
                 submitButton.setDisable(true);
                 stdEmail.setStyle("-fx-background-color: #DBB1B1, #FFF0F0;");
-
             }
             else
             {
@@ -76,7 +71,7 @@ public class NewRegistrationDialogueController
         }));
         stdID.textProperty().addListener(((observable, oldValue, newValue) ->
         {
-            if(!newValue.matches("\\d*") || newValue.length() < 7)
+            if(!validation.isValidStudentID(newValue))
             {
                 stdID.setText(newValue.replaceAll("[^\\d]", ""));
                 stdID.setStyle("-fx-background-color: #DBB1B1, #FFF0F0;");
@@ -105,7 +100,7 @@ public class NewRegistrationDialogueController
         }));
         stdPhoneNumber.textProperty().addListener(((observable, oldValue, newValue) ->
         {
-            if(!newValue.matches("\\d*") || newValue.length() != 11)
+            if(!validation.isValidPhoneNumber(newValue))
             {
                 stdPhoneNumber.setText(newValue.replaceAll("[^\\d]", ""));
                 stdPhoneNumber.setStyle("-fx-background-color: #DBB1B1, #FFF0F0;");

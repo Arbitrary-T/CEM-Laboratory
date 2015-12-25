@@ -34,8 +34,8 @@ public class StudentDatabase
         try
         {
             insertStudent = databaseConnection.prepareStatement("INSERT INTO Students VALUES (?,?,?,?,?,?)");
-            deleteStudent = databaseConnection.prepareStatement("DELETE FROM Students WHERE studentID = ?");
-            updateStudent = databaseConnection.prepareStatement("UPDATE Students SET studentName=? , studentEmail=?, studentCourse=?, studentPhoneNumber=? WHERE studentID = ?");
+            deleteStudent = databaseConnection.prepareStatement("DELETE FROM Students WHERE cardUID = ?");
+            updateStudent = databaseConnection.prepareStatement("UPDATE Students SET studentName=?, studentID=? , studentEmail=?, studentCourse=?, studentPhoneNumber=? WHERE cardUID = ?");
             searchStudent = databaseConnection.prepareStatement("SELECT * FROM Students WHERE cardUID = ?"); /////
             getAllStudents = databaseConnection.prepareStatement("SELECT * FROM Students");
         }
@@ -52,27 +52,28 @@ public class StudentDatabase
             try
             {
                 updateStudent.setString(1, studentData.getStudentName());
-                updateStudent.setString(2, studentData.getStudentEmail());
-                updateStudent.setString(3, studentData.getStudentCourse());
-                updateStudent.setString(4, studentData.getStudentPhoneNumber());
-                updateStudent.setInt(5, studentData.getStudentID());
-                return true;
+                updateStudent.setInt(2, studentData.getStudentID());
+                updateStudent.setString(3, studentData.getStudentEmail());
+                updateStudent.setString(4, studentData.getStudentCourse());
+                updateStudent.setString(5, studentData.getStudentPhoneNumber());
+                updateStudent.setString(6, studentData.getCardUID());
             }
             catch(SQLException e)
             {
                 e.printStackTrace();
                 return false;
             }
+            return true;
         }
         return false;
     }
-    public boolean deleteStudentEntry(int studentID)
+    public boolean deleteStudentEntry(String cardUID)
     {
         if(databaseConnection != null)
         {
             try
             {
-                deleteStudent.setInt(1, studentID);
+                deleteStudent.setString(1, cardUID);
                 deleteStudent.executeUpdate();
                 databaseAgent.onStudentDatabaseUpdate();
                 return true;
