@@ -1,15 +1,20 @@
 package cu.controllers.tabs;
 
-import cu.listeners.DatabaseInterface;
+import cu.interfaces.DatabaseInterface;
+import cu.models.Equipment;
+import cu.models.EquipmentDatabase;
 import cu.models.Student;
 import cu.models.StudentDatabase;
 import cu.validations.TextValidation;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.KeyCode;
 import javafx.util.converter.IntegerStringConverter;
 
 import java.util.Optional;
@@ -21,40 +26,163 @@ import java.util.Optional;
 public class DatabaseManagementTabViewController implements DatabaseInterface
 {
     @FXML
-    TextField filterTextField;
-
+    private TextField filterTextField;
     @FXML
-    TableColumn<Student, Integer>  studentIDColumn;
-
+    private TableColumn<Student, Integer>  studentIDColumn;
     @FXML
-    TableColumn<Student, String>  studentNameColumn;
-
+    private TableColumn<Student, String>  studentNameColumn;
     @FXML
-    TableColumn<Student, String>  studentCourseColumn;
-
+    private TableColumn<Student, String>  studentCourseColumn;
     @FXML
-    TableColumn<Student, String>  studentEmailColumn;
-
+    private TableColumn<Student, String>  studentEmailColumn;
     @FXML
-    TableColumn<Student, String>  studentPhoneNumberColumn;
-
+    private TableColumn<Student, String>  studentPhoneNumberColumn;
     @FXML
-    TableView<Student> databaseTableView;
+    private TableView<Student> studentTableView;
+    @FXML
+    private TextField equipmentFilterTextField;
+    @FXML
+    private TableView<Equipment> equipmentTableView;
+    @FXML
+    private TableColumn<Equipment, Integer> idTableColumn;
+    @FXML
+    private TableColumn<Equipment, String> nameTableColumn;
+    @FXML
+    private TableColumn<Equipment, String> categoryTableColumn;
+    @FXML
+    private TableColumn<Equipment, String> conditionTableColumn;
+    @FXML
+    private TableColumn<Equipment, String> partOfBundleTableColumn;
+    @FXML
+    private ListView availableBundleListView;
+    @FXML
+    private ListView newBundleListView;
+    @FXML
+    private Button addBundleButton;
+    @FXML
+    private Button clearBundleButton;
 
-    ObservableList<Student> studentsObservableList;
+    private ObservableList<String> isFunctionalObservableList = FXCollections.observableArrayList("Yes", "No");
+    private ObservableList<Student> studentsObservableList;
+    private ObservableList<Equipment> equipmentObservableList;
+    private StudentDatabase studentDatabase = new StudentDatabase("students");
+    private EquipmentDatabase equipmentDatabase = new EquipmentDatabase("equipment");
+    private TextValidation validation = new TextValidation();
+    private Student tempStudent;
+    private Equipment tempEquipment;
 
-    StudentDatabase studentDatabase = new StudentDatabase("students");
-
-    TextValidation validation = new TextValidation();
-
-    Student tempStudent;
     @FXML
     void initialize()
     {
         StudentDatabase.activateAgent(this);
-        databaseTableView.setEditable(true);
-        databaseTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        EquipmentDatabase.activateAgent(this);
+        studentTableView.setEditable(true);
+        studentTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         studentsObservableList = studentDatabase.getAllStudents();
+        equipmentObservableList = equipmentDatabase.getAllEquipment();
+
+        equipmentTableView.setEditable(true);
+        equipmentTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        idTableColumn.setCellValueFactory(new PropertyValueFactory<>("itemID"));
+        idTableColumn.setCellFactory(TextFieldTableCell.<Equipment, Integer>forTableColumn(new IntegerStringConverter()));
+        idTableColumn.setOnEditCommit((CellEditEvent<Equipment, Integer> event) ->
+        {
+            tempEquipment = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            if(!event.getNewValue().toString().isEmpty())
+            {
+                if(event.getNewValue().toString().matches("\\d*"))
+                {
+                    tempEquipment.setItemID(event.getNewValue());
+                    equipmentDatabase.editEquipmentEntry(tempEquipment);
+                }
+            }
+        });
+        nameTableColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
+        nameTableColumn.setCellFactory(TextFieldTableCell.<Equipment>forTableColumn());
+        nameTableColumn.setOnEditCommit((CellEditEvent<Equipment, String> event) ->
+        {
+            tempEquipment = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            if(!event.getNewValue().isEmpty())
+            {
+                tempEquipment.setItemName(event.getNewValue());
+                equipmentDatabase.editEquipmentEntry(tempEquipment);
+            }
+        });
+        categoryTableColumn.setCellValueFactory(new PropertyValueFactory<>("itemCategory"));
+        categoryTableColumn.setCellFactory(TextFieldTableCell.<Equipment>forTableColumn());
+        categoryTableColumn.setOnEditCommit((CellEditEvent<Equipment, String> event) ->
+        {
+            tempEquipment = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            if(!event.getNewValue().isEmpty())
+            {
+                tempEquipment.setItemCategory(event.getNewValue());
+                equipmentDatabase.editEquipmentEntry(tempEquipment);
+            }
+        });
+        conditionTableColumn.setCellValueFactory(new PropertyValueFactory<>("functional"));
+        conditionTableColumn.setCellFactory(ComboBoxTableCell.forTableColumn(isFunctionalObservableList));
+        conditionTableColumn.setOnEditCommit((CellEditEvent<Equipment, String> event) ->
+        {
+            tempEquipment = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            System.out.println("THE COMBO BOX SAYS: ? "+event.getNewValue());
+            if(event.getNewValue().equals("Yes"))
+            {
+                tempEquipment.setFunctional(true);
+            }
+            else
+            {
+                tempEquipment.setFunctional(false);
+            }
+            equipmentDatabase.editEquipmentEntry(tempEquipment);
+        });
+        partOfBundleTableColumn.setCellValueFactory(new PropertyValueFactory<>("partOfBundle"));
+        partOfBundleTableColumn.setCellFactory(TextFieldTableCell.<Equipment>forTableColumn());
+        partOfBundleTableColumn.setOnEditCommit((CellEditEvent<Equipment, String> event) ->
+        {
+            tempEquipment = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            if(!event.getNewValue().isEmpty())
+            {
+                tempEquipment.setPartOfBundle(event.getNewValue());
+                equipmentDatabase.editEquipmentEntry(tempEquipment);
+            }
+        });
+
+        ContextMenu equipmentTableContextMenu = new ContextMenu();
+        MenuItem equipmentEditMenuItem = new MenuItem("Modify cell");
+        equipmentEditMenuItem.setOnAction(event ->
+                equipmentTableView.getSelectionModel().getTableView().edit(equipmentTableView.getFocusModel().getFocusedCell().getRow(),equipmentTableView.getFocusModel().getFocusedCell().getTableColumn()));
+        MenuItem equipmentDeleteMenuItem = new MenuItem("Delete item");
+        equipmentDeleteMenuItem.setOnAction(event ->
+        {
+            if(equipmentTableView.getSelectionModel().getSelectedCells().size() > 0)
+            {
+                //MAKE IT MORE MODULAR (IN METHOD TO CREATE AN ALERT AT ANY TIME.....!)
+                Alert confirmDeletion = new Alert(Alert.AlertType.CONFIRMATION);
+                confirmDeletion.setTitle("Delete item");
+                confirmDeletion.setHeaderText("Warning this cannot be undone!");
+                confirmDeletion.setContentText("Do you want to continue?");
+                Optional<ButtonType> result = confirmDeletion.showAndWait();
+                if (result.get() == ButtonType.OK)
+                {
+                    for (Equipment equipment : equipmentTableView.getSelectionModel().getSelectedItems())
+                    {
+                        equipmentDatabase.deleteEquipmentEntry(equipment);
+                    }
+                }
+                event.consume();
+            }
+        });
+        MenuItem equipmentNewMenuItem = new MenuItem("New item");
+        equipmentNewMenuItem.setOnAction(event ->
+        {
+            equipmentDatabase.addEquipmentEntry(new Equipment(0,"ToDo", "ToDo", true, "ToDo"));
+            equipmentTableView.edit(equipmentTableView.getItems().size(), equipmentTableView.getColumns().get(0));
+        });
+        equipmentTableContextMenu.getItems().addAll(equipmentNewMenuItem, equipmentEditMenuItem, equipmentDeleteMenuItem);
+        equipmentTableView.setContextMenu(equipmentTableContextMenu);
+        equipmentTableView.setItems(equipmentObservableList);
+
 
         studentIDColumn.setCellValueFactory(new PropertyValueFactory<>("studentID"));
         studentIDColumn.setCellFactory(TextFieldTableCell.<Student,Integer>forTableColumn(new IntegerStringConverter()));
@@ -104,10 +232,33 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
             studentDatabase.editStudentEntry(tempStudent);
         });
 
-        ContextMenu contextMenu = new ContextMenu();
+        studentTableView.setOnKeyReleased(event ->
+        {
+            if(event.getCode().equals(KeyCode.DELETE))
+            {
+                if(studentTableView.getSelectionModel().getSelectedCells().size() > 0)
+                {
+                    Alert confirmDeletion = new Alert(Alert.AlertType.CONFIRMATION);
+                    confirmDeletion.setTitle("Delete student");
+                    confirmDeletion.setHeaderText("Warning this cannot be undone!");
+                    confirmDeletion.setContentText("Do you want to continue?");
+                    Optional<ButtonType> result = confirmDeletion.showAndWait();
+                    if(result.get() == ButtonType.OK)
+                    {
+                        for(Student students : studentTableView.getSelectionModel().getSelectedItems())
+                        {
+                            studentDatabase.deleteStudentEntry(students.getCardUID());
+                        }
+                    }
+                    event.consume();
+                }
+            }
+        });
+
+        ContextMenu studentTableContextMenu = new ContextMenu();
         MenuItem editMenuItem = new MenuItem("Modify cell");
         editMenuItem.setOnAction(event ->
-                databaseTableView.getSelectionModel().getTableView().edit(databaseTableView.getFocusModel().getFocusedCell().getRow(),databaseTableView.getFocusModel().getFocusedCell().getTableColumn()));
+                studentTableView.getSelectionModel().getTableView().edit(studentTableView.getFocusModel().getFocusedCell().getRow(),studentTableView.getFocusModel().getFocusedCell().getTableColumn()));
         MenuItem deleteMenuItem = new MenuItem("Delete student");
         deleteMenuItem.setOnAction(event ->
         {
@@ -119,46 +270,28 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
             Optional<ButtonType> result = confirmDeletion.showAndWait();
             if(result.get() == ButtonType.OK)
             {
-                for(Student students : databaseTableView.getSelectionModel().getSelectedItems())
+                for(Student students : studentTableView.getSelectionModel().getSelectedItems())
                 {
                     studentDatabase.deleteStudentEntry(students.getCardUID());
                 }
             }
         });
-        databaseTableView.setOnKeyPressed(event ->
-        {
-            if(event.getCode().getName().equals("Delete"))
-            {
-                Alert confirmDeletion = new Alert(Alert.AlertType.CONFIRMATION);
-                confirmDeletion.setTitle("Delete student");
-                confirmDeletion.setHeaderText("Warning this cannot be undone!");
-                confirmDeletion.setContentText("Do you want to continue?");
-                Optional<ButtonType> result = confirmDeletion.showAndWait();
-                if(result.get() == ButtonType.OK)
-                {
-                    for(Student students : databaseTableView.getSelectionModel().getSelectedItems())
-                    {
-                        studentDatabase.deleteStudentEntry(students.getCardUID());
-                    }
-                }
-                event.consume();
-            }
-        });
-        contextMenu.getItems().addAll(editMenuItem, deleteMenuItem);
-        databaseTableView.setContextMenu(contextMenu);
-        databaseTableView.setItems(studentsObservableList);
+        studentTableContextMenu.getItems().addAll(editMenuItem, deleteMenuItem);
+        studentTableView.setContextMenu(studentTableContextMenu);
+        studentTableView.setItems(studentsObservableList);
     }
 
     @Override
     public void onStudentDatabaseUpdate()
     {
         studentsObservableList = studentDatabase.getAllStudents();
-        databaseTableView.setItems(studentsObservableList);
+        studentTableView.setItems(studentsObservableList);
     }
 
     @Override
     public void onEquipmentDatabaseUpdate()
     {
-
+        equipmentObservableList = equipmentDatabase.getAllEquipment();
+        equipmentTableView.setItems(equipmentObservableList);
     }
 }

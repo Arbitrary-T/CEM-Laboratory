@@ -1,6 +1,6 @@
 package cu;
 
-import cu.listeners.CardListener;
+import cu.models.CardListener;
 import cu.models.Student;
 import javafx.application.Application;
 

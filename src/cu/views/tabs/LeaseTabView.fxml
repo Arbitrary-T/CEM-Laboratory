@@ -10,7 +10,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox fx:id="mainPane" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.tabs.LeaseTabViewController">
+<HBox fx:id="mainPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.tabs.LeaseTabViewController">
    <children>
       <AnchorPane HBox.hgrow="ALWAYS">
          <children>
@@ -31,7 +31,7 @@
                               <Region prefHeight="87.0" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
-                        <BarChart fx:id="barChart" layoutX="10.0" layoutY="318.0" prefHeight="400.0" prefWidth="338.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                        <BarChart fx:id="barChart" layoutX="10.0" layoutY="318.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                           <xAxis>
                             <CategoryAxis side="BOTTOM" />
                           </xAxis>
@@ -92,41 +92,45 @@
                               </TableView>
                            </center>
                            <bottom>
-                              <AnchorPane fx:id="bottomRightAnchorPane" BorderPane.alignment="CENTER">
+                              <HBox BorderPane.alignment="CENTER">
                                  <children>
-                                    <BorderPane layoutX="436.0" layoutY="14.0" prefHeight="237.0" prefWidth="828.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <left>
-                                          <ListSelectionView fx:id="equipmentListSelectionView" />
-                                       </left>
-                                       <center>
-                                          <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                                             <children>
-                                                <Label layoutX="25.0" layoutY="6.0" text="Remarks" AnchorPane.topAnchor="10.0">
-                                                   <font>
-                                                      <Font name="System Bold" size="12.0" />
-                                                   </font>
-                                                </Label>
-                                                <TextArea fx:id="remarksTextArea" layoutX="25.0" layoutY="36.0" prefHeight="181.0" prefWidth="182.0" wrapText="true" AnchorPane.bottomAnchor="20.0" />
-                                                <ComboBox fx:id="timeComboBox" layoutX="231.0" layoutY="36.0" prefWidth="140.0" />
-                                                <Button fx:id="clearOptionsButton" layoutX="231.0" layoutY="192.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Clear" />
-                                                <Button fx:id="confirmLeaseButton" layoutX="312.0" layoutY="192.0" mnemonicParsing="false" text="Confirm" />
-                                                <TextField fx:id="customTimeTextField" disable="true" layoutX="231.0" layoutY="73.0" prefWidth="140.0" promptText="Custom time (hours)" />
-                                                <ImageView fx:id="coventryLogo" fitHeight="79.0" fitWidth="117.0" layoutX="244.0" layoutY="104.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="244.0" AnchorPane.rightAnchor="33.230552673339844">
-                                                   <image>
-                                                      <Image url="@../../../resources/images/logo.png" />
-                                                   </image>
-                                                </ImageView>
-                                                <Label layoutX="230.0" layoutY="10.0" text="Lease Time" AnchorPane.topAnchor="10.0">
-                                                   <font>
-                                                      <Font name="System Bold" size="12.0" />
-                                                   </font>
-                                                </Label>
-                                             </children>
-                                          </AnchorPane>
-                                       </center>
-                                    </BorderPane>
+                                    <AnchorPane fx:id="bottomRightAnchorPane" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <BorderPane layoutX="436.0" layoutY="14.0" prefHeight="237.0" prefWidth="828.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <left>
+                                                <ListSelectionView fx:id="equipmentListSelectionView" />
+                                             </left>
+                                             <center>
+                                                <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                                   <children>
+                                                      <Label layoutX="25.0" layoutY="6.0" text="Remarks" AnchorPane.topAnchor="10.0">
+                                                         <font>
+                                                            <Font name="System Bold" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextArea fx:id="remarksTextArea" layoutX="25.0" layoutY="36.0" prefHeight="181.0" prefWidth="182.0" wrapText="true" AnchorPane.bottomAnchor="20.0" />
+                                                      <ComboBox fx:id="timeComboBox" layoutX="231.0" layoutY="36.0" prefWidth="140.0" />
+                                                      <Button fx:id="clearOptionsButton" layoutX="231.0" layoutY="192.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Clear" />
+                                                      <Button fx:id="confirmLeaseButton" layoutX="312.0" layoutY="192.0" mnemonicParsing="false" text="Confirm" />
+                                                      <TextField fx:id="customTimeTextField" disable="true" layoutX="231.0" layoutY="73.0" prefWidth="140.0" promptText="Custom time (hours)" />
+                                                      <ImageView fx:id="coventryLogo" fitHeight="79.0" fitWidth="117.0" layoutX="244.0" layoutY="104.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="244.0" AnchorPane.rightAnchor="33.230552673339844">
+                                                         <image>
+                                                            <Image url="@../../../resources/images/logo.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                      <Label layoutX="230.0" layoutY="10.0" text="Lease Time" AnchorPane.topAnchor="10.0">
+                                                         <font>
+                                                            <Font name="System Bold" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </AnchorPane>
+                                             </center>
+                                          </BorderPane>
+                                       </children>
+                                    </AnchorPane>
                                  </children>
-                              </AnchorPane>
+                              </HBox>
                            </bottom>
                         </BorderPane>
                      </children>

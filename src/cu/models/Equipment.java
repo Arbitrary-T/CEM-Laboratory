@@ -5,21 +5,25 @@ package cu.models;
  */
 public class Equipment
 {
+    public static final int AUTO_INCREMENT = 0;
     private int itemID;
-    private int itemCount;
-    private boolean functional; //working (true)/ not working (false)
+    private boolean functional;
     private String itemName;
     private String itemCategory;
+    private String partOfBundle;
 
-    public Equipment(int itemID, int itemCount, String itemName, String itemCategory, boolean functional)
+    public Equipment(int itemID, String itemName, String itemCategory, boolean functional, String bundle)
     {
         setItemID(itemID);
-        setItemCount(itemCount);
         setItemName(itemName);
         setItemCategory(itemCategory);
         setFunctional(functional);
+        setPartOfBundle(bundle);
     }
+    public Equipment()
+    {
 
+    }
     public String getItemName() {
         return itemName;
     }
@@ -44,19 +48,18 @@ public class Equipment
         this.functional = condition;
     }
 
-    public int getItemCount() {
-        return itemCount;
-    }
-
-    public void setItemCount(int itemCount) {
-        this.itemCount = itemCount;
-    }
-
     public int getItemID() {
         return itemID;
     }
 
     public void setItemID(int itemID) {
         this.itemID = itemID;
+    }
+
+    public String getPartOfBundle() {
+        return partOfBundle;
+    }
+    public void setPartOfBundle(String partOfBundle) {
+        this.partOfBundle = partOfBundle;
     }
 }

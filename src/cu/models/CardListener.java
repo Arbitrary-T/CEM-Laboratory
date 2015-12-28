@@ -1,5 +1,6 @@
-package cu.listeners;
+package cu.models;
 
+import cu.interfaces.CardInterface;
 import javax.smartcardio.*;
 import java.util.List;
 import javax.xml.bind.DatatypeConverter;

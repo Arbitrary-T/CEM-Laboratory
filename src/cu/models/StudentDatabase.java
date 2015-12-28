@@ -1,7 +1,7 @@
 package cu.models;
 
 import cu.Main;
-import cu.listeners.DatabaseInterface;
+import cu.interfaces.DatabaseInterface;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -43,7 +43,6 @@ public class StudentDatabase
         {
             e.printStackTrace();
         }
-
     }
     public boolean editStudentEntry(Student studentData)
     {

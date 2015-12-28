@@ -2,8 +2,8 @@ package cu.controllers.tabs;
 
 import cu.Main;
 import cu.controllers.dialogues.NewRegistrationDialogueController;
-import cu.listeners.CardInterface;
-import cu.listeners.CardListener;
+import cu.interfaces.CardInterface;
+import cu.models.CardListener;
 import cu.models.StudentDatabase;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -16,7 +16,6 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
@@ -56,7 +55,7 @@ public class LeaseTabViewController implements CardInterface
     @FXML
     private Label stdPhoneNumberLabel;
     @FXML
-    private ListSelectionView equipmentListSelectionView;
+    private ListSelectionView<Integer> equipmentListSelectionView;
     @FXML
     private VBox labelsVBox;
     @FXML
@@ -111,6 +110,7 @@ public class LeaseTabViewController implements CardInterface
             Scale scale = new Scale(scale_factor, scale_factor, 0, pivot_y);
             studentDetailsTextGroup.getTransforms().add(scale);
         }));
+        //coventryLogo.setImage(QRGenerator.test("Hello"));
     }
 
     @Override
