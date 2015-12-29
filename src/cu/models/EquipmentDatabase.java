@@ -3,7 +3,6 @@ package cu.models;
 import cu.interfaces.DatabaseInterface;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import java.io.File;
 import java.sql.*;
 
@@ -35,7 +34,7 @@ public class EquipmentDatabase
         {
             insertItem = databaseConnection.prepareStatement("INSERT INTO Equipment VALUES (?,?,?,?,?)");
             deleteItem = databaseConnection.prepareStatement("DELETE FROM Equipment WHERE itemID = ?");
-            updateItem = databaseConnection.prepareStatement("UPDATE Equipment SET itemName=?, itemCategory=? , functional=?, partOfBundle=? WHERE itemID = ?");
+            updateItem = databaseConnection.prepareStatement("UPDATE Equipment SET itemID=?, itemName=?, itemCategory=?, functional=?, partOfBundle=? WHERE itemID=?");
             searchItem = databaseConnection.prepareStatement("SELECT * FROM Equipment WHERE itemID = ?");
             getAllEquipment = databaseConnection.prepareStatement("SELECT * FROM Equipment");
         }
@@ -134,18 +133,19 @@ public class EquipmentDatabase
         return false;
     }
 
-    public boolean editEquipmentEntry(Equipment equipment)
+    public boolean editEquipmentEntry(Equipment equipment, int oldID)
     {
         if(databaseConnection != null)
         {
-            //SET itemName=?, itemCategory=? , functional=?, partOfBundle=? WHERE itemID
             try
             {
-                updateItem.setString(1, equipment.getItemName());
-                updateItem.setString(2, equipment.getItemCategory());
-                updateItem.setBoolean(3, equipment.isFunctional());
-                updateItem.setString(4, equipment.getPartOfBundle());
-                updateItem.setInt(5, equipment.getItemID());
+                System.out.println(equipment.toString());
+                updateItem.setInt(1, equipment.getItemID());
+                updateItem.setString(2, equipment.getItemName());
+                updateItem.setString(3, equipment.getItemCategory());
+                updateItem.setBoolean(4, equipment.isFunctional());
+                updateItem.setString(5, equipment.getPartOfBundle());
+                updateItem.setInt(6, oldID);
                 updateItem.executeUpdate();
                 agent.onEquipmentDatabaseUpdate();
                 return true;
@@ -182,8 +182,6 @@ public class EquipmentDatabase
         equipmentObservableList.clear();
         try
         {
-            //if(getAllEquipment != null)
-            //{
                 ResultSet resultSet = getAllEquipment.executeQuery();
                 if (resultSet != null)
                 {
@@ -194,7 +192,6 @@ public class EquipmentDatabase
                     }
                     return equipmentObservableList;
                 }
-           // }
         }
         catch (SQLException e)
         {

@@ -1,6 +1,7 @@
 package cu.models;
 
 import cu.interfaces.CardInterface;
+import javafx.scene.control.Alert;
 import javax.smartcardio.*;
 import java.util.List;
 import javax.xml.bind.DatatypeConverter;
@@ -22,6 +23,7 @@ public class CardListener implements Runnable
     {
         agent = mainAgent;
     }
+
     @Override
     public void run()
     {
@@ -32,8 +34,10 @@ public class CardListener implements Runnable
 
             if(terminalFactory.terminals().list().isEmpty())
             {
-                //Change to Dialogs later.
-                System.out.println("Please connect a NFC Card Reader!");
+                Alert notifyCardReader = new Alert(Alert.AlertType.ERROR);
+                notifyCardReader.setTitle("NFC Reader");
+                notifyCardReader.setHeaderText("Error: No NFC reader found.");
+                notifyCardReader.setContentText("Connect an NFC reader to use all of the features.");
             }
             else
             {

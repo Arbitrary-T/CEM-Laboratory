@@ -16,9 +16,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.util.converter.IntegerStringConverter;
-
 import java.util.Optional;
 
+//TO DO FIX THE CONTEXTMENU TO BE ON ROW RATHER THAN TABLE. FIX EQUIPMENT PRIMARY KEY ISSUE.
 
 /**
  * Created by T on 22/12/2015.
@@ -70,7 +70,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
     private TextValidation validation = new TextValidation();
     private Student tempStudent;
     private Equipment tempEquipment;
-
+    private int equipmentCount;
     @FXML
     void initialize()
     {
@@ -80,7 +80,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
         studentTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         studentsObservableList = studentDatabase.getAllStudents();
         equipmentObservableList = equipmentDatabase.getAllEquipment();
-
+        equipmentCount = equipmentObservableList.size();
         equipmentTableView.setEditable(true);
         equipmentTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -93,8 +93,10 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
             {
                 if(event.getNewValue().toString().matches("\\d*"))
                 {
+                    System.out.println(event.getNewValue());
+
                     tempEquipment.setItemID(event.getNewValue());
-                    equipmentDatabase.editEquipmentEntry(tempEquipment);
+                    equipmentDatabase.editEquipmentEntry(tempEquipment, event.getOldValue());
                 }
             }
         });
@@ -106,7 +108,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
             if(!event.getNewValue().isEmpty())
             {
                 tempEquipment.setItemName(event.getNewValue());
-                equipmentDatabase.editEquipmentEntry(tempEquipment);
+                equipmentDatabase.editEquipmentEntry(tempEquipment, tempEquipment.getItemID());
             }
         });
         categoryTableColumn.setCellValueFactory(new PropertyValueFactory<>("itemCategory"));
@@ -117,7 +119,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
             if(!event.getNewValue().isEmpty())
             {
                 tempEquipment.setItemCategory(event.getNewValue());
-                equipmentDatabase.editEquipmentEntry(tempEquipment);
+                equipmentDatabase.editEquipmentEntry(tempEquipment, tempEquipment.getItemID());
             }
         });
         conditionTableColumn.setCellValueFactory(new PropertyValueFactory<>("functional"));
@@ -125,7 +127,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
         conditionTableColumn.setOnEditCommit((CellEditEvent<Equipment, String> event) ->
         {
             tempEquipment = event.getTableView().getItems().get(event.getTablePosition().getRow());
-            System.out.println("THE COMBO BOX SAYS: ? "+event.getNewValue());
+            System.out.println("THE COMBO BOX SAYS: ? " + event.getNewValue());
             if(event.getNewValue().equals("Yes"))
             {
                 tempEquipment.setFunctional(true);
@@ -134,7 +136,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
             {
                 tempEquipment.setFunctional(false);
             }
-            equipmentDatabase.editEquipmentEntry(tempEquipment);
+            equipmentDatabase.editEquipmentEntry(tempEquipment, tempEquipment.getItemID());
         });
         partOfBundleTableColumn.setCellValueFactory(new PropertyValueFactory<>("partOfBundle"));
         partOfBundleTableColumn.setCellFactory(TextFieldTableCell.<Equipment>forTableColumn());
@@ -144,7 +146,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
             if(!event.getNewValue().isEmpty())
             {
                 tempEquipment.setPartOfBundle(event.getNewValue());
-                equipmentDatabase.editEquipmentEntry(tempEquipment);
+                equipmentDatabase.editEquipmentEntry(tempEquipment, tempEquipment.getItemID());
             }
         });
 
@@ -157,7 +159,6 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
         {
             if(equipmentTableView.getSelectionModel().getSelectedCells().size() > 0)
             {
-                //MAKE IT MORE MODULAR (IN METHOD TO CREATE AN ALERT AT ANY TIME.....!)
                 Alert confirmDeletion = new Alert(Alert.AlertType.CONFIRMATION);
                 confirmDeletion.setTitle("Delete item");
                 confirmDeletion.setHeaderText("Warning this cannot be undone!");
@@ -168,6 +169,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
                     for (Equipment equipment : equipmentTableView.getSelectionModel().getSelectedItems())
                     {
                         equipmentDatabase.deleteEquipmentEntry(equipment);
+
                     }
                 }
                 event.consume();
@@ -176,7 +178,8 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
         MenuItem equipmentNewMenuItem = new MenuItem("New item");
         equipmentNewMenuItem.setOnAction(event ->
         {
-            equipmentDatabase.addEquipmentEntry(new Equipment(0,"ToDo", "ToDo", true, "ToDo"));
+            System.out.println(equipmentCount);
+            equipmentDatabase.addEquipmentEntry(new Equipment(equipmentCount,"ToDo", "ToDo", true, "ToDo"));
             equipmentTableView.edit(equipmentTableView.getItems().size(), equipmentTableView.getColumns().get(0));
         });
         equipmentTableContextMenu.getItems().addAll(equipmentNewMenuItem, equipmentEditMenuItem, equipmentDeleteMenuItem);
@@ -199,7 +202,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
         {
             tempStudent = event.getTableView().getItems().get(event.getTablePosition().getRow());
             if(!event.getNewValue().isEmpty())
-                tempStudent.setStudentName(event.getNewValue().toString());
+                tempStudent.setStudentName(event.getNewValue());
             studentDatabase.editStudentEntry(tempStudent);
         });
 
@@ -209,7 +212,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
         {
             tempStudent = event.getTableView().getItems().get(event.getTablePosition().getRow());
             if(!event.getNewValue().isEmpty())
-                tempStudent.setStudentCourse(event.getNewValue().toString());
+                tempStudent.setStudentCourse(event.getNewValue());
             studentDatabase.editStudentEntry(tempStudent);
         });
 
@@ -219,7 +222,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
         {
             tempStudent = event.getTableView().getItems().get(event.getTablePosition().getRow());
             if(validation.checkValidEmail(event.getNewValue()))
-                tempStudent.setStudentEmail(event.getNewValue().toString());
+                tempStudent.setStudentEmail(event.getNewValue());
             studentDatabase.editStudentEntry(tempStudent);
         });
         studentPhoneNumberColumn.setCellValueFactory(new PropertyValueFactory<>("studentPhoneNumber"));
@@ -228,7 +231,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
         {
             tempStudent = event.getTableView().getItems().get(event.getTablePosition().getRow());
             if(validation.isValidPhoneNumber(event.getNewValue()))
-                tempStudent.setPhoneNumber(event.getNewValue().toString());
+                tempStudent.setPhoneNumber(event.getNewValue());
             studentDatabase.editStudentEntry(tempStudent);
         });
 
@@ -262,17 +265,19 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
         MenuItem deleteMenuItem = new MenuItem("Delete student");
         deleteMenuItem.setOnAction(event ->
         {
-            //MAKE IT MORE MODULAR (IN METHOD TO CREATE AN ALERT AT ANY TIME.....!)
-            Alert confirmDeletion = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmDeletion.setTitle("Delete student");
-            confirmDeletion.setHeaderText("Warning this cannot be undone!");
-            confirmDeletion.setContentText("Do you want to continue?");
-            Optional<ButtonType> result = confirmDeletion.showAndWait();
-            if(result.get() == ButtonType.OK)
+            if(studentTableView.getSelectionModel().getSelectedCells().size() > 0)
             {
-                for(Student students : studentTableView.getSelectionModel().getSelectedItems())
+                Alert confirmDeletion = new Alert(Alert.AlertType.CONFIRMATION);
+                confirmDeletion.setTitle("Delete student");
+                confirmDeletion.setHeaderText("Warning this cannot be undone!");
+                confirmDeletion.setContentText("Do you want to continue?");
+                Optional<ButtonType> result = confirmDeletion.showAndWait();
+                if (result.get() == ButtonType.OK)
                 {
-                    studentDatabase.deleteStudentEntry(students.getCardUID());
+                    for (Student students : studentTableView.getSelectionModel().getSelectedItems())
+                    {
+                        studentDatabase.deleteStudentEntry(students.getCardUID());
+                    }
                 }
             }
         });
@@ -293,5 +298,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
     {
         equipmentObservableList = equipmentDatabase.getAllEquipment();
         equipmentTableView.setItems(equipmentObservableList);
+        System.out.println(equipmentCount + "\t" + equipmentObservableList.get(0).getItemID());
+        equipmentCount = equipmentObservableList.size();
     }
 }

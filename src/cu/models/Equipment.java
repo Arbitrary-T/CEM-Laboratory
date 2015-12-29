@@ -62,4 +62,11 @@ public class Equipment
     public void setPartOfBundle(String partOfBundle) {
         this.partOfBundle = partOfBundle;
     }
+
+    @Override
+    public String toString()
+    {
+        String equipment = itemID + "\t" + itemName + "\t" + itemCategory + "\t" + functional + "\t" + partOfBundle;
+        return equipment;
+    }
 }

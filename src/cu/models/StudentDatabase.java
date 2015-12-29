@@ -20,7 +20,7 @@ public class StudentDatabase
     private PreparedStatement searchStudent;
     private PreparedStatement getAllStudents;
     public boolean firstRun = true;
-
+    private int equipmentCount;
     private static DatabaseInterface databaseAgent;
 
     public static void activateAgent(DatabaseInterface mainAgent)

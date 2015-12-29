@@ -4,6 +4,7 @@ import cu.Main;
 import cu.controllers.dialogues.NewRegistrationDialogueController;
 import cu.interfaces.CardInterface;
 import cu.models.CardListener;
+import cu.models.QRGenerator;
 import cu.models.StudentDatabase;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -110,7 +111,7 @@ public class LeaseTabViewController implements CardInterface
             Scale scale = new Scale(scale_factor, scale_factor, 0, pivot_y);
             studentDetailsTextGroup.getTransforms().add(scale);
         }));
-        //coventryLogo.setImage(QRGenerator.test("Hello"));
+        //coventryLogo.setImage(QRGenerator.generateQRCode("1",50,50));
     }
 
     @Override
