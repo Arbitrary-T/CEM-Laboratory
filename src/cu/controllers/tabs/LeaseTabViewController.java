@@ -3,9 +3,7 @@ package cu.controllers.tabs;
 import cu.Main;
 import cu.controllers.dialogues.NewRegistrationDialogueController;
 import cu.interfaces.CardInterface;
-import cu.models.CardListener;
-import cu.models.QRGenerator;
-import cu.models.StudentDatabase;
+import cu.models.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -56,7 +54,7 @@ public class LeaseTabViewController implements CardInterface
     @FXML
     private Label stdPhoneNumberLabel;
     @FXML
-    private ListSelectionView<Integer> equipmentListSelectionView;
+    private ListSelectionView<Equipment> equipmentListSelectionView;
     @FXML
     private VBox labelsVBox;
     @FXML
@@ -76,6 +74,7 @@ public class LeaseTabViewController implements CardInterface
     @FXML
     private Button clearOptionsButton;
 
+    private EquipmentDatabase equipmentDatabase = new EquipmentDatabase("equipment");
     @FXML
     void initialize()
     {
@@ -93,8 +92,8 @@ public class LeaseTabViewController implements CardInterface
         CardListener.activateAgent(this);
         timeComboBox.setItems(timeComboBoxOptions);
         timeComboBox.setValue(timeComboBoxOptions.get(2));
-        for (int i = 0; i < 20; i++)
-            equipmentListSelectionView.getSourceItems().add(i);
+        //equipmentListSelectionView.
+        equipmentListSelectionView.setSourceItems(equipmentDatabase.getAllEquipment());
         leftAnchorPane.maxWidthProperty().bind(mainVerticalSplitPane.widthProperty().multiply(0.2));
         barChart.maxWidthProperty().bind(leftAnchorPane.widthProperty());
         studentCardBack.fitHeightProperty().bind(leftAnchorPane.heightProperty());

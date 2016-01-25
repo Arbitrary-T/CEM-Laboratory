@@ -1,10 +1,7 @@
 package cu.controllers.tabs;
 
 import cu.interfaces.DatabaseInterface;
-import cu.models.Equipment;
-import cu.models.EquipmentDatabase;
-import cu.models.Student;
-import cu.models.StudentDatabase;
+import cu.models.*;
 import cu.validations.TextValidation;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,6 +11,7 @@ import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.util.converter.IntegerStringConverter;
 import java.util.Optional;
@@ -25,6 +23,8 @@ import java.util.Optional;
  */
 public class DatabaseManagementTabViewController implements DatabaseInterface
 {
+    @FXML
+    private ImageView contextImageView;
     @FXML
     private TextField filterTextField;
     @FXML
@@ -169,7 +169,6 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
                     for (Equipment equipment : equipmentTableView.getSelectionModel().getSelectedItems())
                     {
                         equipmentDatabase.deleteEquipmentEntry(equipment);
-
                     }
                 }
                 event.consume();
@@ -179,14 +178,95 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
         equipmentNewMenuItem.setOnAction(event ->
         {
             System.out.println(equipmentCount);
-            equipmentDatabase.addEquipmentEntry(new Equipment(equipmentCount,"ToDo", "ToDo", true, "ToDo"));
+            if(equipmentDatabase.getAllEquipment().size() != 0)
+                equipmentDatabase.addEquipmentEntry(new Equipment(equipmentObservableList.get(equipmentCount-1).getItemID()+1,"ToDo", "ToDo", true, "ToDo"));
+            else
+                equipmentDatabase.addEquipmentEntry(new Equipment(0,"ToDo", "ToDo", true, "ToDo"));
             equipmentTableView.edit(equipmentTableView.getItems().size(), equipmentTableView.getColumns().get(0));
         });
-        equipmentTableContextMenu.getItems().addAll(equipmentNewMenuItem, equipmentEditMenuItem, equipmentDeleteMenuItem);
+        MenuItem deleteAll = new MenuItem("deleteAll");
+        deleteAll.setOnAction(event ->
+                {
+                    equipmentObservableList.removeAll();
+                    equipmentObservableList.clear();
+                    equipmentDatabase.deleteAllEntries();
+                }
+        );
+        equipmentTableContextMenu.getItems().addAll(equipmentNewMenuItem, equipmentEditMenuItem, equipmentDeleteMenuItem, deleteAll);
         equipmentTableView.setContextMenu(equipmentTableContextMenu);
         equipmentTableView.setItems(equipmentObservableList);
+        equipmentTableView.setOnKeyPressed(event ->
+                {
+                    if (event.getCode().equals(KeyCode.DELETE))
+                    {
+                        if(equipmentTableView.getSelectionModel().getSelectedCells().size() > 0)
+                        {
+                            Alert confirmDeletion = new Alert(Alert.AlertType.CONFIRMATION);
+                            confirmDeletion.setTitle("Delete item");
+                            confirmDeletion.setHeaderText("Warning this cannot be undone!");
+                            confirmDeletion.setContentText("Do you want to continue?");
+                            Optional<ButtonType> result = confirmDeletion.showAndWait();
+                            if (result.get() == ButtonType.OK)
+                            {
+                                for (Equipment equipment : equipmentTableView.getSelectionModel().getSelectedItems())
+                                {
+                                    equipmentDatabase.deleteEquipmentEntry(equipment);
+                                }
+                            }
+                            event.consume();
+                        }
+                    }
+                });
+        equipmentTableView.setOnKeyPressed(event ->
+        {
+            if(event.isControlDown() && event.getCode().equals(KeyCode.C))
+            {
+                if(equipmentObservableList.size() > 0)
+                {
+                    int row = equipmentTableView.getFocusModel().getFocusedCell().getRow();
+                    if (row >= 1)
+                    {
+                        Equipment temp = equipmentObservableList.get(row - 1);
+                        equipmentDatabase.editEquipmentEntry(new Equipment(equipmentObservableList.get(row).getItemID(), temp.getItemName(), temp.getItemCategory(), temp.isFunctional(), temp.getPartOfBundle()), equipmentObservableList.get(row).getItemID());
+                    }
+                    event.consume();
+                    if(row+1 < equipmentObservableList.size())
+                    {
+                        equipmentTableView.getFocusModel().focus(row+1);
+                    }
+                    else
+                    {
+                        equipmentTableView.getFocusModel().focus(row);
+                    }
+                }
+            }
+        });
+        equipmentTableView.setOnKeyReleased(event ->
+        {
+            if(event.isControlDown() && event.getCode().equals(KeyCode.N))
+            {
+                if(equipmentDatabase.getAllEquipment().size() != 0)
+                    equipmentDatabase.addEquipmentEntry(new Equipment(equipmentObservableList.get(equipmentCount-1).getItemID()+1,"ToDo", "ToDo", true, "ToDo"));
+                else
+                    equipmentDatabase.addEquipmentEntry(new Equipment(0,"ToDo", "ToDo", true, "ToDo"));
+                equipmentTableView.edit(equipmentTableView.getItems().size(), equipmentTableView.getColumns().get(0));
+                event.consume();
+                equipmentTableView.getFocusModel().focus(equipmentTableView.getItems().size()-1);
+            }
+        });
+        //.getSelectionModel()
+        equipmentTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
+        {
+            if(equipmentObservableList.size() > 0)
+            {
+                System.out.println("Current Row: " +equipmentTableView.getSelectionModel().getSelectedIndex());
+                Equipment temp = equipmentObservableList.get(equipmentTableView.getSelectionModel().getSelectedIndex());
+                contextImageView.setImage(QRGenerator.generateQRCode(temp.getItemID() + temp.getItemName(), 300, 300));
+            }
+        });
 
 
+        /////////////////@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@////////////////////////////////////////////////////////////////////////////////////
         studentIDColumn.setCellValueFactory(new PropertyValueFactory<>("studentID"));
         studentIDColumn.setCellFactory(TextFieldTableCell.<Student,Integer>forTableColumn(new IntegerStringConverter()));
         studentIDColumn.setOnEditCommit((CellEditEvent<Student, Integer> event) ->
@@ -258,6 +338,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
             }
         });
 
+
         ContextMenu studentTableContextMenu = new ContextMenu();
         MenuItem editMenuItem = new MenuItem("Modify cell");
         editMenuItem.setOnAction(event ->
@@ -298,7 +379,10 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
     {
         equipmentObservableList = equipmentDatabase.getAllEquipment();
         equipmentTableView.setItems(equipmentObservableList);
-        System.out.println(equipmentCount + "\t" + equipmentObservableList.get(0).getItemID());
+        if(!equipmentObservableList.isEmpty())
+        {
+            //System.out.println(equipmentCount + "\t" + equipmentObservableList.get(0).getItemID());
+        }
         equipmentCount = equipmentObservableList.size();
     }
 }

@@ -20,7 +20,6 @@ public class StudentDatabase
     private PreparedStatement searchStudent;
     private PreparedStatement getAllStudents;
     public boolean firstRun = true;
-    private int equipmentCount;
     private static DatabaseInterface databaseAgent;
 
     public static void activateAgent(DatabaseInterface mainAgent)
@@ -143,7 +142,7 @@ public class StudentDatabase
             {
                 while(resultSet.next())
                 {
-                    System.out.println(resultSet.getString(1) + resultSet.getString(2) + resultSet.getInt(3) + resultSet.getString(4) + resultSet.getString(5) + resultSet.getString(6));
+                    //System.out.println(resultSet.getString(1) + resultSet.getString(2) + resultSet.getInt(3) + resultSet.getString(4) + resultSet.getString(5) + resultSet.getString(6));
                     return new Student(resultSet.getString(1), resultSet.getString(2), resultSet.getInt(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6));
                 }
             }

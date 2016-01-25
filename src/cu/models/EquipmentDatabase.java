@@ -16,6 +16,7 @@ public class EquipmentDatabase
     PreparedStatement deleteItem;
     PreparedStatement updateItem;
     PreparedStatement searchItem;
+    PreparedStatement deleteAll;
     PreparedStatement getAllEquipment;
     ObservableList<Equipment> equipmentObservableList = FXCollections.observableArrayList();
 
@@ -36,6 +37,7 @@ public class EquipmentDatabase
             deleteItem = databaseConnection.prepareStatement("DELETE FROM Equipment WHERE itemID = ?");
             updateItem = databaseConnection.prepareStatement("UPDATE Equipment SET itemID=?, itemName=?, itemCategory=?, functional=?, partOfBundle=? WHERE itemID=?");
             searchItem = databaseConnection.prepareStatement("SELECT * FROM Equipment WHERE itemID = ?");
+            deleteAll = databaseConnection.prepareStatement("DELETE FROM Equipment WHERE 1=1");
             getAllEquipment = databaseConnection.prepareStatement("SELECT * FROM Equipment");
         }
         catch (SQLException e)
@@ -132,7 +134,19 @@ public class EquipmentDatabase
         }
         return false;
     }
-
+    public boolean deleteAllEntries()
+    {
+        try
+        {
+            deleteAll.executeUpdate();
+            return true;
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    }
     public boolean editEquipmentEntry(Equipment equipment, int oldID)
     {
         if(databaseConnection != null)
@@ -187,7 +201,7 @@ public class EquipmentDatabase
                 {
                     while (resultSet.next())
                     {
-                        System.out.println(resultSet.getInt(1) + resultSet.getString(2) + resultSet.getString(3) + resultSet.getBoolean(4) + resultSet.getString(5));
+                        //System.out.println(resultSet.getInt(1) + resultSet.getString(2) + resultSet.getString(3) + resultSet.getBoolean(4) + resultSet.getString(5));
                         equipmentObservableList.add(new Equipment(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getBoolean(4), resultSet.getString(5)));
                     }
                     return equipmentObservableList;

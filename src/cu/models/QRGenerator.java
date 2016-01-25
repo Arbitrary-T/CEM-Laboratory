@@ -27,7 +27,7 @@ public class QRGenerator
         Image imageFromString = null;
         String charset = "UTF-8"; // or "ISO-8859-1"
         Map<EncodeHintType, ErrorCorrectionLevel> hintMap = new HashMap<>();
-        hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+        hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
         try
         {
             BitMatrix matrix = new MultiFormatWriter().encode(new String(text.getBytes("UTF-8"), charset), BarcodeFormat.QR_CODE, w, h, hintMap);

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.scene.effect.*?>
 <?import org.controlsfx.control.*?>
 <?import javafx.scene.text.*?>
@@ -136,7 +137,19 @@
                                              <children>
                                                 <TitledPane fx:id="contextTitledPane" text="Context Information">
                                                   <content>
-                                                    <AnchorPane />
+                                                    <AnchorPane>
+                                                         <children>
+                                                            <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                               <children>
+                                                                  <Label text="QR Code:" />
+                                                                  <HBox>
+                                                                     <children>
+                                                                        <ImageView fx:id="contextImageView" fitHeight="150.0" fitWidth="230.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" />
+                                                                     </children>
+                                                                  </HBox>
+                                                               </children>
+                                                            </VBox>
+                                                         </children></AnchorPane>
                                                   </content>
                                                 </TitledPane>
                                                 <TitledPane fx:id="bundleTitlePane" expanded="false" text="Bundle Management">
