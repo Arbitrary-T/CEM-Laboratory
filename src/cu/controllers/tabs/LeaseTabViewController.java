@@ -54,8 +54,6 @@ public class LeaseTabViewController implements CardInterface
     @FXML
     private Label stdPhoneNumberLabel;
     @FXML
-    private ListSelectionView<Equipment> equipmentListSelectionView;
-    @FXML
     private VBox labelsVBox;
     @FXML
     private Group studentDetailsTextGroup;
@@ -92,8 +90,6 @@ public class LeaseTabViewController implements CardInterface
         CardListener.activateAgent(this);
         timeComboBox.setItems(timeComboBoxOptions);
         timeComboBox.setValue(timeComboBoxOptions.get(2));
-        //equipmentListSelectionView.
-        equipmentListSelectionView.setSourceItems(equipmentDatabase.getAllEquipment());
         leftAnchorPane.maxWidthProperty().bind(mainVerticalSplitPane.widthProperty().multiply(0.2));
         barChart.maxWidthProperty().bind(leftAnchorPane.widthProperty());
         studentCardBack.fitHeightProperty().bind(leftAnchorPane.heightProperty());

@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.chart.*?>
-<?import org.controlsfx.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<HBox fx:id="mainPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.tabs.LeaseTabViewController">
+<HBox fx:id="mainPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.tabs.LeaseTabViewController">
    <children>
       <AnchorPane HBox.hgrow="ALWAYS">
          <children>
@@ -94,41 +107,83 @@
                            <bottom>
                               <HBox BorderPane.alignment="CENTER">
                                  <children>
-                                    <AnchorPane fx:id="bottomRightAnchorPane" HBox.hgrow="ALWAYS">
-                                       <children>
-                                          <BorderPane layoutX="436.0" layoutY="14.0" prefHeight="237.0" prefWidth="828.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <left>
-                                                <ListSelectionView fx:id="equipmentListSelectionView" />
-                                             </left>
-                                             <center>
-                                                <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                    <BorderPane prefHeight="237.0" prefWidth="828.0">
+                                       <center>
+                                          <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                             <children>
+                                                <Label layoutX="25.0" layoutY="6.0" text="Remarks" AnchorPane.topAnchor="10.0">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextArea fx:id="remarksTextArea" layoutX="25.0" layoutY="36.0" prefHeight="181.0" prefWidth="182.0" wrapText="true" AnchorPane.bottomAnchor="15.0" />
+                                                <ComboBox fx:id="timeComboBox" layoutX="231.0" layoutY="36.0" prefWidth="140.0" />
+                                                <Button fx:id="clearOptionsButton" layoutX="231.0" layoutY="192.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Clear" />
+                                                <Button fx:id="confirmLeaseButton" layoutX="312.0" layoutY="192.0" mnemonicParsing="false" text="Confirm" />
+                                                <TextField fx:id="customTimeTextField" disable="true" layoutX="231.0" layoutY="73.0" prefWidth="140.0" promptText="Custom time (hours)" />
+                                                <ImageView fx:id="coventryLogo" fitHeight="79.0" fitWidth="117.0" layoutX="244.0" layoutY="104.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="244.0" AnchorPane.rightAnchor="33.230552673339844">
+                                                   <image>
+                                                      <Image url="@../../../resources/images/logo.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <Label layoutX="230.0" layoutY="10.0" text="Lease Time" AnchorPane.topAnchor="10.0">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </AnchorPane>
+                                       </center>
+                                       <left>
+                                          <AnchorPane BorderPane.alignment="CENTER">
+                                             <children>
+                                                <HBox AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
-                                                      <Label layoutX="25.0" layoutY="6.0" text="Remarks" AnchorPane.topAnchor="10.0">
-                                                         <font>
-                                                            <Font name="System Bold" size="12.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <TextArea fx:id="remarksTextArea" layoutX="25.0" layoutY="36.0" prefHeight="181.0" prefWidth="182.0" wrapText="true" AnchorPane.bottomAnchor="20.0" />
-                                                      <ComboBox fx:id="timeComboBox" layoutX="231.0" layoutY="36.0" prefWidth="140.0" />
-                                                      <Button fx:id="clearOptionsButton" layoutX="231.0" layoutY="192.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Clear" />
-                                                      <Button fx:id="confirmLeaseButton" layoutX="312.0" layoutY="192.0" mnemonicParsing="false" text="Confirm" />
-                                                      <TextField fx:id="customTimeTextField" disable="true" layoutX="231.0" layoutY="73.0" prefWidth="140.0" promptText="Custom time (hours)" />
-                                                      <ImageView fx:id="coventryLogo" fitHeight="79.0" fitWidth="117.0" layoutX="244.0" layoutY="104.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="244.0" AnchorPane.rightAnchor="33.230552673339844">
-                                                         <image>
-                                                            <Image url="@../../../resources/images/logo.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                      <Label layoutX="230.0" layoutY="10.0" text="Lease Time" AnchorPane.topAnchor="10.0">
-                                                         <font>
-                                                            <Font name="System Bold" size="12.0" />
-                                                         </font>
-                                                      </Label>
+                                                      <VBox>
+                                                         <children>
+                                                            <TextField promptText="Search equipment database...">
+                                                               <VBox.margin>
+                                                                  <Insets left="5.0" top="10.0" />
+                                                               </VBox.margin>
+                                                            </TextField>
+                                                            <ListView>
+                                                               <VBox.margin>
+                                                                  <Insets left="5.0" top="5.0" />
+                                                               </VBox.margin>
+                                                            </ListView>
+                                                         </children>
+                                                      </VBox>
+                                                      <Button mnemonicParsing="false" text="&gt;">
+                                                         <HBox.margin>
+                                                            <Insets left="5.0" top="120.0" />
+                                                         </HBox.margin>
+                                                      </Button>
+                                                      <VBox>
+                                                         <HBox.margin>
+                                                            <Insets left="5.0" top="5.0" />
+                                                         </HBox.margin>
+                                                         <children>
+                                                            <Label text="Selected items">
+                                                               <font>
+                                                                  <Font name="System Bold" size="12.0" />
+                                                               </font>
+                                                               <VBox.margin>
+                                                                  <Insets top="10.0" />
+                                                               </VBox.margin>
+                                                            </Label>
+                                                            <ListView>
+                                                               <VBox.margin>
+                                                                  <Insets top="8.0" />
+                                                               </VBox.margin>
+                                                            </ListView>
+                                                         </children>
+                                                      </VBox>
                                                    </children>
-                                                </AnchorPane>
-                                             </center>
-                                          </BorderPane>
-                                       </children>
-                                    </AnchorPane>
+                                                </HBox>
+                                             </children>
+                                          </AnchorPane>
+                                       </left>
+                                    </BorderPane>
                                  </children>
                               </HBox>
                            </bottom>
