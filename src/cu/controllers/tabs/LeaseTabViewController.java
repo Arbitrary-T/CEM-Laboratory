@@ -72,7 +72,6 @@ public class LeaseTabViewController implements CardInterface
     @FXML
     private Button clearOptionsButton;
 
-    private EquipmentDatabase equipmentDatabase = new EquipmentDatabase("equipment");
     @FXML
     void initialize()
     {

@@ -7,28 +7,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="controlsfx-8.40.11-20151119.115516-109" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://C:/Program Files/Java/jdk1.8.0_65/db/lib/derby.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/controlsfx-8.40.11-20151118.010657-104.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/javase-3.2.1.jar!/" />
+          <root url="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/db/lib/derby.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -38,6 +21,15 @@
       <library>
         <CLASSES>
           <root url="jar://$USER_HOME$/Downloads/core-3.2.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Downloads/javase-3.2.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

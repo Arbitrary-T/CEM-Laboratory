@@ -4,7 +4,6 @@ import cu.interfaces.DatabaseInterface;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.io.File;
 import java.sql.*;
 
 /**
@@ -20,7 +19,12 @@ public class EquipmentDatabase extends Database
     PreparedStatement deleteAll;
     PreparedStatement getAllEquipment;
     ObservableList<Equipment> equipmentObservableList = FXCollections.observableArrayList();
-
+    String createTableStatement = "CREATE TABLE Equipment(" +
+                                  "itemID INT NOT NULL PRIMARY KEY, " +
+                                  "itemName VARCHAR(256), " +
+                                  "itemCategory VARCHAR(256), " +
+                                  "functional BOOLEAN, " +
+                                  "partOfBundle VARCHAR(256))";
     private  static DatabaseInterface agent;
 
     public static void activateAgent(DatabaseInterface mainAgent)
@@ -31,22 +35,25 @@ public class EquipmentDatabase extends Database
     public EquipmentDatabase(String database)
     {
         activateAgent(agent);
-        loadDatabase(database);
+        databaseConnection = loadDatabase(database, createTableStatement);
         try
         {
-            insertItem = databaseConnection.prepareStatement("INSERT INTO Equipment VALUES (?,?,?,?,?)");
-            deleteItem = databaseConnection.prepareStatement("DELETE FROM Equipment WHERE itemID = ?");
-            updateItem = databaseConnection.prepareStatement("UPDATE Equipment SET itemID=?, itemName=?, itemCategory=?, functional=?, partOfBundle=? WHERE itemID=?");
-            searchItem = databaseConnection.prepareStatement("SELECT * FROM Equipment WHERE itemID = ?");
-            deleteAll = databaseConnection.prepareStatement("DELETE FROM Equipment WHERE 1=1");
-            getAllEquipment = databaseConnection.prepareStatement("SELECT * FROM Equipment");
+            if(databaseConnection != null)
+            {
+                insertItem = databaseConnection.prepareStatement("INSERT INTO Equipment VALUES (?,?,?,?,?)");
+                deleteItem = databaseConnection.prepareStatement("DELETE FROM Equipment WHERE itemID = ?");
+                updateItem = databaseConnection.prepareStatement("UPDATE Equipment SET itemID=?, itemName=?, itemCategory=?, functional=?, partOfBundle=? WHERE itemID=?");
+                searchItem = databaseConnection.prepareStatement("SELECT * FROM Equipment WHERE itemID = ?");
+                deleteAll = databaseConnection.prepareStatement("DELETE FROM Equipment WHERE 1=1");
+                getAllEquipment = databaseConnection.prepareStatement("SELECT * FROM Equipment");
+            }
         }
         catch (SQLException e)
         {
             e.printStackTrace();
         }
     }
-
+    /*
     private boolean loadDatabase(String database)
     {
         File databaseFile = new File(database);
@@ -73,13 +80,7 @@ public class EquipmentDatabase extends Database
             {
                 databaseConnection = DriverManager.getConnection(newDatabaseURL);
                 Statement firstRunStatement = databaseConnection.createStatement();
-                firstRunStatement.executeUpdate(
-                        "CREATE TABLE Equipment(" +
-                        "itemID INT NOT NULL PRIMARY KEY, " +
-                        "itemName VARCHAR(256), " +
-                        "itemCategory VARCHAR(256), " +
-                        "functional BOOLEAN, " +
-                        "partOfBundle VARCHAR(256))");
+                firstRunStatement.executeUpdate(createTableStatement);
                 firstRunStatement.close();
                 System.out.println("Successfully connected to newly created 'Equipment' database.");
                 return true;
@@ -90,7 +91,7 @@ public class EquipmentDatabase extends Database
                 return false;
             }
         }
-    }
+    }*/
 
     public boolean addEquipmentEntry(Equipment equipmentData)
     {

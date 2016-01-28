@@ -5,6 +5,7 @@ import cu.interfaces.DatabaseInterface;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.awt.*;
 import java.io.File;
 import java.sql.*;
 
@@ -13,6 +14,7 @@ import java.sql.*;
  */
 public class StudentDatabase
 {
+    //Enhance program functionality - for future use, automatically reset the equipment, for example ICD.
     private Connection databaseConnection;
     private PreparedStatement insertStudent;
     private PreparedStatement deleteStudent;
@@ -32,11 +34,14 @@ public class StudentDatabase
         loadDatabase(database);
         try
         {
-            insertStudent = databaseConnection.prepareStatement("INSERT INTO Students VALUES (?,?,?,?,?,?)");
-            deleteStudent = databaseConnection.prepareStatement("DELETE FROM Students WHERE cardUID = ?");
-            updateStudent = databaseConnection.prepareStatement("UPDATE Students SET studentName=?, studentID=? , studentEmail=?, studentCourse=?, studentPhoneNumber=? WHERE cardUID = ?");
-            searchStudent = databaseConnection.prepareStatement("SELECT * FROM Students WHERE cardUID = ?"); /////
-            getAllStudents = databaseConnection.prepareStatement("SELECT * FROM Students");
+            if(databaseConnection != null)
+            {
+                insertStudent = databaseConnection.prepareStatement("INSERT INTO Students VALUES (?,?,?,?,?,?)");
+                deleteStudent = databaseConnection.prepareStatement("DELETE FROM Students WHERE cardUID = ?");
+                updateStudent = databaseConnection.prepareStatement("UPDATE Students SET studentName=?, studentID=? , studentEmail=?, studentCourse=?, studentPhoneNumber=? WHERE cardUID = ?");
+                searchStudent = databaseConnection.prepareStatement("SELECT * FROM Students WHERE cardUID = ?"); /////
+                getAllStudents = databaseConnection.prepareStatement("SELECT * FROM Students");
+            }
         }
         catch (SQLException e)
         {

@@ -5,7 +5,6 @@ package cu.models;
  */
 public class Equipment
 {
-    public static final int AUTO_INCREMENT = 0;
     private int itemID;
     private boolean functional;
     private String itemName;
