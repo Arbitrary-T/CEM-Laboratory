@@ -3,13 +3,14 @@ package cu.models;
 import cu.interfaces.DatabaseInterface;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
 import java.io.File;
 import java.sql.*;
 
 /**
  * Created by T on 22/11/2015.
  */
-public class EquipmentDatabase
+public class EquipmentDatabase extends Database
 {
     Connection databaseConnection;
     PreparedStatement insertItem;
