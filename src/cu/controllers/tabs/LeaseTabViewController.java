@@ -18,7 +18,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
-import org.controlsfx.control.ListSelectionView;
 
 
 import java.io.IOException;

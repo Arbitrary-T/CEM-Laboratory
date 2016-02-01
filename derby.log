@@ -1,26 +1,26 @@
 ----------------------------------------------------------------
-Thu Jan 28 12:40:46 GMT 2016:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance a816c00e-0152-8840-132e-000005d36158 
-on database directory /Users/arbitrary/IdeaProjects/CEM-Laboratory/students with class loader sun.misc.Launcher$AppClassLoader@2c7b84de 
-Loaded from file:/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/db/lib/derby.jar
+Mon Feb 01 04:57:40 GMT 2016:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance a816c00e-0152-9b31-8555-00000d33e3f0 
+on database directory C:\Users\T\IdeaProjects\CU Laboratory Equipment Manager\students with class loader sun.misc.Launcher$AppClassLoader@66d3c617 
+Loaded from file:/C:/Program%20Files/Java/jdk1.8.0_65/db/lib/derby.jar
 java.vendor=Oracle Corporation
-java.runtime.version=1.8.0_60-b27
-user.dir=/Users/arbitrary/IdeaProjects/CEM-Laboratory
-os.name=Mac OS X
-os.arch=x86_64
-os.version=10.11.2
+java.runtime.version=1.8.0_65-b17
+user.dir=C:\Users\T\IdeaProjects\CU Laboratory Equipment Manager
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
 ----------------------------------------------------------------
-Thu Jan 28 12:40:47 GMT 2016:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance 6074401f-0152-8840-132e-000005d36158 
-on database directory /Users/arbitrary/IdeaProjects/CEM-Laboratory/equipment with class loader sun.misc.Launcher$AppClassLoader@2c7b84de 
-Loaded from file:/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/db/lib/derby.jar
+Mon Feb 01 04:57:40 GMT 2016:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance 6074401f-0152-9b31-8555-00000d33e3f0 
+on database directory C:\Users\T\IdeaProjects\CU Laboratory Equipment Manager\equipment with class loader sun.misc.Launcher$AppClassLoader@66d3c617 
+Loaded from file:/C:/Program%20Files/Java/jdk1.8.0_65/db/lib/derby.jar
 java.vendor=Oracle Corporation
-java.runtime.version=1.8.0_60-b27
-user.dir=/Users/arbitrary/IdeaProjects/CEM-Laboratory
-os.name=Mac OS X
-os.arch=x86_64
-os.version=10.11.2
+java.runtime.version=1.8.0_65-b17
+user.dir=C:\Users\T\IdeaProjects\CU Laboratory Equipment Manager
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''

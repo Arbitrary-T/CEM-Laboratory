@@ -53,45 +53,6 @@ public class EquipmentDatabase extends Database
             e.printStackTrace();
         }
     }
-    /*
-    private boolean loadDatabase(String database)
-    {
-        File databaseFile = new File(database);
-        String existsDatabaseURL = "jdbc:derby:" + database;
-        String newDatabaseURL = "jdbc:derby:" + database + ";create=true;";
-
-        if (databaseFile.exists())
-        {
-            try
-            {
-                databaseConnection = DriverManager.getConnection(existsDatabaseURL);
-                System.out.println("Successfully connected to existing 'Equipment' database.");
-                return true;
-            }
-            catch (SQLException e)
-            {
-                e.printStackTrace();
-                return false;
-            }
-        }
-        else
-        {
-            try
-            {
-                databaseConnection = DriverManager.getConnection(newDatabaseURL);
-                Statement firstRunStatement = databaseConnection.createStatement();
-                firstRunStatement.executeUpdate(createTableStatement);
-                firstRunStatement.close();
-                System.out.println("Successfully connected to newly created 'Equipment' database.");
-                return true;
-            }
-            catch (SQLException e)
-            {
-                e.printStackTrace();
-                return false;
-            }
-        }
-    }*/
 
     public boolean addEquipmentEntry(Equipment equipmentData)
     {
@@ -174,25 +135,7 @@ public class EquipmentDatabase extends Database
         }
         return false;
     }
-    public boolean searchEquipment(Equipment equipment)
-    {
-        if(databaseConnection != null)
-        {
-            try
-            {
-                searchItem.setInt(1, equipment.getItemID());
-                searchItem.executeUpdate();
-                agent.onEquipmentDatabaseUpdate();
-                return true;
-            }
-            catch(SQLException e)
-            {
-                e.printStackTrace();
-                return false;
-            }
-        }
-        return false;
-    }
+
     public ObservableList<Equipment> getAllEquipment()
     {
         equipmentObservableList.clear();

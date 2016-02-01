@@ -12,7 +12,7 @@ import java.sql.*;
 /**
  * Created by T on 12/11/2015.
  */
-public class StudentDatabase
+public class StudentDatabase extends Database
 {
     //Enhance program functionality - for future use, automatically reset the equipment, for example ICD.
     private Connection databaseConnection;
@@ -21,7 +21,14 @@ public class StudentDatabase
     private PreparedStatement updateStudent;
     private PreparedStatement searchStudent;
     private PreparedStatement getAllStudents;
-    public boolean firstRun = true;
+    String createTableStatement = "CREATE TABLE Students(" +
+            "cardUID VARCHAR(256) NOT NULL PRIMARY KEY, " +
+            "studentName VARCHAR(256), " +
+            "studentID INT," +
+            "studentEmail VARCHAR(256), " +
+            "studentCourse VARCHAR(256), " +
+            "studentPhoneNumber VARCHAR(256))";
+
     private static DatabaseInterface databaseAgent;
 
     public static void activateAgent(DatabaseInterface mainAgent)
@@ -31,7 +38,7 @@ public class StudentDatabase
     public StudentDatabase(String database)
     {
         activateAgent(databaseAgent);
-        loadDatabase(database);
+        databaseConnection = loadDatabase(database, createTableStatement);
         try
         {
             if(databaseConnection != null)
@@ -121,7 +128,7 @@ public class StudentDatabase
         try
         {
             ResultSet resultSet = getAllStudents.executeQuery();
-            if (resultSet != null)
+            if(resultSet != null)
             {
                     while (resultSet.next())
                     {
@@ -133,7 +140,6 @@ public class StudentDatabase
         {
             e.printStackTrace();
         }
-
         return studentsFromDatabase;
     }
     public Student searchDatabase(String cardUID)
@@ -158,50 +164,5 @@ public class StudentDatabase
         }
         return null;
     }
-    private boolean loadDatabase(String database)
-    {
-        File databaseFile = new File(database);
-        String existsDatabaseURL = "jdbc:derby:" + database;
-        String newDatabaseURL = "jdbc:derby:" + database + ";create=true;";
 
-        if(databaseFile.exists())
-        {
-            try
-            {
-                databaseConnection = DriverManager.getConnection(existsDatabaseURL);
-                System.out.println("Successfully connected to existing 'Students' database.");
-                firstRun = false;
-                return true;
-            }
-            catch (SQLException e)
-            {
-                e.printStackTrace();
-                return false;
-            }
-        }
-        else
-        {
-            try
-            {
-                databaseConnection = DriverManager.getConnection(newDatabaseURL);
-                Statement firstRunStatement = databaseConnection.createStatement();
-                firstRunStatement.executeUpdate("CREATE TABLE Students(" +
-                        "cardUID VARCHAR(256) NOT NULL PRIMARY KEY, " +
-                        "studentName VARCHAR(256), " +
-                        "studentID INT," +
-                        "studentEmail VARCHAR(256), " +
-                        "studentCourse VARCHAR(256), " +
-                        "studentPhoneNumber VARCHAR(256))");
-                firstRunStatement.close();
-                System.out.println("Successfully connected to newly created 'Students' database.");
-                activateAgent(databaseAgent);
-                return true;
-            }
-            catch (SQLException e)
-            {
-                e.printStackTrace();
-                return false;
-            }
-        }
-    }
 }

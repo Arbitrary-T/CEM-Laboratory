@@ -24,7 +24,7 @@ public abstract class Database
             try
             {
                 databaseConnection = DriverManager.getConnection(existsDatabaseURL);
-                System.out.println("Successfully connected to newly created " + database + " database.");
+                System.out.println("Successfully connected to existing " + database + " database.");
                 return databaseConnection;
             }
             catch (SQLException e)

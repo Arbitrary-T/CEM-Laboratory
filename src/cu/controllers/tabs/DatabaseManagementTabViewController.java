@@ -1,10 +1,14 @@
 package cu.controllers.tabs;
 
+import com.sun.javaws.Main;
 import cu.interfaces.DatabaseInterface;
 import cu.models.*;
 import cu.validations.TextValidation;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.TableColumn.CellEditEvent;
@@ -13,6 +17,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.util.Callback;
 import javafx.util.converter.IntegerStringConverter;
 import java.util.Optional;
 
@@ -23,6 +29,7 @@ import java.util.Optional;
  */
 public class DatabaseManagementTabViewController implements DatabaseInterface
 {
+    int equipmentTableCurrentRow = 0;
     @FXML
     private ImageView contextImageView;
     @FXML
@@ -83,6 +90,116 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
         equipmentCount = equipmentObservableList.size();
         equipmentTableView.setEditable(true);
         equipmentTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        equipmentTableView.setRowFactory(param ->
+        {
+            final TableRow<Equipment> row = new TableRow<>();
+            final ContextMenu rowMenu = new ContextMenu();
+            param.setOnKeyPressed(event ->
+            {
+                if(event.getCode().equals(KeyCode.DELETE))
+                {
+                    if(equipmentTableView.getSelectionModel().getSelectedCells().size() > 0)
+                    {
+
+                        Alert confirmDeletion = new Alert(Alert.AlertType.CONFIRMATION);
+                        confirmDeletion.setTitle("Delete item");
+                        confirmDeletion.setHeaderText("Warning this cannot be undone!");
+                        confirmDeletion.setContentText("Do you want to continue?");
+                        Optional<ButtonType> result = confirmDeletion.showAndWait();
+                        if (result.get() == ButtonType.OK)
+                        {
+                            for (Equipment equipment : equipmentTableView.getSelectionModel().getSelectedItems())
+                            {
+                                equipmentDatabase.deleteEquipmentEntry(equipment);
+                            }
+                        }
+                        equipmentTableView.requestFocus();
+                        equipmentTableView.getSelectionModel().select(equipmentTableCurrentRow);
+                        equipmentTableView.getFocusModel().focus(equipmentTableCurrentRow);
+                        event.consume();
+                    }
+                }
+                if(event.isControlDown() && event.getCode().equals(KeyCode.C))
+                {
+                    System.out.println("CTRL IS DOWN AND C IS PRESSED");
+                    if(equipmentObservableList.size() > 0)
+                    {
+                        int rowa = equipmentTableView.getFocusModel().getFocusedCell().getRow();
+                        if (rowa >= 1)
+                        {
+                            Equipment temp = equipmentObservableList.get(rowa - 1);
+                            equipmentDatabase.editEquipmentEntry(new Equipment(equipmentObservableList.get(rowa).getItemID(), temp.getItemName(), temp.getItemCategory(), temp.isFunctional(), temp.getPartOfBundle()), equipmentObservableList.get(rowa).getItemID());
+                        }
+                        event.consume();
+                        if(rowa+1 < equipmentObservableList.size())
+                        {
+                            equipmentTableView.getFocusModel().focus(rowa+1);
+                        }
+                        else
+                        {
+                            equipmentTableView.getFocusModel().focus(rowa);
+                        }
+                    }
+                }
+                if(event.isControlDown() && event.getCode().equals(KeyCode.N))
+                {
+                    if(equipmentDatabase.getAllEquipment().size() != 0)
+                        equipmentDatabase.addEquipmentEntry(new Equipment(equipmentObservableList.get(equipmentCount-1).getItemID()+1,"ToDo", "ToDo", true, "ToDo"));
+                    else
+                        equipmentDatabase.addEquipmentEntry(new Equipment(0,"ToDo", "ToDo", true, "ToDo"));
+                    equipmentTableView.edit(equipmentTableView.getItems().size(), equipmentTableView.getColumns().get(0));
+                    event.consume();
+                    equipmentTableView.getFocusModel().focus(equipmentTableView.getItems().size()-1);
+                }
+            });
+            MenuItem equipmentNewMenuItem = new MenuItem("New item");
+            equipmentNewMenuItem.setOnAction(event ->
+            {
+                System.out.println(equipmentCount);
+                if(equipmentDatabase.getAllEquipment().size() != 0)
+                {
+                    equipmentDatabase.addEquipmentEntry(new Equipment(equipmentObservableList.get(equipmentCount - 1).getItemID() + 1, "ToDo", "ToDo", true, "ToDo"));
+                }
+                else
+                {
+                    equipmentDatabase.addEquipmentEntry(new Equipment(0, "ToDo", "ToDo", true, "ToDo"));
+                }
+                equipmentTableView.scrollTo(equipmentCount+1);
+                equipmentTableView.requestFocus();
+                equipmentTableView.getSelectionModel().select(equipmentCount);
+                equipmentTableView.getFocusModel().focus(equipmentCount);
+            });
+            MenuItem equipmentDeleteMenuItem = new MenuItem("Delete row");
+            equipmentDeleteMenuItem.setOnAction(event ->
+            {
+                if(equipmentTableView.getSelectionModel().getSelectedCells().size() > 0)
+                {
+                    Alert confirmDeletion = new Alert(Alert.AlertType.CONFIRMATION);
+                    confirmDeletion.setTitle("Delete item");
+                    confirmDeletion.setHeaderText("Warning this cannot be undone!");
+                    confirmDeletion.setContentText("Do you want to continue?");
+                    Optional<ButtonType> result = confirmDeletion.showAndWait();
+                    if (result.get() == ButtonType.OK)
+                    {
+                        for (Equipment equipment : equipmentTableView.getSelectionModel().getSelectedItems())
+                        {
+                            equipmentDatabase.deleteEquipmentEntry(equipment);
+                        }
+                    }
+                    equipmentTableView.requestFocus();
+                    equipmentTableView.getSelectionModel().select(equipmentTableCurrentRow);
+                    equipmentTableView.getFocusModel().focus(equipmentTableCurrentRow);
+                    event.consume();
+                }
+            });
+            MenuItem editItem = new MenuItem("Edit row");
+            editItem.setOnAction(event ->
+                equipmentTableView.getSelectionModel().getTableView().edit(equipmentTableView.getFocusModel().getFocusedCell().getRow(),equipmentTableView.getFocusModel().getFocusedCell().getTableColumn()));
+
+            rowMenu.getItems().addAll(equipmentNewMenuItem, equipmentDeleteMenuItem, editItem);
+            row.contextMenuProperty().bind(Bindings.when(Bindings.isNotNull(row.itemProperty())).then(rowMenu).otherwise((ContextMenu) null));
+            return row;
+        });
 
         idTableColumn.setCellValueFactory(new PropertyValueFactory<>("itemID"));
         idTableColumn.setCellFactory(TextFieldTableCell.<Equipment, Integer>forTableColumn(new IntegerStringConverter()));
@@ -104,6 +221,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
         nameTableColumn.setCellFactory(TextFieldTableCell.<Equipment>forTableColumn());
         nameTableColumn.setOnEditCommit((CellEditEvent<Equipment, String> event) ->
         {
+
             tempEquipment = event.getTableView().getItems().get(event.getTablePosition().getRow());
             if(!event.getNewValue().isEmpty())
             {
@@ -111,6 +229,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
                 equipmentDatabase.editEquipmentEntry(tempEquipment, tempEquipment.getItemID());
             }
         });
+
         categoryTableColumn.setCellValueFactory(new PropertyValueFactory<>("itemCategory"));
         categoryTableColumn.setCellFactory(TextFieldTableCell.<Equipment>forTableColumn());
         categoryTableColumn.setOnEditCommit((CellEditEvent<Equipment, String> event) ->
@@ -149,117 +268,29 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
                 equipmentDatabase.editEquipmentEntry(tempEquipment, tempEquipment.getItemID());
             }
         });
-
+        //***********************TEST****************************************
         ContextMenu equipmentTableContextMenu = new ContextMenu();
-        MenuItem equipmentEditMenuItem = new MenuItem("Modify cell");
-        equipmentEditMenuItem.setOnAction(event ->
-                equipmentTableView.getSelectionModel().getTableView().edit(equipmentTableView.getFocusModel().getFocusedCell().getRow(),equipmentTableView.getFocusModel().getFocusedCell().getTableColumn()));
-        MenuItem equipmentDeleteMenuItem = new MenuItem("Delete item");
-        equipmentDeleteMenuItem.setOnAction(event ->
-        {
-            if(equipmentTableView.getSelectionModel().getSelectedCells().size() > 0)
-            {
-                Alert confirmDeletion = new Alert(Alert.AlertType.CONFIRMATION);
-                confirmDeletion.setTitle("Delete item");
-                confirmDeletion.setHeaderText("Warning this cannot be undone!");
-                confirmDeletion.setContentText("Do you want to continue?");
-                Optional<ButtonType> result = confirmDeletion.showAndWait();
-                if (result.get() == ButtonType.OK)
-                {
-                    for (Equipment equipment : equipmentTableView.getSelectionModel().getSelectedItems())
-                    {
-                        equipmentDatabase.deleteEquipmentEntry(equipment);
-                    }
-                }
-                event.consume();
-            }
-        });
-        MenuItem equipmentNewMenuItem = new MenuItem("New item");
-        equipmentNewMenuItem.setOnAction(event ->
-        {
-            System.out.println(equipmentCount);
-            if(equipmentDatabase.getAllEquipment().size() != 0)
-                equipmentDatabase.addEquipmentEntry(new Equipment(equipmentObservableList.get(equipmentCount-1).getItemID()+1,"ToDo", "ToDo", true, "ToDo"));
-            else
-                equipmentDatabase.addEquipmentEntry(new Equipment(0,"ToDo", "ToDo", true, "ToDo"));
-            equipmentTableView.edit(equipmentTableView.getItems().size(), equipmentTableView.getColumns().get(0));
-        });
         MenuItem deleteAll = new MenuItem("deleteAll");
         deleteAll.setOnAction(event ->
-                {
-                    equipmentObservableList.removeAll();
-                    equipmentObservableList.clear();
-                    equipmentDatabase.deleteAllEntries();
-                }
+        {
+            equipmentObservableList.removeAll();
+            equipmentObservableList.clear();
+            equipmentDatabase.deleteAllEntries();
+        }
         );
-        equipmentTableContextMenu.getItems().addAll(equipmentNewMenuItem, equipmentEditMenuItem, equipmentDeleteMenuItem, deleteAll);
+        equipmentTableContextMenu.getItems().add(deleteAll);
         equipmentTableView.setContextMenu(equipmentTableContextMenu);
+        //**********************END TEST***************************************
+
         equipmentTableView.setItems(equipmentObservableList);
-        equipmentTableView.setOnKeyPressed(event ->
-                {
-                    if (event.getCode().equals(KeyCode.DELETE))
-                    {
-                        if(equipmentTableView.getSelectionModel().getSelectedCells().size() > 0)
-                        {
-                            Alert confirmDeletion = new Alert(Alert.AlertType.CONFIRMATION);
-                            confirmDeletion.setTitle("Delete item");
-                            confirmDeletion.setHeaderText("Warning this cannot be undone!");
-                            confirmDeletion.setContentText("Do you want to continue?");
-                            Optional<ButtonType> result = confirmDeletion.showAndWait();
-                            if (result.get() == ButtonType.OK)
-                            {
-                                for (Equipment equipment : equipmentTableView.getSelectionModel().getSelectedItems())
-                                {
-                                    equipmentDatabase.deleteEquipmentEntry(equipment);
-                                }
-                            }
-                            event.consume();
-                        }
-                    }
-                });
-        equipmentTableView.setOnKeyPressed(event ->
-        {
-            if(event.isControlDown() && event.getCode().equals(KeyCode.C))
-            {
-                if(equipmentObservableList.size() > 0)
-                {
-                    int row = equipmentTableView.getFocusModel().getFocusedCell().getRow();
-                    if (row >= 1)
-                    {
-                        Equipment temp = equipmentObservableList.get(row - 1);
-                        equipmentDatabase.editEquipmentEntry(new Equipment(equipmentObservableList.get(row).getItemID(), temp.getItemName(), temp.getItemCategory(), temp.isFunctional(), temp.getPartOfBundle()), equipmentObservableList.get(row).getItemID());
-                    }
-                    event.consume();
-                    if(row+1 < equipmentObservableList.size())
-                    {
-                        equipmentTableView.getFocusModel().focus(row+1);
-                    }
-                    else
-                    {
-                        equipmentTableView.getFocusModel().focus(row);
-                    }
-                }
-            }
-        });
-        equipmentTableView.setOnKeyReleased(event ->
-        {
-            if(event.isControlDown() && event.getCode().equals(KeyCode.N))
-            {
-                if(equipmentDatabase.getAllEquipment().size() != 0)
-                    equipmentDatabase.addEquipmentEntry(new Equipment(equipmentObservableList.get(equipmentCount-1).getItemID()+1,"ToDo", "ToDo", true, "ToDo"));
-                else
-                    equipmentDatabase.addEquipmentEntry(new Equipment(0,"ToDo", "ToDo", true, "ToDo"));
-                equipmentTableView.edit(equipmentTableView.getItems().size(), equipmentTableView.getColumns().get(0));
-                event.consume();
-                equipmentTableView.getFocusModel().focus(equipmentTableView.getItems().size()-1);
-            }
-        });
-        //.getSelectionModel()
+
+
         equipmentTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
         {
             if(equipmentObservableList.size() > 0)
             {
-                System.out.println("Current Row: " +equipmentTableView.getSelectionModel().getSelectedIndex());
+                equipmentTableCurrentRow = equipmentTableView.getSelectionModel().getSelectedIndex();
+                System.out.println("Current Row: " + equipmentTableCurrentRow);
                 Equipment temp = equipmentObservableList.get(equipmentTableView.getSelectionModel().getSelectedIndex());
                 contextImageView.setImage(QRGenerator.generateQRCode(temp.getItemID() + temp.getItemName(), 300, 300));
             }
