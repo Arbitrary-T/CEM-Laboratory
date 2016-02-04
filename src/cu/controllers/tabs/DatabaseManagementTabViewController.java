@@ -369,7 +369,6 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
             }
         });
 
-
         ContextMenu studentTableContextMenu = new ContextMenu();
         MenuItem editMenuItem = new MenuItem("Modify cell");
         editMenuItem.setOnAction(event ->
