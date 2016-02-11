@@ -1,14 +1,13 @@
 package cu.controllers.tabs;
 
-import com.sun.javaws.Main;
 import cu.interfaces.DatabaseInterface;
 import cu.models.*;
 import cu.validations.TextValidation;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.TableColumn.CellEditEvent;
@@ -17,8 +16,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.util.Callback;
 import javafx.util.converter.IntegerStringConverter;
 import java.util.Optional;
 
@@ -296,8 +293,8 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
             }
         });
 
-
         /////////////////@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@////////////////////////////////////////////////////////////////////////////////////
+        studentTableView.setPlaceholder(new Label("No records available!"));
         studentIDColumn.setCellValueFactory(new PropertyValueFactory<>("studentID"));
         studentIDColumn.setCellFactory(TextFieldTableCell.<Student,Integer>forTableColumn(new IntegerStringConverter()));
         studentIDColumn.setOnEditCommit((CellEditEvent<Student, Integer> event) ->
@@ -305,6 +302,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
             tempStudent = event.getTableView().getItems().get(event.getTablePosition().getRow());
             if(validation.isValidStudentID(event.getNewValue().toString()))
                 tempStudent.setID(Integer.parseInt(event.getNewValue().toString()));
+            System.out.println(tempStudent.toString());
             studentDatabase.editStudentEntry(tempStudent);
         });
         studentNameColumn.setCellValueFactory(new PropertyValueFactory<>("studentName"));
@@ -315,6 +313,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
             if(!event.getNewValue().isEmpty())
                 tempStudent.setStudentName(event.getNewValue());
             studentDatabase.editStudentEntry(tempStudent);
+            System.out.println(tempStudent.toString());
         });
 
         studentCourseColumn.setCellValueFactory(new PropertyValueFactory<>("studentCourse"));
@@ -345,7 +344,6 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
                 tempStudent.setPhoneNumber(event.getNewValue());
             studentDatabase.editStudentEntry(tempStudent);
         });
-
         studentTableView.setOnKeyReleased(event ->
         {
             if(event.getCode().equals(KeyCode.DELETE))
@@ -392,16 +390,54 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
                 }
             }
         });
+
         studentTableContextMenu.getItems().addAll(editMenuItem, deleteMenuItem);
         studentTableView.setContextMenu(studentTableContextMenu);
-        studentTableView.setItems(studentsObservableList);
+        FilteredList<Student> studentFilteredData = new FilteredList<>(studentsObservableList, p -> true);
+        filterTextField.textProperty().addListener((observable, oldValue, newValue) ->
+        {
+            studentFilteredData.setPredicate(studentObject ->
+            {
+                String lowerCaseFilter = newValue.toLowerCase();
+                String intToString = "";
+                try
+                {
+                    intToString = Integer.toString(studentObject.getStudentID());
+                }
+                catch (NumberFormatException e)
+                {
+                    //e.printStackTrace();
+                }
+                // If filter text is empty, display all students.
+                if (newValue == null || newValue.isEmpty())
+                {
+                    return true;
+                }
+                // Compare first name and last name of every person with filter text.
+                if (studentObject.getStudentName().toLowerCase().contains(lowerCaseFilter))
+                {
+                    return true; // Filter matches first name.
+                }
+                else if(!intToString.isEmpty())
+                {
+                    if(intToString.contains(lowerCaseFilter))
+                        return true; // Filter matches student id.
+                }
+                return false; // Does not match.
+            });
+        });
+        SortedList<Student> sortedData = new SortedList<>(studentFilteredData);
+        sortedData.comparatorProperty().bind(studentTableView.comparatorProperty());
+        studentTableView.setItems(sortedData);
     }
 
     @Override
     public void onStudentDatabaseUpdate()
     {
-        studentsObservableList = studentDatabase.getAllStudents();
-        studentTableView.setItems(studentsObservableList);
+        studentsObservableList.clear();
+        studentsObservableList.addAll(studentDatabase.getAllStudents());
+        //studentsObservableList = studentDatabase.getAllStudents();
+        //studentTableView.setItems(studentsObservableList);
     }
 
     @Override
@@ -409,10 +445,6 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
     {
         equipmentObservableList = equipmentDatabase.getAllEquipment();
         equipmentTableView.setItems(equipmentObservableList);
-        if(!equipmentObservableList.isEmpty())
-        {
-            //System.out.println(equipmentCount + "\t" + equipmentObservableList.get(0).getItemID());
-        }
         equipmentCount = equipmentObservableList.size();
     }
 }

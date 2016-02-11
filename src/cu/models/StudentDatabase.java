@@ -61,12 +61,14 @@ public class StudentDatabase extends Database
         {
             try
             {
+                System.out.println(studentData.toString());
                 updateStudent.setString(1, studentData.getStudentName());
                 updateStudent.setInt(2, studentData.getStudentID());
                 updateStudent.setString(3, studentData.getStudentEmail());
                 updateStudent.setString(4, studentData.getStudentCourse());
                 updateStudent.setString(5, studentData.getStudentPhoneNumber());
                 updateStudent.setString(6, studentData.getCardUID());
+                updateStudent.executeUpdate();
             }
             catch(SQLException e)
             {

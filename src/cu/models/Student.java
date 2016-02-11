@@ -79,4 +79,9 @@ public class Student
     {
         return this.studentID.get();
     }
+    @Override
+    public String toString()
+    {
+       return cardUID.toString() + "\t" + studentID + "\t" + studentName.toString();
+    }
 }
