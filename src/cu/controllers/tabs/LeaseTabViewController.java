@@ -104,7 +104,7 @@ public class LeaseTabViewController implements CardInterface
             Scale scale = new Scale(scale_factor, scale_factor, 0, pivot_y);
             studentDetailsTextGroup.getTransforms().add(scale);
         }));
-        //coventryLogo.setImage(QRGenerator.generateQRCode("1",50,50));
+        coventryLogo.setImage(QRGenerator.generateQRCode("1",200,200));
     }
 
     @Override

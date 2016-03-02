@@ -1,7 +1,7 @@
 ----------------------------------------------------------------
-Mon Feb 08 15:20:10 GMT 2016:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance a816c00e-0152-c177-f62c-00000d3493a0 
-on database directory C:\Users\T\IdeaProjects\CU Laboratory Equipment Manager\students with class loader sun.misc.Launcher$AppClassLoader@66d3c617 
+Wed Mar 02 19:38:15 GMT 2016:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance a816c00e-0153-38d6-8049-00000d1f92c8 
+on database directory C:\Users\T\IdeaProjects\CU Laboratory Equipment Manager\students with class loader sun.misc.Launcher$AppClassLoader@2b193f2d 
 Loaded from file:/C:/Program%20Files/Java/jdk1.8.0_65/db/lib/derby.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.8.0_65-b17
@@ -12,9 +12,9 @@ os.version=10.0
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
 ----------------------------------------------------------------
-Mon Feb 08 15:20:11 GMT 2016:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance 6074401f-0152-c177-f62c-00000d3493a0 
-on database directory C:\Users\T\IdeaProjects\CU Laboratory Equipment Manager\equipment with class loader sun.misc.Launcher$AppClassLoader@66d3c617 
+Wed Mar 02 19:38:15 GMT 2016:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance 6074401f-0153-38d6-8049-00000d1f92c8 
+on database directory C:\Users\T\IdeaProjects\CU Laboratory Equipment Manager\equipment with class loader sun.misc.Launcher$AppClassLoader@2b193f2d 
 Loaded from file:/C:/Program%20Files/Java/jdk1.8.0_65/db/lib/derby.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.8.0_65-b17

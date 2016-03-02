@@ -18,7 +18,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.util.converter.IntegerStringConverter;
 import java.util.Optional;
-
+//Test
 //TO DO FIX THE CONTEXTMENU TO BE ON ROW RATHER THAN TABLE. FIX EQUIPMENT PRIMARY KEY ISSUE.
 
 /**
