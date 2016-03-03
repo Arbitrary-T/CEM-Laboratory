@@ -3,6 +3,7 @@ package cu.controllers.tabs;
 import cu.Main;
 import cu.controllers.dialogues.NewRegistrationDialogueController;
 import cu.interfaces.CardInterface;
+import cu.interfaces.CodeScannerInterface;
 import cu.models.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -26,7 +27,7 @@ import java.io.IOException;
  * Created by T on 08/11/2015.
  */
 
-public class LeaseTabViewController implements CardInterface
+public class LeaseTabViewController implements CardInterface, CodeScannerInterface
 {
     //Non-view related variables
     private StudentDatabase studentDatabase = new StudentDatabase("students");
@@ -85,6 +86,7 @@ public class LeaseTabViewController implements CardInterface
                 customTimeTextField.setDisable(true);
             }
         });
+        CodeScanner.activateAgent(this);
         CardListener.activateAgent(this);
         timeComboBox.setItems(timeComboBoxOptions);
         timeComboBox.setValue(timeComboBoxOptions.get(2));
@@ -163,5 +165,11 @@ public class LeaseTabViewController implements CardInterface
         {
             Platform.runLater(configureStudentCard);
         }
+    }
+
+    @Override
+    public void onCodeScanner(String QRCode)
+    {
+
     }
 }

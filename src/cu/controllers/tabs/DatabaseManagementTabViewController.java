@@ -1,8 +1,10 @@
 package cu.controllers.tabs;
 
+import cu.interfaces.CodeScannerInterface;
 import cu.interfaces.DatabaseInterface;
 import cu.models.*;
 import cu.validations.TextValidation;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,13 +20,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.util.converter.IntegerStringConverter;
 import java.util.Optional;
+
 //Test
 //TO DO FIX THE CONTEXTMENU TO BE ON ROW RATHER THAN TABLE. FIX EQUIPMENT PRIMARY KEY ISSUE.
 
 /**
  * Created by T on 22/12/2015.
  */
-public class DatabaseManagementTabViewController implements DatabaseInterface
+public class DatabaseManagementTabViewController implements DatabaseInterface, CodeScannerInterface
 {
     int equipmentTableCurrentRow = 0;
     @FXML
@@ -80,6 +83,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
     {
         StudentDatabase.activateAgent(this);
         EquipmentDatabase.activateAgent(this);
+        CodeScanner.activateAgent(this);
         studentTableView.setEditable(true);
         studentTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         studentsObservableList = studentDatabase.getAllStudents();
@@ -189,7 +193,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
                     event.consume();
                 }
             });
-            MenuItem editItem = new MenuItem("Edit row");
+            MenuItem editItem = new MenuItem("Edit cell");
             editItem.setOnAction(event ->
                 equipmentTableView.getSelectionModel().getTableView().edit(equipmentTableView.getFocusModel().getFocusedCell().getRow(),equipmentTableView.getFocusModel().getFocusedCell().getTableColumn()));
 
@@ -197,7 +201,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
             row.contextMenuProperty().bind(Bindings.when(Bindings.isNotNull(row.itemProperty())).then(rowMenu).otherwise((ContextMenu) null));
             return row;
         });
-
+        idTableColumn.setEditable(false);
         idTableColumn.setCellValueFactory(new PropertyValueFactory<>("itemID"));
         idTableColumn.setCellFactory(TextFieldTableCell.<Equipment, Integer>forTableColumn(new IntegerStringConverter()));
         idTableColumn.setOnEditCommit((CellEditEvent<Equipment, Integer> event) ->
@@ -295,6 +299,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
 
         /////////////////@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@////////////////////////////////////////////////////////////////////////////////////
         studentTableView.setPlaceholder(new Label("No records available!"));
+        studentIDColumn.setEditable(false);
         studentIDColumn.setCellValueFactory(new PropertyValueFactory<>("studentID"));
         studentIDColumn.setCellFactory(TextFieldTableCell.<Student,Integer>forTableColumn(new IntegerStringConverter()));
         studentIDColumn.setOnEditCommit((CellEditEvent<Student, Integer> event) ->
@@ -436,8 +441,6 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
     {
         studentsObservableList.clear();
         studentsObservableList.addAll(studentDatabase.getAllStudents());
-        //studentsObservableList = studentDatabase.getAllStudents();
-        //studentTableView.setItems(studentsObservableList);
     }
 
     @Override
@@ -446,5 +449,18 @@ public class DatabaseManagementTabViewController implements DatabaseInterface
         equipmentObservableList = equipmentDatabase.getAllEquipment();
         equipmentTableView.setItems(equipmentObservableList);
         equipmentCount = equipmentObservableList.size();
+    }
+
+    @Override
+    public void onCodeScanner(String QRCode)
+    {
+        Platform.runLater(()->
+        {
+            equipmentTableView.refresh();
+            equipmentFilterTextField.requestFocus();
+            equipmentFilterTextField.clear();
+            equipmentFilterTextField.setText(QRCode);
+            equipmentTableView.refresh();
+        });
     }
 }
