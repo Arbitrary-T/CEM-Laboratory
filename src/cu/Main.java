@@ -1,29 +1,20 @@
 package cu;
 
 import cu.models.CardListener;
-import cu.models.CodeScanner;
+import cu.models.CodeScannerCOM;
 import cu.models.Student;
 import javafx.application.Application;
 
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TabPane;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
-import lc.kra.system.keyboard.GlobalKeyboardHook;
-import lc.kra.system.keyboard.event.GlobalKeyAdapter;
-import lc.kra.system.keyboard.event.GlobalKeyEvent;
-import org.apache.commons.lang3.StringUtils;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Main extends Application
 {
-    private Thread cardListenerThread;
-    private Thread codeScannerThread;
-
     //maybe change to context..?
     public static Student currentStudent;
     private static Stage primaryStage;
@@ -35,14 +26,7 @@ public class Main extends Application
         primaryStage.setTitle("CU CEM Laboratory Management");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
-        this.primaryStage = primaryStage;
-
-        codeScannerThread = new Thread(new CodeScanner());
-        codeScannerThread.setDaemon(true);
-        codeScannerThread.start();
-        cardListenerThread = new Thread(new CardListener());
-        cardListenerThread.setDaemon(true);
-        cardListenerThread.start();
+        Main.primaryStage = primaryStage;
     }
 
     public static Stage getPrimaryStage()
@@ -52,7 +36,11 @@ public class Main extends Application
 
     public static void main(String[] args)
     {
+        ExecutorService exec = Executors.newFixedThreadPool(2);
+        exec.submit(new CodeScannerCOM());
+        exec.submit(new CardListener());
         launch(args);
+        exec.shutdownNow();
     }
 
 }

@@ -1,6 +1,7 @@
 package cu.controllers.tabs;
 
 import cu.Main;
+import cu.controllers.MainViewController;
 import cu.controllers.dialogues.NewRegistrationDialogueController;
 import cu.interfaces.CardInterface;
 import cu.interfaces.CodeScannerInterface;
@@ -19,9 +20,13 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.derby.iapi.util.StringUtil;
 
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by T on 08/11/2015.
@@ -31,8 +36,11 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
 {
     //Non-view related variables
     private StudentDatabase studentDatabase = new StudentDatabase("students");
+    private EquipmentDatabase equipmentDatabase = new EquipmentDatabase("equipment");
+
     private boolean isRegistrationWindowOpen = false;
     private ObservableList<String> timeComboBoxOptions = FXCollections.observableArrayList("1 Hour", "2 Hours", "3 Hours", "CUSTOM");
+    private ObservableList<Equipment> scannedItems = FXCollections.observableArrayList();
 
     //View related variables
     @FXML
@@ -71,10 +79,13 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
     private Button confirmLeaseButton;
     @FXML
     private Button clearOptionsButton;
-
+    @FXML
+    private ListView selectedItemsListView;
     @FXML
     void initialize()
     {
+        CardListener.activateAgent(this);
+        CodeScannerCOM.activateAgent(this);
         timeComboBox.valueProperty().addListener((observable1, oldValue1, newValue1) ->
         {
             if(newValue1.equals("CUSTOM"))
@@ -86,8 +97,6 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
                 customTimeTextField.setDisable(true);
             }
         });
-        CodeScanner.activateAgent(this);
-        CardListener.activateAgent(this);
         timeComboBox.setItems(timeComboBoxOptions);
         timeComboBox.setValue(timeComboBoxOptions.get(2));
         leftAnchorPane.maxWidthProperty().bind(mainVerticalSplitPane.widthProperty().multiply(0.2));
@@ -170,6 +179,37 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
     @Override
     public void onCodeScanner(String QRCode)
     {
-
+        System.out.println(QRCode);
+        if(MainViewController.index == 0)
+        {
+            if(Main.currentStudent != null)
+            {
+                Pattern intsOnly = Pattern.compile("^[\\d]*");
+                Matcher makeMatch = intsOnly.matcher(QRCode);
+                makeMatch.find();
+                String inputInt = makeMatch.group();
+                int inputToInt = -1;
+                try
+                {
+                    inputToInt = Integer.parseInt(inputInt);
+                }
+                catch (NumberFormatException e)
+                {
+                    e.printStackTrace();
+                }
+                Equipment s = equipmentDatabase.getItem(inputToInt);
+                System.out.println(s.toString());
+                scannedItems.add(s);
+                selectedItemsListView.setItems(scannedItems);
+            }
+            else
+            {
+                Alert notifyCardReader = new Alert(Alert.AlertType.INFORMATION);
+                notifyCardReader.setTitle("Error!");
+                notifyCardReader.setHeaderText("Student not found!");
+                notifyCardReader.setContentText("Please scan your student card prior to scanning items!");
+                notifyCardReader.show();
+            }
+        }
     }
 }

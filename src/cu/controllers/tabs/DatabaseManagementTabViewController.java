@@ -1,5 +1,6 @@
 package cu.controllers.tabs;
 
+import cu.controllers.MainViewController;
 import cu.interfaces.CodeScannerInterface;
 import cu.interfaces.DatabaseInterface;
 import cu.models.*;
@@ -83,7 +84,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
     {
         StudentDatabase.activateAgent(this);
         EquipmentDatabase.activateAgent(this);
-        CodeScanner.activateAgent(this);
+        CodeScannerCOM.activateAgent(this);
         studentTableView.setEditable(true);
         studentTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         studentsObservableList = studentDatabase.getAllStudents();
@@ -456,11 +457,15 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
     {
         Platform.runLater(()->
         {
-            equipmentTableView.refresh();
-            equipmentFilterTextField.requestFocus();
-            equipmentFilterTextField.clear();
-            equipmentFilterTextField.setText(QRCode);
-            equipmentTableView.refresh();
+            if(MainViewController.index == 1)
+            {
+                equipmentTableView.refresh();
+                equipmentFilterTextField.requestFocus();
+                equipmentFilterTextField.clear();
+                System.out.println(QRCode);
+                equipmentFilterTextField.setText(QRCode);
+                equipmentTableView.refresh();
+            }
         });
     }
 }

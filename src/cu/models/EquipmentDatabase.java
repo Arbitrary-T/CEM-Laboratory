@@ -11,15 +11,16 @@ import java.sql.*;
  */
 public class EquipmentDatabase extends Database
 {
-    Connection databaseConnection;
-    PreparedStatement insertItem;
-    PreparedStatement deleteItem;
-    PreparedStatement updateItem;
-    PreparedStatement searchItem;
-    PreparedStatement deleteAll;
-    PreparedStatement getAllEquipment;
-    ObservableList<Equipment> equipmentObservableList = FXCollections.observableArrayList();
-    String createTableStatement = "CREATE TABLE Equipment(" +
+    private Connection databaseConnection;
+    private PreparedStatement insertItem;
+    private PreparedStatement deleteItem;
+    private PreparedStatement updateItem;
+    private PreparedStatement searchItem;
+    private PreparedStatement deleteAll;
+    private PreparedStatement getAllEquipment;
+    private PreparedStatement getItem;
+    private ObservableList<Equipment> equipmentObservableList = FXCollections.observableArrayList();
+    private String createTableStatement = "CREATE TABLE Equipment(" +
                                   "itemID INT NOT NULL PRIMARY KEY, " +
                                   "itemName VARCHAR(256), " +
                                   "itemCategory VARCHAR(256), " +
@@ -45,6 +46,7 @@ public class EquipmentDatabase extends Database
                 updateItem = databaseConnection.prepareStatement("UPDATE Equipment SET itemID=?, itemName=?, itemCategory=?, functional=?, partOfBundle=? WHERE itemID=?");
                 searchItem = databaseConnection.prepareStatement("SELECT * FROM Equipment WHERE itemID = ?");
                 deleteAll = databaseConnection.prepareStatement("DELETE FROM Equipment WHERE 1=1");
+                getItem = databaseConnection.prepareStatement("SELECT * FROM Equipment WHERE itemID = ?");
                 getAllEquipment = databaseConnection.prepareStatement("SELECT * FROM Equipment");
             }
         }
@@ -135,7 +137,29 @@ public class EquipmentDatabase extends Database
         }
         return false;
     }
-
+    public Equipment getItem(int itemID)
+    {
+        if(databaseConnection != null)
+        {
+            try
+            {
+                getItem.setInt(1, itemID);
+                ResultSet resultSet = getItem.executeQuery();
+                if(resultSet != null)
+                {
+                    if(resultSet.next())
+                    {
+                        return new Equipment(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getBoolean(4), resultSet.getString(5));
+                    }
+                }
+            }
+            catch (SQLException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
     public ObservableList<Equipment> getAllEquipment()
     {
         equipmentObservableList.clear();

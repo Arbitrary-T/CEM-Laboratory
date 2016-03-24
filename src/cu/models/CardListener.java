@@ -40,6 +40,7 @@ public class CardListener implements Runnable
                     boolean firstTime = true;
                     if(firstTime)
                     {
+
                         Alert notifyCardReader = new Alert(Alert.AlertType.ERROR);
                         notifyCardReader.setTitle("NFC Reader");
                         notifyCardReader.setHeaderText("Error: No NFC reader found.");
