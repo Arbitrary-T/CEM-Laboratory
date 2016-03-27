@@ -93,11 +93,11 @@
                            <center>
                               <TableView fx:id="leasedItemsTableView" prefHeight="195.0" prefWidth="415.0" BorderPane.alignment="CENTER">
                                  <columns>
-                                    <TableColumn prefWidth="89.0" text="Item(s)" />
-                                    <TableColumn prefWidth="115.0" text="Leased To" />
-                                    <TableColumn prefWidth="115.0" text="Leased On" />
-                                    <TableColumn prefWidth="115.0" text="Time Left" />
-                                    <TableColumn prefWidth="115.0" text="Remarks" />
+                                    <TableColumn fx:id="itemTableColumn" prefWidth="89.0" text="Item(s)" />
+                                    <TableColumn fx:id="leasedToTableColumn" prefWidth="115.0" text="Leased To" />
+                                    <TableColumn fx:id="leasedOnTableColumn" prefWidth="115.0" text="Leased On" />
+                                    <TableColumn fx:id="timeLeftTableColumn" prefWidth="115.0" text="Time Left" />
+                                    <TableColumn fx:id="remarksTableColumn" prefWidth="115.0" text="Remarks" />
                                  </columns>
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -141,23 +141,19 @@
                                                    <children>
                                                       <VBox>
                                                          <children>
-                                                            <TextField promptText="Search equipment database...">
+                                                            <TextField fx:id="searchDatabaseTextField" promptText="Search equipment database...">
                                                                <VBox.margin>
                                                                   <Insets left="5.0" top="10.0" />
                                                                </VBox.margin>
                                                             </TextField>
-                                                            <ListView>
+                                                            <ListView fx:id="equipmentResultsListView">
                                                                <VBox.margin>
                                                                   <Insets left="5.0" top="5.0" />
                                                                </VBox.margin>
                                                             </ListView>
                                                          </children>
                                                       </VBox>
-                                                      <Button mnemonicParsing="false" text="&gt;">
-                                                         <HBox.margin>
-                                                            <Insets left="5.0" top="120.0" />
-                                                         </HBox.margin>
-                                                      </Button>
+                                                      <Region prefHeight="215.0" prefWidth="35.0" />
                                                       <VBox>
                                                          <HBox.margin>
                                                             <Insets left="5.0" top="5.0" />

@@ -24,7 +24,10 @@ public class Student
         this.studentCourse = new SimpleStringProperty(studentCourse);
         this.studentPhoneNumber = new SimpleStringProperty(studentPhoneNumber);
     }
+    public Student()
+    {
 
+    }
     public void setCardUID(String cardUID)
     {
         this.cardUID.set(cardUID);

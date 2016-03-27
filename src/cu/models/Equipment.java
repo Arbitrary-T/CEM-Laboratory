@@ -39,7 +39,8 @@ public class Equipment
         this.itemCategory = itemCategory;
     }
 
-    public boolean isFunctional() {
+    public boolean isFunctional()
+    {
         return functional;
     }
 
@@ -63,9 +64,22 @@ public class Equipment
     }
 
     @Override
+    public int hashCode()
+    {
+        return (7 * 31) + getItemID();
+    }
+    @Override
+    public boolean equals(Object object)
+    {
+        if(object == null || getClass() != object.getClass())
+        {
+            return false;
+        }
+        return this.getItemID() == ((Equipment) object).getItemID();
+    }
+    @Override
     public String toString()
     {
-        String equipment = itemID + "\t" + itemName + "\t" + itemCategory + "\t" + functional + "\t" + partOfBundle;
-        return equipment;
+        return itemID + "\t" + itemName + "\t" + itemCategory + "\t" + functional + "\t" + partOfBundle;
     }
 }

@@ -1,5 +1,6 @@
 package cu.controllers.tabs;
 
+import cu.Main;
 import cu.controllers.MainViewController;
 import cu.interfaces.CodeScannerInterface;
 import cu.interfaces.DatabaseInterface;
@@ -204,21 +205,8 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
         });
         idTableColumn.setEditable(false);
         idTableColumn.setCellValueFactory(new PropertyValueFactory<>("itemID"));
-        idTableColumn.setCellFactory(TextFieldTableCell.<Equipment, Integer>forTableColumn(new IntegerStringConverter()));
-        idTableColumn.setOnEditCommit((CellEditEvent<Equipment, Integer> event) ->
-        {
-            tempEquipment = event.getTableView().getItems().get(event.getTablePosition().getRow());
-            if(!event.getNewValue().toString().isEmpty())
-            {
-                if(event.getNewValue().toString().matches("\\d*"))
-                {
-                    System.out.println(event.getNewValue());
+        idTableColumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 
-                    tempEquipment.setItemID(event.getNewValue());
-                    equipmentDatabase.editEquipmentEntry(tempEquipment, event.getOldValue());
-                }
-            }
-        });
         nameTableColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
         nameTableColumn.setCellFactory(TextFieldTableCell.<Equipment>forTableColumn());
         nameTableColumn.setOnEditCommit((CellEditEvent<Equipment, String> event) ->

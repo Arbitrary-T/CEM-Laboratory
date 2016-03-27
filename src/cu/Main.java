@@ -1,8 +1,6 @@
 package cu;
 
-import cu.models.CardListener;
-import cu.models.CodeScannerCOM;
-import cu.models.Student;
+import cu.models.*;
 import javafx.application.Application;
 
 import javafx.fxml.FXMLLoader;
@@ -17,7 +15,6 @@ public class Main extends Application
 {
     //maybe change to context..?
     public static Student currentStudent;
-    private static Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) throws Exception
@@ -26,19 +23,16 @@ public class Main extends Application
         primaryStage.setTitle("CU CEM Laboratory Management");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
-        Main.primaryStage = primaryStage;
     }
 
-    public static Stage getPrimaryStage()
-    {
-        return primaryStage;
-    }
 
     public static void main(String[] args)
     {
         ExecutorService exec = Executors.newFixedThreadPool(2);
         exec.submit(new CodeScannerCOM());
         exec.submit(new CardListener());
+        //new EquipmentOnLoan(new Student(), new Equipment(), 3, "Hl");
+
         launch(args);
         exec.shutdownNow();
     }

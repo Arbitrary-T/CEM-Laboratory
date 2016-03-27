@@ -15,17 +15,10 @@ public class EquipmentDatabase extends Database
     private PreparedStatement insertItem;
     private PreparedStatement deleteItem;
     private PreparedStatement updateItem;
-    private PreparedStatement searchItem;
     private PreparedStatement deleteAll;
     private PreparedStatement getAllEquipment;
     private PreparedStatement getItem;
     private ObservableList<Equipment> equipmentObservableList = FXCollections.observableArrayList();
-    private String createTableStatement = "CREATE TABLE Equipment(" +
-                                  "itemID INT NOT NULL PRIMARY KEY, " +
-                                  "itemName VARCHAR(256), " +
-                                  "itemCategory VARCHAR(256), " +
-                                  "functional BOOLEAN, " +
-                                  "partOfBundle VARCHAR(256))";
     private  static DatabaseInterface agent;
 
     public static void activateAgent(DatabaseInterface mainAgent)
@@ -35,7 +28,14 @@ public class EquipmentDatabase extends Database
 
     public EquipmentDatabase(String database)
     {
+        String createTableStatement = "CREATE TABLE Equipment(" +
+                                      "itemID INT NOT NULL PRIMARY KEY, " +
+                                      "itemName VARCHAR(256), " +
+                                      "itemCategory VARCHAR(256), " +
+                                      "functional BOOLEAN, " +
+                                      "partOfBundle VARCHAR(256))";
         activateAgent(agent);
+
         databaseConnection = loadDatabase(database, createTableStatement);
         try
         {
@@ -44,7 +44,6 @@ public class EquipmentDatabase extends Database
                 insertItem = databaseConnection.prepareStatement("INSERT INTO Equipment VALUES (?,?,?,?,?)");
                 deleteItem = databaseConnection.prepareStatement("DELETE FROM Equipment WHERE itemID = ?");
                 updateItem = databaseConnection.prepareStatement("UPDATE Equipment SET itemID=?, itemName=?, itemCategory=?, functional=?, partOfBundle=? WHERE itemID=?");
-                searchItem = databaseConnection.prepareStatement("SELECT * FROM Equipment WHERE itemID = ?");
                 deleteAll = databaseConnection.prepareStatement("DELETE FROM Equipment WHERE 1=1");
                 getItem = databaseConnection.prepareStatement("SELECT * FROM Equipment WHERE itemID = ?");
                 getAllEquipment = databaseConnection.prepareStatement("SELECT * FROM Equipment");

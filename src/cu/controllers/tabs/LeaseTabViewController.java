@@ -7,6 +7,7 @@ import cu.interfaces.CardInterface;
 import cu.interfaces.CodeScannerInterface;
 import cu.models.*;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,11 +21,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.derby.iapi.util.StringUtil;
-
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,6 +50,20 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
     private ImageView studentCardBack;
     @FXML
     private TableView leasedItemsTableView;
+    @FXML
+    private TableColumn<EquipmentOnLoan, String> itemTableColumn;
+    @FXML
+    private TableColumn<EquipmentOnLoan, String> leasedToTableColumn;
+    @FXML
+    private TableColumn<EquipmentOnLoan, String> leasedOnTableColumn;
+    @FXML
+    private TableColumn<EquipmentOnLoan, String> timeLeftTableColumn;
+    @FXML
+    private TableColumn<EquipmentOnLoan, String> remarksTableColumn;
+    @FXML
+    private TextField searchDatabaseTextField;
+    @FXML
+    private ListView equipmentResultsListView;
     @FXML
     private Label stdNameLabel;
     @FXML
@@ -81,11 +94,16 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
     private Button clearOptionsButton;
     @FXML
     private ListView selectedItemsListView;
+
+    private ObservableList<EquipmentOnLoan> itemsOnLeaseObservableList = FXCollections.observableArrayList();
+
     @FXML
     void initialize()
     {
+        LocalDateTime oldTime = LocalDateTime.now();
         CardListener.activateAgent(this);
         CodeScannerCOM.activateAgent(this);
+
         timeComboBox.valueProperty().addListener((observable1, oldValue1, newValue1) ->
         {
             if(newValue1.equals("CUSTOM"))
@@ -115,7 +133,59 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
             Scale scale = new Scale(scale_factor, scale_factor, 0, pivot_y);
             studentDetailsTextGroup.getTransforms().add(scale);
         }));
+        leasedItemsTableView.setItems(itemsOnLeaseObservableList);
         coventryLogo.setImage(QRGenerator.generateQRCode("1",200,200));
+        itemTableColumn.setEditable(false);
+        itemTableColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper(p.getValue().getEquipmentID().toString()));
+        timeLeftTableColumn.setEditable(false);
+        timeLeftTableColumn.setCellValueFactory(p -> p.getValue().getLeaseTimeLeft());
+        leasedOnTableColumn.setEditable(false);
+        leasedOnTableColumn.setCellValueFactory(p->p.getValue().getLeaseStartTime());
+        leasedToTableColumn.setEditable(false);
+        leasedToTableColumn.setCellValueFactory(p-> new ReadOnlyObjectWrapper(p.getValue().getStudent().getStudentID()));
+
+        confirmLeaseButton.setOnMouseClicked(event ->
+        {
+            if(selectedItemsListView.getItems().size() > 0)
+            {
+                if(Main.currentStudent != null)
+                {
+                    switch(timeComboBox.getSelectionModel().getSelectedIndex())
+                    {
+                        case 0:
+                            itemsOnLeaseObservableList.add(new EquipmentOnLoan(Main.currentStudent, scannedItems.subList(0,scannedItems.size()),1,remarksTextArea.getText()));
+                            break;
+                        case 1:
+                            itemsOnLeaseObservableList.add(new EquipmentOnLoan(Main.currentStudent, scannedItems.subList(0,scannedItems.size()),2,remarksTextArea.getText()));
+                            break;
+                        case 2:
+                            itemsOnLeaseObservableList.add(new EquipmentOnLoan(Main.currentStudent, scannedItems.subList(0,scannedItems.size()),3,remarksTextArea.getText()));
+                            break;
+                        case 3:
+                            try
+                            {
+                                itemsOnLeaseObservableList.add(new EquipmentOnLoan(Main.currentStudent, scannedItems.subList(0,scannedItems.size()),Integer.parseInt(customTimeTextField.getText()),remarksTextArea.getText()));
+                            }
+                            catch (NumberFormatException e)
+                            {
+                                e.printStackTrace();
+                            }
+                            break;
+                    }
+
+                }
+                clearOptionsButton.fireEvent(event);
+            }
+        });
+
+        clearOptionsButton.setOnMouseClicked(event ->
+        {
+            searchDatabaseTextField.clear();
+            customTimeTextField.clear();
+            scannedItems.clear();
+            remarksTextArea.clear();
+            Main.currentStudent = null;
+        });
     }
 
     @Override
@@ -182,7 +252,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         System.out.println(QRCode);
         if(MainViewController.index == 0)
         {
-            if(Main.currentStudent != null)
+            if (Main.currentStudent != null)
             {
                 Pattern intsOnly = Pattern.compile("^[\\d]*");
                 Matcher makeMatch = intsOnly.matcher(QRCode);
@@ -199,7 +269,10 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
                 }
                 Equipment s = equipmentDatabase.getItem(inputToInt);
                 System.out.println(s.toString());
-                scannedItems.add(s);
+                if (!scannedItems.contains(s) && !leasedItemsTableView.getItems().contains(s))
+                {
+                    scannedItems.add(s);
+                }
                 selectedItemsListView.setItems(scannedItems);
             }
             else
@@ -211,5 +284,9 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
                 notifyCardReader.show();
             }
         }
+    }
+    private void checkItemInTable()
+    {
+        //check table if item exists
     }
 }
