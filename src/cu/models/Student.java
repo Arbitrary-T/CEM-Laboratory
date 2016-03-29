@@ -8,21 +8,21 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class Student
 {
-    private SimpleStringProperty cardUID ;
-    private SimpleStringProperty studentName ;
-    private SimpleStringProperty studentEmail ;
-    private SimpleStringProperty studentCourse ;
-    private SimpleStringProperty studentPhoneNumber;
-    private SimpleIntegerProperty studentID;
+    private SimpleStringProperty cardUID = new SimpleStringProperty();
+    private SimpleStringProperty studentName = new SimpleStringProperty();
+    private SimpleStringProperty studentEmail = new SimpleStringProperty();
+    private SimpleStringProperty studentCourse = new SimpleStringProperty();
+    private SimpleStringProperty studentPhoneNumber = new SimpleStringProperty();
+    private SimpleIntegerProperty studentID = new SimpleIntegerProperty();
 
     public Student(String cardUID, String studentName, int studentID, String studentEmail, String studentCourse, String studentPhoneNumber)
     {
-        this.cardUID = new SimpleStringProperty(cardUID);
-        this.studentID = new SimpleIntegerProperty(studentID);
-        this.studentName = new SimpleStringProperty(studentName);
-        this.studentEmail = new SimpleStringProperty(studentEmail);
-        this.studentCourse = new SimpleStringProperty(studentCourse);
-        this.studentPhoneNumber = new SimpleStringProperty(studentPhoneNumber);
+        setCardUID(cardUID);
+        setID(studentID);
+        setStudentName(studentName);
+        setStudentEmail(studentEmail);
+        setStudentCourse(studentCourse);
+        setPhoneNumber(studentPhoneNumber);
     }
     public Student()
     {
@@ -56,6 +56,7 @@ public class Student
     public void setID(int studentID)
     {
         this.studentID.set(studentID);
+
     }
 
     public String getCardUID()
@@ -82,9 +83,25 @@ public class Student
     {
         return this.studentID.get();
     }
+
     @Override
     public String toString()
     {
        return cardUID.toString() + "\t" + studentID + "\t" + studentName.toString();
     }
+    @Override
+    public int hashCode()
+    {
+        return (7 * 31) + getStudentID();
+    }
+    @Override
+    public boolean equals(Object object)
+    {
+        if(object == null || getClass() != object.getClass())
+        {
+            return false;
+        }
+        return this.getStudentID() == ((Student) object).getStudentID();
+    }
+
 }

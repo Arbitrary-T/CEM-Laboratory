@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.CheckListView?>
+
+<DialogPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.dialogues.ReturnsDialogueController">
+   <content>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <HBox prefHeight="200.0" prefWidth="527.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <VBox>
+                     <children>
+                        <Label text="Check the items that are working properly">
+                           <font>
+                              <Font size="14.0" />
+                           </font></Label>
+                        <CheckListView fx:id="itemsToScanList" />
+                     </children>
+                  </VBox>
+                  <Region prefHeight="171.0" prefWidth="79.0" />
+                  <VBox prefHeight="22.0" prefWidth="158.0">
+                     <children>
+                        <Label text="Items left:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="itemsLeftLabel" textFill="#1872b6">
+                           <font>
+                              <Font size="96.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="50.0" top="10.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Button fx:id="confirmButton" mnemonicParsing="false" onAction="#onConfirm" prefHeight="25.0" prefWidth="158.0" text="Confirm" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children></AnchorPane>
+   </content>
+   <header>
+      <HBox style="-fx-background-color: e2e2e2;">
+         <children>
+            <Region prefWidth="28.0" />
+            <Label text="Please scan-in the following items:">
+               <font>
+                  <Font size="20.0" />
+               </font>
+               <HBox.margin>
+                  <Insets top="25.0" />
+               </HBox.margin>
+            </Label>
+            <Region prefWidth="105.0" />
+            <ImageView fitHeight="85.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../resources/images/return.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+   </header>
+</DialogPane>

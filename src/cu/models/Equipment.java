@@ -77,9 +77,10 @@ public class Equipment
         }
         return this.getItemID() == ((Equipment) object).getItemID();
     }
+
     @Override
     public String toString()
     {
-        return itemID + "\t" + itemName + "\t" + itemCategory + "\t" + functional + "\t" + partOfBundle;
+        return "Item ID " + itemID + " - Item: "+ itemName+"\n";
     }
 }

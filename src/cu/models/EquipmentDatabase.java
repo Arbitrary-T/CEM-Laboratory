@@ -1,5 +1,6 @@
 package cu.models;
 
+import cu.Main;
 import cu.interfaces.DatabaseInterface;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -144,12 +145,15 @@ public class EquipmentDatabase extends Database
             {
                 getItem.setInt(1, itemID);
                 ResultSet resultSet = getItem.executeQuery();
+                Equipment result = null;
                 if(resultSet != null)
                 {
                     if(resultSet.next())
                     {
-                        return new Equipment(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getBoolean(4), resultSet.getString(5));
+                        result= new Equipment(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getBoolean(4), resultSet.getString(5));
                     }
+                    resultSet.close();
+                    return result;
                 }
             }
             catch (SQLException e)
@@ -172,6 +176,7 @@ public class EquipmentDatabase extends Database
                         //System.out.println(resultSet.getInt(1) + resultSet.getString(2) + resultSet.getString(3) + resultSet.getBoolean(4) + resultSet.getString(5));
                         equipmentObservableList.add(new Equipment(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getBoolean(4), resultSet.getString(5)));
                     }
+                    resultSet.close();
                     return equipmentObservableList;
                 }
         }

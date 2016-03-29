@@ -159,7 +159,7 @@
                                                             <Insets left="5.0" top="5.0" />
                                                          </HBox.margin>
                                                          <children>
-                                                            <Label text="Selected items">
+                                                            <Label text="Scanned items">
                                                                <font>
                                                                   <Font name="System Bold" size="12.0" />
                                                                </font>

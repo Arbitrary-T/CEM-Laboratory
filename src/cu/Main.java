@@ -31,8 +31,6 @@ public class Main extends Application
         ExecutorService exec = Executors.newFixedThreadPool(2);
         exec.submit(new CodeScannerCOM());
         exec.submit(new CardListener());
-        //new EquipmentOnLoan(new Student(), new Equipment(), 3, "Hl");
-
         launch(args);
         exec.shutdownNow();
     }

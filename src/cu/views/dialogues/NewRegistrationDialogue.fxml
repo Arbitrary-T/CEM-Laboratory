@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.text.Font?>
 
-<DialogPane maxHeight="65.0" minHeight="65.0" minWidth="280.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.dialogues.NewRegistrationDialogueController">
+<DialogPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.dialogues.NewRegistrationDialogueController">
     <content>
       <AnchorPane>
          <children>
@@ -48,7 +53,7 @@
    <header>
       <HBox style="-fx-background-color: e2e2e2;">
          <children>
-            <Region layoutX="364.0" layoutY="10.0" prefHeight="81.0" prefWidth="28.0" />
+            <Region layoutX="364.0" layoutY="10.0" prefWidth="28.0" />
             <Label text="Please enter your details below:">
                <font>
                   <Font size="20.0" />
@@ -57,7 +62,7 @@
                   <Insets top="25.0" />
                </padding>
             </Label>
-            <Region prefHeight="81.0" prefWidth="105.0" HBox.hgrow="ALWAYS" />
+            <Region prefWidth="105.0" HBox.hgrow="ALWAYS" />
             <ImageView fitHeight="71.0" fitWidth="89.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../resources/images/add_user.png" />

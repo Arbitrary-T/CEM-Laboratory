@@ -1,12 +1,9 @@
 package cu.models;
 
-import cu.Main;
 import cu.interfaces.DatabaseInterface;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.awt.*;
-import java.io.File;
 import java.sql.*;
 
 /**
@@ -69,6 +66,7 @@ public class StudentDatabase extends Database
                 updateStudent.setString(5, studentData.getStudentPhoneNumber());
                 updateStudent.setString(6, studentData.getCardUID());
                 updateStudent.executeUpdate();
+                databaseAgent.onStudentDatabaseUpdate();
             }
             catch(SQLException e)
             {
@@ -100,7 +98,6 @@ public class StudentDatabase extends Database
     }
     public boolean addStudentEntry(Student studentData)
     {
-        Main.currentStudent = studentData;
         if(databaseConnection != null)
         {
             try
@@ -132,16 +129,18 @@ public class StudentDatabase extends Database
             ResultSet resultSet = getAllStudents.executeQuery();
             if(resultSet != null)
             {
-                    while (resultSet.next())
-                    {
-                        studentsFromDatabase.add(new Student(resultSet.getString(1), resultSet.getString(2), resultSet.getInt(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6)));
-                    }
+                while (resultSet.next())
+                {
+                    studentsFromDatabase.add(new Student(resultSet.getString(1), resultSet.getString(2), resultSet.getInt(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6)));
+                }
+                resultSet.close();
             }
         }
         catch (SQLException e)
         {
             e.printStackTrace();
         }
+
         return studentsFromDatabase;
     }
     public Student searchDatabase(String cardUID)
@@ -150,15 +149,13 @@ public class StudentDatabase extends Database
         {
             searchStudent.setString(1, cardUID);
             ResultSet resultSet = searchStudent.executeQuery();
-
-            if(resultSet != null)
+            Student result = null;
+            if(resultSet.next())
             {
-                while(resultSet.next())
-                {
-                    //System.out.println(resultSet.getString(1) + resultSet.getString(2) + resultSet.getInt(3) + resultSet.getString(4) + resultSet.getString(5) + resultSet.getString(6));
-                    return new Student(resultSet.getString(1), resultSet.getString(2), resultSet.getInt(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6));
-                }
+                result = new Student(resultSet.getString(1), resultSet.getString(2), resultSet.getInt(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6));
             }
+            resultSet.close();
+            return result;
         }
         catch (SQLException e)
         {
@@ -166,5 +163,4 @@ public class StudentDatabase extends Database
         }
         return null;
     }
-
 }

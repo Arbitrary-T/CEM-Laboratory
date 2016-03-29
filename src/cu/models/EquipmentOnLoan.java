@@ -85,6 +85,8 @@ public class EquipmentOnLoan
                 }
                 else
                 {
+                    //Call method to increase the student's counter in terms of not successfully returning an item
+                    //send email to student
                     updateTimeLeft.cancel();
                     updateTimeLeft.purge();
                     return;

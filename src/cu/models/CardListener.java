@@ -9,16 +9,16 @@ import javax.xml.bind.DatatypeConverter;
 
 public class CardListener implements Runnable
 {
-    TerminalFactory terminalFactory;
-    List<CardTerminal> availableTerminals;
-    CardTerminal firstReader;
-    Card scannedCard;
-    CardChannel cardChannel;
-    CommandAPDU getChallenge;
-    ResponseAPDU response;
-    long pastTime = System.currentTimeMillis() - 2000;
+    private TerminalFactory terminalFactory;
+    private List<CardTerminal> availableTerminals;
+    private CardTerminal firstReader;
+    private Card scannedCard;
+    private CardChannel cardChannel;
+    private CommandAPDU getChallenge;
+    private ResponseAPDU response;
+    private long pastTime = System.currentTimeMillis() - 2000;
     static CardInterface agent;
-    byte[] byteHistory = {0x00};
+    private byte[] byteHistory = {0x00};
 
     public static void activateAgent(CardInterface mainAgent)
     {

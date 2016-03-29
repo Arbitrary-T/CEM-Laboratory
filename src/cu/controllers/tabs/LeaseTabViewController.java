@@ -3,6 +3,7 @@ package cu.controllers.tabs;
 import cu.Main;
 import cu.controllers.MainViewController;
 import cu.controllers.dialogues.NewRegistrationDialogueController;
+import cu.controllers.dialogues.ReturnsDialogueController;
 import cu.interfaces.CardInterface;
 import cu.interfaces.CodeScannerInterface;
 import cu.models.*;
@@ -23,7 +24,7 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +39,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
     private EquipmentDatabase equipmentDatabase = new EquipmentDatabase("equipment");
 
     private boolean isRegistrationWindowOpen = false;
+    private boolean isReturnsWindowOpen = false;
     private ObservableList<String> timeComboBoxOptions = FXCollections.observableArrayList("1 Hour", "2 Hours", "3 Hours", "CUSTOM");
     private ObservableList<Equipment> scannedItems = FXCollections.observableArrayList();
 
@@ -49,7 +51,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
     @FXML
     private ImageView studentCardBack;
     @FXML
-    private TableView leasedItemsTableView;
+    private TableView<EquipmentOnLoan> leasedItemsTableView;
     @FXML
     private TableColumn<EquipmentOnLoan, String> itemTableColumn;
     @FXML
@@ -93,14 +95,13 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
     @FXML
     private Button clearOptionsButton;
     @FXML
-    private ListView selectedItemsListView;
+    private ListView<Equipment> selectedItemsListView;
 
     private ObservableList<EquipmentOnLoan> itemsOnLeaseObservableList = FXCollections.observableArrayList();
 
     @FXML
     void initialize()
     {
-        LocalDateTime oldTime = LocalDateTime.now();
         CardListener.activateAgent(this);
         CodeScannerCOM.activateAgent(this);
 
@@ -134,16 +135,16 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
             studentDetailsTextGroup.getTransforms().add(scale);
         }));
         leasedItemsTableView.setItems(itemsOnLeaseObservableList);
-        coventryLogo.setImage(QRGenerator.generateQRCode("1",200,200));
         itemTableColumn.setEditable(false);
-        itemTableColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper(p.getValue().getEquipmentID().toString()));
+        itemTableColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue().getEquipmentID().toString()));
         timeLeftTableColumn.setEditable(false);
         timeLeftTableColumn.setCellValueFactory(p -> p.getValue().getLeaseTimeLeft());
         leasedOnTableColumn.setEditable(false);
         leasedOnTableColumn.setCellValueFactory(p->p.getValue().getLeaseStartTime());
         leasedToTableColumn.setEditable(false);
-        leasedToTableColumn.setCellValueFactory(p-> new ReadOnlyObjectWrapper(p.getValue().getStudent().getStudentID()));
-
+        leasedToTableColumn.setCellValueFactory(p-> new ReadOnlyObjectWrapper<>(p.getValue().getStudent().getStudentName()+" ("+p.getValue().getStudent().getStudentID() +")"));
+        remarksTableColumn.setEditable(false);
+        remarksTableColumn.setCellValueFactory(p-> new ReadOnlyObjectWrapper<>(p.getValue().getRemarks()));
         confirmLeaseButton.setOnMouseClicked(event ->
         {
             if(selectedItemsListView.getItems().size() > 0)
@@ -168,6 +169,11 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
                             }
                             catch (NumberFormatException e)
                             {
+                                Alert notifyCardReader = new Alert(Alert.AlertType.INFORMATION);
+                                notifyCardReader.setTitle("Error!");
+                                notifyCardReader.setHeaderText("Unrecognised input!");
+                                notifyCardReader.setContentText("Please make sure the time entered is a whole number!");
+                                notifyCardReader.show();
                                 e.printStackTrace();
                             }
                             break;
@@ -175,6 +181,22 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
 
                 }
                 clearOptionsButton.fireEvent(event);
+            }
+            else if(Main.currentStudent != null)
+            {
+                Alert notifyCardReader = new Alert(Alert.AlertType.INFORMATION);
+                notifyCardReader.setTitle("Error!");
+                notifyCardReader.setHeaderText("No items scanned!");
+                notifyCardReader.setContentText("Please scan the wanted items prior to confirming!");
+                notifyCardReader.show();
+            }
+            else
+            {
+                Alert notifyCardReader = new Alert(Alert.AlertType.INFORMATION);
+                notifyCardReader.setTitle("Error!");
+                notifyCardReader.setHeaderText("Student not found!");
+                notifyCardReader.setContentText("Please scan your student card prior to scanning items!");
+                notifyCardReader.show();
             }
         });
 
@@ -185,6 +207,12 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
             scannedItems.clear();
             remarksTextArea.clear();
             Main.currentStudent = null;
+            VBox s = (VBox) studentDetailsTextGroup.getChildren().get(0);
+            for(int i=0;i<5; i++)
+            {
+                Label temp = (Label) s.getChildren().get(i);
+                temp.setText("");
+            }
         });
     }
 
@@ -203,7 +231,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
             stdPhoneNumberLabel.setText(Main.currentStudent.getStudentPhoneNumber());
         };
         //else if the student is not in the database open a new window and register the student
-        if (!isRegistrationWindowOpen && Main.currentStudent == null) {
+        if(!isRegistrationWindowOpen && Main.currentStudent == null) {
             System.out.println("Student does no exist in database -> Opening registration window");
             //Running the UI manipulating code in the UI thread
             Runnable openRegistrationWindow = () ->
@@ -227,12 +255,11 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
                         {
                             Platform.runLater(configureStudentCard);
                         }
-                    }
-                    ));
+                    }));
                     dialogStage.showAndWait();
 
                 }
-                catch (IOException e)
+                catch(IOException e)
                 {
                     // Exception gets thrown if the fxml file could not be loaded
                     e.printStackTrace();
@@ -240,7 +267,41 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
             };
             Platform.runLater(openRegistrationWindow);
         }
-        else if(!isRegistrationWindowOpen)
+        else if(Main.currentStudent != null && studentExistsInTable() && !isReturnsWindowOpen)
+        {
+            System.out.println("HI");
+            Runnable openRegistrationWindow = () ->
+            {
+                try
+                {
+                    isReturnsWindowOpen = true;
+                    FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/dialogues/ReturnsDialogue.fxml")); // Load the fxml file and create a new stage for the popup
+                    DialogPane page = loader.load();
+                    Stage dialogStage = new Stage();
+                    Scene scene = new Scene(page);
+                    dialogStage.setScene(scene);
+                    dialogStage.setTitle("Return Items");
+                    ReturnsDialogueController controller = loader.getController();
+                    controller.setup(dialogStage, studentDatabase, equipmentDatabase, getLoanedItems(Main.currentStudent));
+                    dialogStage.setOnCloseRequest((event ->
+                    {
+                        isReturnsWindowOpen = false;
+                        System.out.println("Registration window closed.");
+                    }));
+                    dialogStage.showAndWait();
+
+                }
+                catch(IOException e)
+                {
+                    // Exception gets thrown if the fxml file could not be loaded
+                    e.printStackTrace();
+                }
+            };
+            Platform.runLater(openRegistrationWindow);
+            Platform.runLater(configureStudentCard);
+
+        }
+        else if (!isRegistrationWindowOpen)
         {
             Platform.runLater(configureStudentCard);
         }
@@ -252,7 +313,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         System.out.println(QRCode);
         if(MainViewController.index == 0)
         {
-            if (Main.currentStudent != null)
+            if (Main.currentStudent != null && !isReturnsWindowOpen)
             {
                 Pattern intsOnly = Pattern.compile("^[\\d]*");
                 Matcher makeMatch = intsOnly.matcher(QRCode);
@@ -269,24 +330,53 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
                 }
                 Equipment s = equipmentDatabase.getItem(inputToInt);
                 System.out.println(s.toString());
-                if (!scannedItems.contains(s) && !leasedItemsTableView.getItems().contains(s))
+                if (!scannedItems.contains(s) && !itemAlreadyExists(s))
                 {
                     scannedItems.add(s);
                 }
                 selectedItemsListView.setItems(scannedItems);
             }
-            else
+            else if(Main.currentStudent == null && !isReturnsWindowOpen)
             {
                 Alert notifyCardReader = new Alert(Alert.AlertType.INFORMATION);
                 notifyCardReader.setTitle("Error!");
-                notifyCardReader.setHeaderText("Student not found!");
-                notifyCardReader.setContentText("Please scan your student card prior to scanning items!");
+                notifyCardReader.setHeaderText("Student/Items not found!");
+                notifyCardReader.setContentText("Please scan your student card and the wanted items prior to confirming!");
                 notifyCardReader.show();
             }
         }
     }
-    private void checkItemInTable()
+    private boolean studentExistsInTable()
     {
-        //check table if item exists
+        for(EquipmentOnLoan equipmentOnLoan:leasedItemsTableView.getItems())
+        {
+            if(equipmentOnLoan.getStudent().equals(Main.currentStudent))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean itemAlreadyExists(Equipment scannedItem)
+    {
+        for(EquipmentOnLoan equipmentOnLoan:leasedItemsTableView.getItems())
+        {
+            if(equipmentOnLoan.getEquipmentID().contains(scannedItem))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    private List<Equipment> getLoanedItems(Student student)
+    {
+        for(EquipmentOnLoan equipmentOnLoan : leasedItemsTableView.getItems())
+        {
+            if(equipmentOnLoan.getStudent().equals(student))
+            {
+                return equipmentOnLoan.getEquipmentID();
+            }
+        }
+        return null;
     }
 }

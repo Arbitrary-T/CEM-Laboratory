@@ -1,6 +1,5 @@
 package cu.controllers.tabs;
 
-import cu.Main;
 import cu.controllers.MainViewController;
 import cu.interfaces.CodeScannerInterface;
 import cu.interfaces.DatabaseInterface;
@@ -290,7 +289,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
         studentTableView.setPlaceholder(new Label("No records available!"));
         studentIDColumn.setEditable(false);
         studentIDColumn.setCellValueFactory(new PropertyValueFactory<>("studentID"));
-        studentIDColumn.setCellFactory(TextFieldTableCell.<Student,Integer>forTableColumn(new IntegerStringConverter()));
+        studentIDColumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
         studentIDColumn.setOnEditCommit((CellEditEvent<Student, Integer> event) ->
         {
             tempStudent = event.getTableView().getItems().get(event.getTablePosition().getRow());
@@ -300,7 +299,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
             studentDatabase.editStudentEntry(tempStudent);
         });
         studentNameColumn.setCellValueFactory(new PropertyValueFactory<>("studentName"));
-        studentNameColumn.setCellFactory(TextFieldTableCell.<Student>forTableColumn());
+        studentNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         studentNameColumn.setOnEditCommit((CellEditEvent<Student, String> event) ->
         {
             tempStudent = event.getTableView().getItems().get(event.getTablePosition().getRow());
@@ -311,7 +310,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
         });
 
         studentCourseColumn.setCellValueFactory(new PropertyValueFactory<>("studentCourse"));
-        studentCourseColumn.setCellFactory(TextFieldTableCell.<Student>forTableColumn());
+        studentCourseColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         studentCourseColumn.setOnEditCommit((CellEditEvent<Student, String> event) ->
         {
             tempStudent = event.getTableView().getItems().get(event.getTablePosition().getRow());
@@ -321,7 +320,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
         });
 
         studentEmailColumn.setCellValueFactory(new PropertyValueFactory<>("studentEmail"));
-        studentEmailColumn.setCellFactory(TextFieldTableCell.<Student>forTableColumn());
+        studentEmailColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         studentEmailColumn.setOnEditCommit((CellEditEvent<Student, String> event) ->
         {
             tempStudent = event.getTableView().getItems().get(event.getTablePosition().getRow());
@@ -330,7 +329,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
             studentDatabase.editStudentEntry(tempStudent);
         });
         studentPhoneNumberColumn.setCellValueFactory(new PropertyValueFactory<>("studentPhoneNumber"));
-        studentPhoneNumberColumn.setCellFactory(TextFieldTableCell.<Student>forTableColumn());
+        studentPhoneNumberColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         studentPhoneNumberColumn.setOnEditCommit((CellEditEvent<Student, String> event) ->
         {
             tempStudent = event.getTableView().getItems().get(event.getTablePosition().getRow());

@@ -38,7 +38,7 @@ public class NewRegistrationDialogueController
 
     private TextValidation validation = new TextValidation();
     @FXML
-    void initialize()
+    private void initialize()
     {
         submitButton.setDisable(true);
         stdName.textProperty().addListener(((observable, oldValue, newValue) ->
@@ -141,14 +141,8 @@ public class NewRegistrationDialogueController
         System.out.println("Canceled by user.");
     }
 
-    public boolean studentExists(String cardUID)
-    {
-        studentDatabase.searchDatabase(cardUID);
-        return false;
-    }
     public void configureDialogStage(Stage dialogStage, String cardUID)
     {
-        studentExists(cardUID);
         this.dialogStage = dialogStage;
         this.cardUID = cardUID;
     }

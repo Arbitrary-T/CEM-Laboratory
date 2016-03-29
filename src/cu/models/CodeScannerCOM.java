@@ -91,29 +91,44 @@ public class CodeScannerCOM implements Runnable, SerialPortEventListener
                 byte[] readBuffer = new byte[256];
                 ArrayList<Byte> eee = new ArrayList<>();
                 int a = 0;
-                try {
-                    while (inputStream.available() > 0) {
+                try
+                {
+                    while (inputStream.available() > 0)
+                    {
                         a = inputStream.available();
                         int numBytes = inputStream.read(readBuffer);
                     }
-                    for (int i = 0; i < a; i++) {
+                    for (int i = 0; i < a; i++)
+                    {
                         eee.add(readBuffer[i]);
                     }
                     System.out.println(eee);
                     byte[] array = new byte[eee.size()];
                     int i = 0;
-                    for (Byte current : eee) {
+                    for (Byte current : eee)
+                    {
                         array[i] = current;
                         i++;
                     }
                     String s = new String(array);
                     System.out.println(s);
-                    if (s.length() > 1) {
-                        if (s.charAt(0) == 'Q' && s.charAt(1) == 'R') {
+                    if (s.length() > 1)
+                    {
+                        if (s.charAt(0) == 'Q' && s.charAt(1) == 'R')
+                        {
                             s = s.substring(2, s.length());
-                            for (CodeScannerInterface agent : agents) {
-                                final String finalS = s;
-                                Platform.runLater(() -> agent.onCodeScanner(finalS));
+                            for (Iterator<CodeScannerInterface> codeScannerInterfaceIterator = agents.iterator(); codeScannerInterfaceIterator.hasNext();)
+                            {
+                                CodeScannerInterface codeScannerInterface = codeScannerInterfaceIterator.next();
+                                if(codeScannerInterface != null)
+                                {
+                                    final String finalS = s;
+                                    Platform.runLater(() -> codeScannerInterface.onCodeScanner(finalS));
+                                }
+                                else
+                                {
+                                    codeScannerInterfaceIterator.remove();
+                                }
                             }
                         }
                     }
