@@ -11,6 +11,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import java.awt.image.BufferedImage;
 import java.io.UnsupportedEncodingException;
+import java.nio.Buffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,5 +43,23 @@ public class QRGenerator
             e.printStackTrace();
         }
         return imageFromString;
+    }
+
+    public static BufferedImage generateBufferedQRCode(String text, int w, int h)
+    {
+        BufferedImage image = null;
+        String charset = "UTF-8"; // or "ISO-8859-1"
+        Map<EncodeHintType, ErrorCorrectionLevel> hintMap = new HashMap<>();
+        hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+        try
+        {
+            BitMatrix matrix = new MultiFormatWriter().encode(new String(text.getBytes("UTF-8"), charset), BarcodeFormat.QR_CODE, w, h, hintMap);
+            image = MatrixToImageWriter.toBufferedImage(matrix);
+        }
+        catch (UnsupportedEncodingException | WriterException e)
+        {
+            e.printStackTrace();
+        }
+        return image;
     }
 }

@@ -11,19 +11,27 @@ import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -122,7 +130,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         barChart.maxWidthProperty().bind(leftAnchorPane.widthProperty());
         studentCardBack.fitHeightProperty().bind(leftAnchorPane.heightProperty());
         studentCardBack.fitWidthProperty().bind(leftAnchorPane.widthProperty());
-        studentCardBack.boundsInParentProperty().addListener(((observable, oldValue, newValue) ->
+        studentCardBack.boundsInParentProperty().addListener((observable ->
         {
             studentDetailsTextGroup.setLayoutX(studentCardBack.layoutBoundsProperty().get().getWidth() / 3);
             studentDetailsTextGroup.setLayoutY(studentDetailsTextGroup.layoutBoundsProperty().get().getHeight());
@@ -257,7 +265,6 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
                         }
                     }));
                     dialogStage.showAndWait();
-
                 }
                 catch(IOException e)
                 {
@@ -297,14 +304,17 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
                     e.printStackTrace();
                 }
             };
-            Platform.runLater(openRegistrationWindow);
             Platform.runLater(configureStudentCard);
-
+            Platform.runLater(openRegistrationWindow);
         }
         else if (!isRegistrationWindowOpen)
         {
             Platform.runLater(configureStudentCard);
         }
+        PDFRenderer  sss = new PDFRenderer();
+        ArrayList<BufferedImage> arrayList = new ArrayList<>();
+        arrayList.add(QRGenerator.generateBufferedQRCode("1", 100, 100));
+        sss.createFromQRCode(arrayList);
     }
 
     @Override
@@ -313,7 +323,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         System.out.println(QRCode);
         if(MainViewController.index == 0)
         {
-            if (Main.currentStudent != null && !isReturnsWindowOpen)
+            if(Main.currentStudent != null && !isReturnsWindowOpen)
             {
                 Pattern intsOnly = Pattern.compile("^[\\d]*");
                 Matcher makeMatch = intsOnly.matcher(QRCode);

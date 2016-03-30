@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckListView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,6 +30,8 @@ public class ReturnsDialogueController implements CodeScannerInterface
     private EquipmentDatabase equipmentDatabase;
     private Stage dialogStage;
     private int itemCount = -1;
+    ArrayList<Equipment> scannedEquipmentList = new ArrayList<>();
+
     @FXML
     private void initialize()
     {
@@ -53,17 +56,18 @@ public class ReturnsDialogueController implements CodeScannerInterface
         {
             e.printStackTrace();
         }
-        Equipment s = equipmentDatabase.getItem(inputToInt);
-        if(s != null)
+        Equipment scannedEquipment = equipmentDatabase.getItem(inputToInt);
+        if(scannedEquipment != null)
         {
-            if(itemsToScanList.getItems().contains(s))
+            if(itemsToScanList.getItems().contains(scannedEquipment) && !scannedEquipmentList.contains(scannedEquipment))
             {
+                scannedEquipmentList.add(scannedEquipment);
                 itemCount--;
                 itemsLeftLabel.setText(itemCount+"");
                 if(itemCount == 0)
                 {
                     confirmButton.setDisable(false);
-                    //System.out.println("DEAL WITH REMOVAL OF STUDENT & DATABASE OPERATIONS");
+                    //System.out.println("DEAL WITH REMOVAL OF STUDENT & DATABASE OPERATIONS"); (Method)
                 }
             }
         }
@@ -72,6 +76,7 @@ public class ReturnsDialogueController implements CodeScannerInterface
     public void setup(Stage dialogStage, StudentDatabase studentDatabase, EquipmentDatabase equipmentDatabase, List<Equipment> listOfItems)
     {
         this.dialogStage = dialogStage;
+        this.dialogStage.setOnCloseRequest(e -> scannedEquipmentList.clear());
         this.dialogStage.setResizable(false);
         this.studentDatabase = studentDatabase;
         this.equipmentDatabase = equipmentDatabase;
@@ -83,6 +88,12 @@ public class ReturnsDialogueController implements CodeScannerInterface
     @FXML
     private void onConfirm()
     {
-
+        for(int i = 0; i < itemsToScanList.getItems().size(); i++)
+        {
+            if(itemsToScanList.getCheckModel().isChecked(i))
+            {
+                System.out.println(itemsToScanList.getItems().get(i) + " is Checked!");
+            }
+        }
     }
 }
