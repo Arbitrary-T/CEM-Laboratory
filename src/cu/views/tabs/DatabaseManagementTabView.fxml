@@ -147,7 +147,7 @@
                                                   <content>
                                                     <AnchorPane>
                                                          <children>
-                                                            <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <VBox AnchorPane.bottomAnchor="-10.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="-10.0">
                                                                <children>
                                                                   <Label text="QR Code:" />
                                                                   <HBox>
@@ -155,6 +155,7 @@
                                                                         <ImageView fx:id="contextImageView" fitHeight="150.0" fitWidth="230.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" />
                                                                      </children>
                                                                   </HBox>
+                                                                  <Button mnemonicParsing="false" onAction="#onPrintClicked" text="Print Labels" />
                                                                </children>
                                                             </VBox>
                                                          </children></AnchorPane>

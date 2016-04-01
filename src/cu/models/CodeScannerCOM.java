@@ -96,7 +96,6 @@ public class CodeScannerCOM implements Runnable, SerialPortEventListener
                     while (inputStream.available() > 0)
                     {
                         a = inputStream.available();
-                        int numBytes = inputStream.read(readBuffer);
                     }
                     for (int i = 0; i < a; i++)
                     {
@@ -142,21 +141,3 @@ public class CodeScannerCOM implements Runnable, SerialPortEventListener
         }
     }
 }
-/*
-
- */
-/*
-       portList = CommPortIdentifier.getPortIdentifiers();
-
-        while (portList.hasMoreElements())
-        {
-            portId = (CommPortIdentifier) portList.nextElement();
-            if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL)
-            {
-                if (portId.getName().equals("COM5"))
-                {
-                    //if (portId.getName().equals("/dev/term/a")) {
-                }
-            }
-        }
- */

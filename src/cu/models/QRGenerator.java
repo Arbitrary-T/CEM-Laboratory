@@ -11,7 +11,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import java.awt.image.BufferedImage;
 import java.io.UnsupportedEncodingException;
-import java.nio.Buffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,11 +33,7 @@ public class QRGenerator
             BufferedImage image = MatrixToImageWriter.toBufferedImage(matrix);
             imageFromString = SwingFXUtils.toFXImage(image, null);
         }
-        catch (UnsupportedEncodingException e)
-        {
-            e.printStackTrace();
-        }
-        catch (WriterException e)
+        catch (UnsupportedEncodingException | WriterException e)
         {
             e.printStackTrace();
         }

@@ -1,77 +1,99 @@
 package cu.models;
 
-import javafx.scene.image.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
-import java.awt.*;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by T on 30/03/2016.
  */
 public class PDFRenderer
 {
+    private PDFont font = PDType1Font.HELVETICA;
+    private PDDocument doc;
+    private ArrayList<PDPage> pages = new ArrayList<>();
+
+    private int currentWidth = 60;
+    private int currentHeight = 665;
+    private int counter = 0;
+    private int currentPage = 0;
+
     public PDFRenderer()
     {
 
     }
 
-    public void createFromQRCode(ArrayList<BufferedImage> listOfQRCodes)
+    public void createLabelsFromQRCode(List<Equipment> listOfQRCodes)
     {
         try
         {
-
-            String fileName = "pdfWithImage.pdf";
-            PDDocument doc = new PDDocument();
+            String fileName = "Labels.pdf";
+            doc = new PDDocument();
             PDPage page = new PDPage();
-
+            pages.add(page);
             doc.addPage(page);
-            //PDImageXObject image = JPEGFactory.createFromImage(doc, listOfQRCodes.get(0));
 
-
-            //25 115 630
-            for(int i = 30; i < 725; i=i+90)
+            for(Equipment listOfQRCode : listOfQRCodes)
             {
-                addImage(doc, page, QRGenerator.generateBufferedQRCode("1", 100, 100), i, i);
+                addImage(QRGenerator.generateBufferedQRCode(listOfQRCode.getItemID() + "", 100, 100));
+                addText(listOfQRCode.getItemID()+ " " +listOfQRCode.getItemName());
+                adjustAlignment();
             }
-
-
             doc.save(fileName);
-
             doc.close();
 
         }
         catch (Exception e)
         {
-            System.err.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    public void addImage(PDDocument document, PDPage pdPage, BufferedImage bufferedImage, int x, int y) throws IOException
+    private void addImage(BufferedImage bufferedImage) throws IOException
     {
-        PDImageXObject image = JPEGFactory.createFromImage(document,bufferedImage);
-        PDPageContentStream contentStream = new PDPageContentStream(document, pdPage, PDPageContentStream.AppendMode.APPEND, false);
-        contentStream.drawImage(image, 0, y);
+        PDImageXObject image = JPEGFactory.createFromImage(doc,bufferedImage);
+        PDPageContentStream contentStream = new PDPageContentStream(doc, pages.get(currentPage), PDPageContentStream.AppendMode.APPEND, false);
+        contentStream.drawImage(image, currentWidth, currentHeight);
         contentStream.close();
     }
-
-    public BufferedImage toBufferedImage(Image img)
+    private void addText(String text) throws IOException
     {
-        if(img instanceof BufferedImage)
+        PDPageContentStream contentStream = new PDPageContentStream(doc, pages.get(currentPage), PDPageContentStream.AppendMode.APPEND, false);
+        contentStream.beginText();
+        contentStream.setFont(font, 8);
+        contentStream.newLineAtOffset(currentWidth+text.length(), currentHeight);
+        contentStream.showText(text);
+        contentStream.endText();
+        contentStream.close();
+    }
+    private void adjustAlignment()
+    {
+        //Rows Vs Columns of the labels
+        currentWidth+=95;
+        if(currentWidth >= 450)
         {
-            return (BufferedImage) img;
+            currentWidth = 60;
+            currentHeight-=102;
+            counter++;
+            if(counter == 7)
+            {
+                PDPage newPage = new PDPage();
+                doc.addPage(newPage);
+                pages.add(newPage);
+                currentHeight = 665;
+                currentPage++;
+                counter = 0;
+                System.out.println("Page + 1");
+            }
         }
-        BufferedImage bufferedImage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics2D = bufferedImage.createGraphics();
-        graphics2D.drawImage(img,0,0,null);
-        graphics2D.dispose();
-        return bufferedImage;
     }
 }

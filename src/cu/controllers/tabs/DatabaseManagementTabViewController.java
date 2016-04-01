@@ -20,6 +20,9 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.util.converter.IntegerStringConverter;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 //Test
@@ -454,5 +457,19 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
                 equipmentTableView.refresh();
             }
         });
+    }
+
+    @FXML
+    private void onPrintClicked()
+    {
+        List<Equipment> listOfEquipment = new ArrayList<>();
+
+        ObservableList<Integer> temp = equipmentTableView.getSelectionModel().getSelectedIndices();
+        for(Integer index : temp)
+        {
+            listOfEquipment.add(equipmentTableView.getItems().get(index));
+        }
+        PDFRenderer pdfRenderer = new PDFRenderer();
+        pdfRenderer.createLabelsFromQRCode(listOfEquipment);
     }
 }

@@ -311,10 +311,6 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         {
             Platform.runLater(configureStudentCard);
         }
-        PDFRenderer  sss = new PDFRenderer();
-        ArrayList<BufferedImage> arrayList = new ArrayList<>();
-        arrayList.add(QRGenerator.generateBufferedQRCode("1", 100, 100));
-        sss.createFromQRCode(arrayList);
     }
 
     @Override
