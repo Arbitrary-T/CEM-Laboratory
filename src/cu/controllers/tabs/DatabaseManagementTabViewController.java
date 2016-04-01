@@ -154,7 +154,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
                         equipmentDatabase.addEquipmentEntry(new Equipment(0,"ToDo", "ToDo", true, "ToDo"));
                     equipmentTableView.edit(equipmentTableView.getItems().size(), equipmentTableView.getColumns().get(0));
                     event.consume();
-                    equipmentTableView.getFocusModel().focus(equipmentTableView.getItems().size()-1);
+                    equipmentTableView.getSelectionModel().select(equipmentTableView.getItems().size()-1);
                 }
             });
             MenuItem equipmentNewMenuItem = new MenuItem("New item");
@@ -261,6 +261,24 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
             }
         });
         //***********************TEST****************************************
+        MenuItem equipmentNewMenuItem = new MenuItem("New item");
+        equipmentNewMenuItem.setOnAction(event ->
+        {
+            System.out.println(equipmentCount);
+            if(equipmentDatabase.getAllEquipment().size() != 0)
+            {
+                equipmentDatabase.addEquipmentEntry(new Equipment(equipmentObservableList.get(equipmentCount - 1).getItemID() + 1, "ToDo", "ToDo", true, "ToDo"));
+            }
+            else
+            {
+                equipmentDatabase.addEquipmentEntry(new Equipment(0, "ToDo", "ToDo", true, "ToDo"));
+            }
+            equipmentTableView.scrollTo(equipmentCount+1);
+            equipmentTableView.requestFocus();
+            equipmentTableView.getSelectionModel().select(equipmentCount);
+            equipmentTableView.getFocusModel().focus(equipmentCount);
+        });
+
         ContextMenu equipmentTableContextMenu = new ContextMenu();
         MenuItem deleteAll = new MenuItem("deleteAll");
         deleteAll.setOnAction(event ->
@@ -270,6 +288,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
             equipmentDatabase.deleteAllEntries();
         }
         );
+        equipmentTableContextMenu.getItems().add(equipmentNewMenuItem);
         equipmentTableContextMenu.getItems().add(deleteAll);
         equipmentTableView.setContextMenu(equipmentTableContextMenu);
         //**********************END TEST***************************************

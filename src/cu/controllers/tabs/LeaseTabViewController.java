@@ -335,12 +335,14 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
                     e.printStackTrace();
                 }
                 Equipment s = equipmentDatabase.getItem(inputToInt);
-                System.out.println(s.toString());
-                if (!scannedItems.contains(s) && !itemAlreadyExists(s))
+                if(s != null)
                 {
-                    scannedItems.add(s);
+                    if (!scannedItems.contains(s) && !itemAlreadyExists(s))
+                    {
+                        scannedItems.add(s);
+                    }
+                    selectedItemsListView.setItems(scannedItems);
                 }
-                selectedItemsListView.setItems(scannedItems);
             }
             else if(Main.currentStudent == null && !isReturnsWindowOpen)
             {
