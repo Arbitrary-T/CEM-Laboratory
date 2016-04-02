@@ -24,6 +24,7 @@ import javafx.util.converter.IntegerStringConverter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 //Test
 //TO DO FIX THE CONTEXTMENU TO BE ON ROW RATHER THAN TABLE. FIX EQUIPMENT PRIMARY KEY ISSUE.
@@ -73,7 +74,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
     @FXML
     private Button clearBundleButton;
 
-    private ObservableList<String> isFunctionalObservableList = FXCollections.observableArrayList("Yes", "No");
+    private ObservableList<String> isFunctionalObservableList = FXCollections.observableArrayList("Functional", "Faulty");
     private ObservableList<Student> studentsObservableList;
     private ObservableList<Equipment> equipmentObservableList;
     private StudentDatabase studentDatabase = new StudentDatabase("students");
@@ -90,6 +91,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
         CodeScannerCOM.activateAgent(this);
         studentTableView.setEditable(true);
         studentTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
         studentsObservableList = studentDatabase.getAllStudents();
         equipmentObservableList = equipmentDatabase.getAllEquipment();
         equipmentCount = equipmentObservableList.size();
@@ -149,9 +151,9 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
                 if(event.isControlDown() && event.getCode().equals(KeyCode.N))
                 {
                     if(equipmentDatabase.getAllEquipment().size() != 0)
-                        equipmentDatabase.addEquipmentEntry(new Equipment(equipmentObservableList.get(equipmentCount-1).getItemID()+1,"ToDo", "ToDo", true, "ToDo"));
+                        equipmentDatabase.addEquipmentEntry(new Equipment(equipmentObservableList.get(equipmentCount-1).getItemID()+1,"New", "New", true, "New"));
                     else
-                        equipmentDatabase.addEquipmentEntry(new Equipment(0,"ToDo", "ToDo", true, "ToDo"));
+                        equipmentDatabase.addEquipmentEntry(new Equipment(0,"New", "New", true, "New"));
                     equipmentTableView.edit(equipmentTableView.getItems().size(), equipmentTableView.getColumns().get(0));
                     event.consume();
                     equipmentTableView.getSelectionModel().select(equipmentTableView.getItems().size()-1);
@@ -163,11 +165,11 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
                 System.out.println(equipmentCount);
                 if(equipmentDatabase.getAllEquipment().size() != 0)
                 {
-                    equipmentDatabase.addEquipmentEntry(new Equipment(equipmentObservableList.get(equipmentCount - 1).getItemID() + 1, "ToDo", "ToDo", true, "ToDo"));
+                    equipmentDatabase.addEquipmentEntry(new Equipment(equipmentObservableList.get(equipmentCount - 1).getItemID() + 1, "New", "New", true, "New"));
                 }
                 else
                 {
-                    equipmentDatabase.addEquipmentEntry(new Equipment(0, "ToDo", "ToDo", true, "ToDo"));
+                    equipmentDatabase.addEquipmentEntry(new Equipment(0, "New", "New", true, "New"));
                 }
                 equipmentTableView.scrollTo(equipmentCount+1);
                 equipmentTableView.requestFocus();
@@ -233,7 +235,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
                 equipmentDatabase.editEquipmentEntry(tempEquipment, tempEquipment.getItemID());
             }
         });
-        conditionTableColumn.setCellValueFactory(new PropertyValueFactory<>("functional"));
+        conditionTableColumn.setCellValueFactory(new PropertyValueFactory<>("functionalWrapper"));
         conditionTableColumn.setCellFactory(ComboBoxTableCell.forTableColumn(isFunctionalObservableList));
         conditionTableColumn.setOnEditCommit((CellEditEvent<Equipment, String> event) ->
         {
@@ -267,11 +269,11 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
             System.out.println(equipmentCount);
             if(equipmentDatabase.getAllEquipment().size() != 0)
             {
-                equipmentDatabase.addEquipmentEntry(new Equipment(equipmentObservableList.get(equipmentCount - 1).getItemID() + 1, "ToDo", "ToDo", true, "ToDo"));
+                equipmentDatabase.addEquipmentEntry(new Equipment(equipmentObservableList.get(equipmentCount - 1).getItemID() + 1, "New", "New", true, "New"));
             }
             else
             {
-                equipmentDatabase.addEquipmentEntry(new Equipment(0, "ToDo", "ToDo", true, "ToDo"));
+                equipmentDatabase.addEquipmentEntry(new Equipment(0, "New", "New", true, "New"));
             }
             equipmentTableView.scrollTo(equipmentCount+1);
             equipmentTableView.requestFocus();
@@ -293,8 +295,81 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
         equipmentTableView.setContextMenu(equipmentTableContextMenu);
         //**********************END TEST***************************************
 
-        equipmentTableView.setItems(equipmentObservableList);
+        //equipmentTableView.setItems(equipmentObservableList);
+        FilteredList<Equipment> equipmentFilteredData = new FilteredList<>(equipmentObservableList, p -> true);
+        equipmentFilterTextField.textProperty().addListener((observable, oldValue, newValue) ->
+        {
+            equipmentFilteredData.setPredicate(equipment ->
+            {
+                String lowerCaseFilter = newValue.toLowerCase();
+                String intToString = "";
+                try
+                {
+                    intToString = Integer.toString(equipment.getItemID());
+                }
+                catch (NumberFormatException e)
+                {
+                    //e.printStackTrace();
+                }
+                // If filter text is empty, display all students.
+                if (newValue.isEmpty())
+                {
+                    return true;
+                }
+                // Compare first name and last name of every person with filter text.
+                if (equipment.getItemName().toLowerCase().contains(lowerCaseFilter) || equipment.getItemCategory().toLowerCase().contains(lowerCaseFilter) || equipment.getFunctionalWrapper().toLowerCase().contains(lowerCaseFilter))
+                {
+                    return true; // Filter matches first name.
+                }
+                else if(!intToString.isEmpty())
+                {
+                    if(intToString.equalsIgnoreCase(lowerCaseFilter))
+                        return true; // Filter matches student id.
+                }
 
+                return false; // Does not match.
+            });
+        });
+        SortedList<Equipment> equipmentSortedList = new SortedList<>(equipmentFilteredData);
+        equipmentSortedList.comparatorProperty().bind(equipmentTableView.comparatorProperty());
+        equipmentTableView.setItems(equipmentSortedList);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        ///////////////
 
         equipmentTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
         {
@@ -307,8 +382,35 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
             }
         });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         /////////////////@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@////////////////////////////////////////////////////////////////////////////////////
-        studentTableView.setPlaceholder(new Label("No records available!"));
+        studentTableView.setPlaceholder(new Label("No students registered!"));
         studentIDColumn.setEditable(false);
         studentIDColumn.setCellValueFactory(new PropertyValueFactory<>("studentID"));
         studentIDColumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
@@ -424,7 +526,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
                     //e.printStackTrace();
                 }
                 // If filter text is empty, display all students.
-                if (newValue == null || newValue.isEmpty())
+                if (newValue.isEmpty())
                 {
                     return true;
                 }
@@ -466,14 +568,11 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
     {
         Platform.runLater(()->
         {
-            if(MainViewController.index == 1)
+            if(MainViewController.index == 1 && this.equipmentTableView.isVisible())
             {
-                equipmentTableView.refresh();
-                equipmentFilterTextField.requestFocus();
                 equipmentFilterTextField.clear();
-                System.out.println(QRCode);
                 equipmentFilterTextField.setText(QRCode);
-                equipmentTableView.refresh();
+                equipmentFilterTextField.requestFocus();
             }
         });
     }
@@ -481,14 +580,18 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
     @FXML
     private void onPrintClicked()
     {
-        List<Equipment> listOfEquipment = new ArrayList<>();
-
-        ObservableList<Integer> temp = equipmentTableView.getSelectionModel().getSelectedIndices();
-        for(Integer index : temp)
+        if(equipmentTableView.getSelectionModel().getSelectedCells().size() > 0)
         {
-            listOfEquipment.add(equipmentTableView.getItems().get(index));
+            Runnable runnable = ()->
+            {
+                List<Equipment> listOfEquipment = new ArrayList<>();
+                ObservableList<Integer> temp = equipmentTableView.getSelectionModel().getSelectedIndices();
+                listOfEquipment.addAll(temp.stream().map(index -> equipmentTableView.getItems().get(index)).collect(Collectors.toList()));
+                PDFRenderer pdfRenderer = new PDFRenderer();
+                pdfRenderer.createLabelsFromQRCode(listOfEquipment);
+            };
+            Thread printToPDFThread = new Thread(runnable);
+            printToPDFThread.start();
         }
-        PDFRenderer pdfRenderer = new PDFRenderer();
-        pdfRenderer.createLabelsFromQRCode(listOfEquipment);
     }
 }

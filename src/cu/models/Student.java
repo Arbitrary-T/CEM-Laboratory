@@ -14,8 +14,11 @@ public class Student
     private SimpleStringProperty studentCourse = new SimpleStringProperty();
     private SimpleStringProperty studentPhoneNumber = new SimpleStringProperty();
     private SimpleIntegerProperty studentID = new SimpleIntegerProperty();
-
-    public Student(String cardUID, String studentName, int studentID, String studentEmail, String studentCourse, String studentPhoneNumber)
+    private int faultyReturns = 0;
+    private int totalReturns = 0;
+    private long equipmentUsageTime = 0;
+    private int returnOnTime = 0;
+    public Student(String cardUID, String studentName, int studentID, String studentEmail, String studentCourse, String studentPhoneNumber, int faultyReturns, int totalReturns, long equipmentUsageTime, int returnNotOnTime)
     {
         setCardUID(cardUID);
         setID(studentID);
@@ -23,11 +26,12 @@ public class Student
         setStudentEmail(studentEmail);
         setStudentCourse(studentCourse);
         setPhoneNumber(studentPhoneNumber);
+        setFaultyReturns(faultyReturns);
+        setTotalReturns(totalReturns);
+        setEquipmentUsageTime(equipmentUsageTime);
+        setReturnNotOnTime(returnNotOnTime);
     }
-    public Student()
-    {
 
-    }
     public void setCardUID(String cardUID)
     {
         this.cardUID.set(cardUID);
@@ -56,7 +60,6 @@ public class Student
     public void setID(int studentID)
     {
         this.studentID.set(studentID);
-
     }
 
     public String getCardUID()
@@ -84,10 +87,43 @@ public class Student
         return this.studentID.get();
     }
 
+
+
+    public int getFaultyReturns() {
+        return faultyReturns;
+    }
+
+    public void setFaultyReturns(int faultyReturns) {
+        this.faultyReturns = faultyReturns;
+    }
+
+    public int getTotalReturns() {
+        return totalReturns;
+    }
+
+    public void setTotalReturns(int totalReturns) {
+        this.totalReturns = totalReturns;
+    }
+
+    public long getEquipmentUsageTime() {
+        return equipmentUsageTime;
+    }
+
+    public void setEquipmentUsageTime(long equipmentUsageTime) {
+        this.equipmentUsageTime = equipmentUsageTime;
+    }
+
+    public int getReturnNotOnTime() {
+        return returnOnTime;
+    }
+
+    public void setReturnNotOnTime(int returnOnTime) {
+        this.returnOnTime = returnOnTime;
+    }
     @Override
     public String toString()
     {
-       return cardUID.toString() + "\t" + studentID + "\t" + studentName.toString();
+        return cardUID.toString() + "\t" + studentID + "\t" + studentName.toString();
     }
     @Override
     public int hashCode()
@@ -103,5 +139,4 @@ public class Student
         }
         return this.getStudentID() == ((Student) object).getStudentID();
     }
-
 }

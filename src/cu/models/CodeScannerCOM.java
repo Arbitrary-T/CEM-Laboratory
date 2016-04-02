@@ -96,6 +96,7 @@ public class CodeScannerCOM implements Runnable, SerialPortEventListener
                     while (inputStream.available() > 0)
                     {
                         a = inputStream.available();
+                        int numBytes = inputStream.read(readBuffer);
                     }
                     for (int i = 0; i < a; i++)
                     {

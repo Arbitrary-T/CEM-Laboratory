@@ -6,6 +6,7 @@ import cu.models.StudentDatabase;
 import cu.validations.TextValidation;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -119,7 +120,7 @@ public class NewRegistrationDialogueController
     {
         if(studentDatabase != null)
         {
-            Student newStudent = new Student(cardUID, stdName.getText(), Integer.parseInt(stdID.getText()), stdEmail.getText(), stdCourse.getText(), stdPhoneNumber.getText());
+            Student newStudent = new Student(cardUID, stdName.getText(), Integer.parseInt(stdID.getText()), stdEmail.getText(), stdCourse.getText(), stdPhoneNumber.getText(), 0, 0, 0, 0);
             if(!studentDatabase.addStudentEntry(newStudent))
             {
                 System.out.println("Error: could not maintain a connection to the database!");

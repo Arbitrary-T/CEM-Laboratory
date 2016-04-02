@@ -24,7 +24,11 @@ public class StudentDatabase extends Database
             "studentID INT," +
             "studentEmail VARCHAR(256), " +
             "studentCourse VARCHAR(256), " +
-            "studentPhoneNumber VARCHAR(256))";
+            "studentPhoneNumber VARCHAR(256), " +
+            "studentFaultyReturns INT, " +
+            "studentTotalReturns INT, " +
+            "studentUsageTime BIGINT," +
+            "returnNotOnTime INT)";
 
     private static DatabaseInterface databaseAgent;
 
@@ -40,9 +44,9 @@ public class StudentDatabase extends Database
         {
             if(databaseConnection != null)
             {
-                insertStudent = databaseConnection.prepareStatement("INSERT INTO Students VALUES (?,?,?,?,?,?)");
+                insertStudent = databaseConnection.prepareStatement("INSERT INTO Students VALUES (?,?,?,?,?,?,?,?,?,?)");
                 deleteStudent = databaseConnection.prepareStatement("DELETE FROM Students WHERE cardUID = ?");
-                updateStudent = databaseConnection.prepareStatement("UPDATE Students SET studentName=?, studentID=? , studentEmail=?, studentCourse=?, studentPhoneNumber=? WHERE cardUID = ?");
+                updateStudent = databaseConnection.prepareStatement("UPDATE Students SET studentName=?, studentID=? , studentEmail=?, studentCourse=?, studentPhoneNumber=?,studentFaultyReturns=?, studentTotalReturns=?, studentUsageTime=?, returnNotOnTime=? WHERE cardUID = ?");
                 searchStudent = databaseConnection.prepareStatement("SELECT * FROM Students WHERE cardUID = ?"); /////
                 getAllStudents = databaseConnection.prepareStatement("SELECT * FROM Students");
             }
@@ -64,7 +68,12 @@ public class StudentDatabase extends Database
                 updateStudent.setString(3, studentData.getStudentEmail());
                 updateStudent.setString(4, studentData.getStudentCourse());
                 updateStudent.setString(5, studentData.getStudentPhoneNumber());
-                updateStudent.setString(6, studentData.getCardUID());
+                updateStudent.setInt(6, studentData.getFaultyReturns());
+                updateStudent.setInt(7, studentData.getTotalReturns());
+                updateStudent.setLong(8, studentData.getEquipmentUsageTime());
+                updateStudent.setInt(9, studentData.getReturnNotOnTime());
+                updateStudent.setString(10, studentData.getCardUID());
+
                 updateStudent.executeUpdate();
                 databaseAgent.onStudentDatabaseUpdate();
             }
@@ -108,6 +117,11 @@ public class StudentDatabase extends Database
                 insertStudent.setString(4, studentData.getStudentEmail());
                 insertStudent.setString(5, studentData.getStudentCourse());
                 insertStudent.setString(6, studentData.getStudentPhoneNumber());
+                insertStudent.setInt(7, studentData.getFaultyReturns());
+                insertStudent.setInt(8, studentData.getTotalReturns());
+                insertStudent.setLong(9, studentData.getEquipmentUsageTime());
+                insertStudent.setInt(10, studentData.getReturnNotOnTime());
+
                 insertStudent.executeUpdate();
                 databaseAgent.onStudentDatabaseUpdate();
                 return true;
@@ -131,7 +145,7 @@ public class StudentDatabase extends Database
             {
                 while (resultSet.next())
                 {
-                    studentsFromDatabase.add(new Student(resultSet.getString(1), resultSet.getString(2), resultSet.getInt(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6)));
+                    studentsFromDatabase.add(new Student(resultSet.getString(1), resultSet.getString(2), resultSet.getInt(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6), resultSet.getInt(7), resultSet.getInt(8), resultSet.getInt(9),resultSet.getInt(10)));
                 }
                 resultSet.close();
             }
@@ -152,7 +166,7 @@ public class StudentDatabase extends Database
             Student result = null;
             if(resultSet.next())
             {
-                result = new Student(resultSet.getString(1), resultSet.getString(2), resultSet.getInt(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6));
+                result = new Student(resultSet.getString(1), resultSet.getString(2), resultSet.getInt(3), resultSet.getString(4), resultSet.getString(5), resultSet.getString(6), resultSet.getInt(7), resultSet.getInt(8), resultSet.getInt(9),resultSet.getInt(10));
             }
             resultSet.close();
             return result;

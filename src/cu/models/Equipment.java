@@ -10,6 +10,7 @@ public class Equipment
     private String itemName;
     private String itemCategory;
     private String partOfBundle;
+    private String functionalWrapper = "";
 
     public Equipment(int itemID, String itemName, String itemCategory, boolean functional, String bundle)
     {
@@ -19,10 +20,7 @@ public class Equipment
         setFunctional(functional);
         setPartOfBundle(bundle);
     }
-    public Equipment()
-    {
 
-    }
     public String getItemName() {
         return itemName;
     }
@@ -83,4 +81,18 @@ public class Equipment
     {
         return "Item ID " + itemID + " - Item: "+ itemName+"\n";
     }
+
+    public String getFunctionalWrapper()
+    {
+        if(isFunctional())
+        {
+            return "Functional";
+        }
+        else
+        {
+            return "Faulty";
+        }
+    }
+
+
 }

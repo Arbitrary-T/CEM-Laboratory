@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<HBox xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.tabs.AnalyticsTabViewController">
+   <children>
+      <GridPane HBox.hgrow="ALWAYS">
+        <columnConstraints>
+          <ColumnConstraints hgrow="ALWAYS" />
+          <ColumnConstraints hgrow="ALWAYS" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints vgrow="ALWAYS" />
+          <RowConstraints vgrow="ALWAYS" />
+        </rowConstraints>
+         <children>
+            <VBox>
+               <children>
+                  <Label fx:id="topLeftLabel" text="Label">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+                  <LineChart fx:id="topLeftChart" VBox.vgrow="ALWAYS">
+                    <xAxis>
+                      <CategoryAxis side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis side="LEFT" />
+                    </yAxis>
+                  </LineChart>
+               </children>
+            </VBox>
+            <VBox GridPane.columnIndex="1">
+               <children>
+                  <Label fx:id="topRightLabel" text="Label">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+                  <LineChart fx:id="topRightChart">
+                    <xAxis>
+                      <CategoryAxis side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis side="LEFT" />
+                    </yAxis>
+                  </LineChart>
+               </children>
+            </VBox>
+            <VBox GridPane.rowIndex="1">
+               <children>
+                  <Label fx:id="bottomLeftLabel" text="Label">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+                  <PieChart fx:id="bottomLeftPieChart" />
+               </children>
+            </VBox>
+            <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <children>
+                  <Label fx:id="bottomRightLabel" text="Label">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+                  <BarChart fx:id="bottomRightBarChart">
+                    <xAxis>
+                      <CategoryAxis side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis side="LEFT" />
+                    </yAxis>
+                  </BarChart>
+               </children>
+            </VBox>
+         </children>
+      </GridPane>
+   </children>
+</HBox>

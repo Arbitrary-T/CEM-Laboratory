@@ -21,9 +21,13 @@ public class EquipmentOnLoan
     private Duration leaseTimeLeft;
     private String remarks;
     private SimpleStringProperty leaseTimeLeftWrapper = new SimpleStringProperty();
+    private boolean stopTimer = false;
+    private long secondsPassed = 0;
+    private StudentDatabase studentDatabase;
 
-    public EquipmentOnLoan(Student student, List<Equipment> equipment, int hours, String remarks)
+    public EquipmentOnLoan(StudentDatabase studentDatabase, Student student, List<Equipment> equipment, int hours, String remarks)
     {
+        this.studentDatabase = studentDatabase;
         setStudent(student);
         setEquipment(equipment);
         setLeaseStartTime();
@@ -39,8 +43,11 @@ public class EquipmentOnLoan
     {
         this.student = student;
     }
-
-    public List<Equipment> getEquipmentID()
+    public void stopTimer(boolean stopTimer)
+    {
+        this.stopTimer = stopTimer;
+    }
+    public List<Equipment> getEquipmentIDs()
     {
         return equipment;
     }
@@ -59,9 +66,11 @@ public class EquipmentOnLoan
     public void setLeaseStartTime()
     {
         this.leaseStartTime = LocalTime.now();
-
     }
-
+    public long getLeaseTimeDuration()
+    {
+        return secondsPassed;
+    }
     public SimpleStringProperty getLeaseTimeLeft()
     {
         return leaseTimeLeftWrapper;
@@ -77,16 +86,23 @@ public class EquipmentOnLoan
             @Override
             public void run()
             {
-                if(!leaseTimeLeft.isZero())
+                if(!leaseTimeLeft.isZero() || stopTimer)
                 {
                     leaseTimeLeft = leaseTimeLeft.minusSeconds(1);
                     int seconds = (int) leaseTimeLeft.getSeconds();
+                    secondsPassed++;
                     leaseTimeLeftWrapper.set(String.format("%d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, (seconds % 60)));
                 }
                 else
                 {
-                    //Call method to increase the student's counter in terms of not successfully returning an item
-                    //send email to student
+
+                    if(leaseTimeLeft.isZero() || leaseTimeLeft.isNegative())
+                    {
+                        student.setReturnNotOnTime(student.getReturnNotOnTime());
+                        studentDatabase.editStudentEntry(student);
+                        //Call method to increase the student's counter in terms of not successfully returning an item
+                        //send email to student
+                    }
                     updateTimeLeft.cancel();
                     updateTimeLeft.purge();
                     return;

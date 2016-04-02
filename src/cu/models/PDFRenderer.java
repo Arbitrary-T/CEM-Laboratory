@@ -10,6 +10,12 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.sql.Time;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,15 +35,15 @@ public class PDFRenderer
 
     public PDFRenderer()
     {
-
+        doc = new PDDocument();
     }
-
+    //Could be enhanced by allowing variable image size. :S
     public void createLabelsFromQRCode(List<Equipment> listOfQRCodes)
     {
         try
         {
-            String fileName = "Labels.pdf";
-            doc = new PDDocument();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss");
+            String fileName = LocalDateTime.now().format(formatter) +".pdf";
             PDPage page = new PDPage();
             pages.add(page);
             doc.addPage(page);
@@ -45,7 +51,7 @@ public class PDFRenderer
             for(Equipment listOfQRCode : listOfQRCodes)
             {
                 addImage(QRGenerator.generateBufferedQRCode(listOfQRCode.getItemID() + "", 100, 100));
-                addText(listOfQRCode.getItemID()+ " " +listOfQRCode.getItemName());
+                addText(listOfQRCode.getItemID() + " " + listOfQRCode.getItemName());
                 adjustAlignment();
             }
             doc.save(fileName);
