@@ -1,6 +1,8 @@
 package cu;
 
-import cu.models.*;
+import cu.models.listeners.CardListener;
+import cu.models.listeners.CodeScannedListener;
+import cu.models.students.Student;
 import javafx.application.Application;
 
 import javafx.fxml.FXMLLoader;
@@ -29,7 +31,7 @@ public class Main extends Application
     public static void main(String[] args)
     {
         ExecutorService exec = Executors.newFixedThreadPool(2);
-        exec.submit(new CodeScannerCOM());
+        exec.submit(new CodeScannedListener());
         exec.submit(new CardListener());
         launch(args);
         exec.shutdownNow();

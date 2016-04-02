@@ -1,5 +1,7 @@
-package cu.models;
+package cu.models.equipment;
 
+import cu.models.students.Student;
+import cu.models.students.StudentDatabase;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.time.Duration;

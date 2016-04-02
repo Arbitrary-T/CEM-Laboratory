@@ -1,4 +1,4 @@
-package cu.models;
+package cu.models.equipment;
 
 /**
  * Created by T on 22/11/2015.

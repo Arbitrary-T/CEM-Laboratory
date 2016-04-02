@@ -1,4 +1,4 @@
-package cu.models;
+package cu.models.students;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;

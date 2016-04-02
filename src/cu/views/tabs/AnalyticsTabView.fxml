@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -31,6 +34,9 @@
                      <font>
                         <Font size="15.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
                   </Label>
                   <LineChart fx:id="topLeftChart" VBox.vgrow="ALWAYS">
                     <xAxis>
@@ -48,8 +54,11 @@
                      <font>
                         <Font size="15.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
                   </Label>
-                  <LineChart fx:id="topRightChart">
+                  <LineChart fx:id="topRightChart" VBox.vgrow="ALWAYS">
                     <xAxis>
                       <CategoryAxis side="BOTTOM" />
                     </xAxis>
@@ -61,12 +70,26 @@
             </VBox>
             <VBox GridPane.rowIndex="1">
                <children>
-                  <Label fx:id="bottomLeftLabel" text="Label">
-                     <font>
-                        <Font size="15.0" />
-                     </font>
+                  <HBox>
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
+                     <children>
+                        <Label fx:id="bottomLeftLabel" text="Functional vs Faulty returns" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Label>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="pieChartComboBox" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="numberOfStudentsComputed">
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
                   </Label>
-                  <PieChart fx:id="bottomLeftPieChart" />
+                  <PieChart fx:id="bottomLeftPieChart" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
             <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -75,8 +98,11 @@
                      <font>
                         <Font size="15.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
                   </Label>
-                  <BarChart fx:id="bottomRightBarChart">
+                  <BarChart fx:id="bottomRightBarChart" VBox.vgrow="ALWAYS">
                     <xAxis>
                       <CategoryAxis side="BOTTOM" />
                     </xAxis>

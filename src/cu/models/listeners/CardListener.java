@@ -1,4 +1,4 @@
-package cu.models;
+package cu.models.listeners;
 
 import cu.interfaces.CardInterface;
 import javafx.application.Platform;

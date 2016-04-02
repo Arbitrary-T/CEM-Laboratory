@@ -2,7 +2,14 @@ package cu.controllers.dialogues;
 
 import cu.Main;
 import cu.interfaces.CodeScannerInterface;
-import cu.models.*;
+import cu.models.equipment.Equipment;
+import cu.models.equipment.EquipmentDatabase;
+import cu.models.equipment.EquipmentOnLoan;
+import cu.models.listeners.CodeScannedListener;
+import cu.models.statistics.Statistics;
+import cu.models.statistics.StatisticsDatabase;
+import cu.models.students.Student;
+import cu.models.students.StudentDatabase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -40,7 +47,7 @@ public class ReturnsDialogueController implements CodeScannerInterface
     @FXML
     private void initialize()
     {
-        CodeScannerCOM.activateAgent(this);
+        CodeScannedListener.activateAgent(this);
         confirmButton.setDisable(true);
     }
 

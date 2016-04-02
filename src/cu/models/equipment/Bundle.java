@@ -1,4 +1,4 @@
-package cu.models;
+package cu.models.equipment;
 
 import java.util.ArrayList;
 

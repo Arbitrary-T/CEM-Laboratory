@@ -6,7 +6,13 @@ import cu.controllers.dialogues.NewRegistrationDialogueController;
 import cu.controllers.dialogues.ReturnsDialogueController;
 import cu.interfaces.CardInterface;
 import cu.interfaces.CodeScannerInterface;
-import cu.models.*;
+import cu.models.equipment.Equipment;
+import cu.models.equipment.EquipmentDatabase;
+import cu.models.equipment.EquipmentOnLoan;
+import cu.models.listeners.CardListener;
+import cu.models.listeners.CodeScannedListener;
+import cu.models.students.Student;
+import cu.models.students.StudentDatabase;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -89,7 +95,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
     @FXML
     private TextArea remarksTextArea;
     @FXML
-    private ComboBox timeComboBox;
+    private ComboBox<String> timeComboBox;
     @FXML
     private TextField customTimeTextField;
     @FXML
@@ -107,7 +113,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
     void initialize()
     {
         CardListener.activateAgent(this);
-        CodeScannerCOM.activateAgent(this);
+        CodeScannedListener.activateAgent(this);
         totalNumberOfReturns.setVisible(false);
         leasedItemsTableView.setPlaceholder(new Label("No borrowed items!"));
         timeComboBox.valueProperty().addListener((observable1, oldValue1, newValue1) ->

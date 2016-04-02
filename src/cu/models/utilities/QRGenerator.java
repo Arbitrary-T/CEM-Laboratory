@@ -1,4 +1,4 @@
-package cu.models;
+package cu.models.utilities;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;

@@ -3,7 +3,13 @@ package cu.controllers.tabs;
 import cu.controllers.MainViewController;
 import cu.interfaces.CodeScannerInterface;
 import cu.interfaces.DatabaseInterface;
-import cu.models.*;
+import cu.models.equipment.Equipment;
+import cu.models.equipment.EquipmentDatabase;
+import cu.models.listeners.CodeScannedListener;
+import cu.models.students.Student;
+import cu.models.students.StudentDatabase;
+import cu.models.utilities.PDFRenderer;
+import cu.models.utilities.QRGenerator;
 import cu.validations.TextValidation;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -88,7 +94,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
     {
         StudentDatabase.activateAgent(this);
         EquipmentDatabase.activateAgent(this);
-        CodeScannerCOM.activateAgent(this);
+        CodeScannedListener.activateAgent(this);
         studentTableView.setEditable(true);
         studentTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 

@@ -1,4 +1,4 @@
-package cu.models;
+package cu.models.utilities;
 
 import java.io.File;
 import java.sql.Connection;

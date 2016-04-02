@@ -1,4 +1,4 @@
-package cu.models;
+package cu.models.statistics;
 
 import java.time.LocalDate;
 

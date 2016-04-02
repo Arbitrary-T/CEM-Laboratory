@@ -1,4 +1,4 @@
-package cu.models;
+package cu.models.listeners;
 import cu.interfaces.CodeScannerInterface;
 import gnu.io.*;
 import gnu.io.CommPortIdentifier;
@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * Created by T on 20/03/2016.
  */
-public class CodeScannerCOM implements Runnable, SerialPortEventListener
+public class CodeScannedListener implements Runnable, SerialPortEventListener
 {
     private static ArrayList<CodeScannerInterface> agents = new ArrayList<>();
 
@@ -18,7 +18,7 @@ public class CodeScannerCOM implements Runnable, SerialPortEventListener
     private InputStream inputStream;
     private SerialPort serialPort;
 
-    public CodeScannerCOM()
+    public CodeScannedListener()
     {
         portList = CommPortIdentifier.getPortIdentifiers();
 

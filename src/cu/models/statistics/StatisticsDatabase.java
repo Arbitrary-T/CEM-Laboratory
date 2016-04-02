@@ -1,5 +1,7 @@
-package cu.models;
+package cu.models.statistics;
 
+
+import cu.models.utilities.Database;
 
 import java.sql.*;
 import java.time.LocalDate;

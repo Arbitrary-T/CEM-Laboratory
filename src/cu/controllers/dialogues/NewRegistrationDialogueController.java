@@ -1,12 +1,11 @@
 package cu.controllers.dialogues;
 
 import cu.Main;
-import cu.models.Student;
-import cu.models.StudentDatabase;
+import cu.models.students.Student;
+import cu.models.students.StudentDatabase;
 import cu.validations.TextValidation;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;

@@ -1,6 +1,7 @@
-package cu.models;
+package cu.models.students;
 
 import cu.interfaces.DatabaseInterface;
+import cu.models.utilities.Database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
