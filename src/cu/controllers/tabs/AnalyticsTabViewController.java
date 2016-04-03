@@ -6,6 +6,8 @@ import cu.models.statistics.Statistics;
 import cu.models.statistics.StatisticsDatabase;
 import cu.models.students.Student;
 import cu.models.students.StudentDatabase;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,10 +16,11 @@ import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.util.Pair;
+import javafx.util.StringConverter;
+import org.controlsfx.control.RangeSlider;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -52,8 +55,10 @@ public class AnalyticsTabViewController
     BarChart<String, Integer> bottomRightBarChart;
 
     Map<LocalDate, Long> sortedMap = new TreeMap<>();
+    List<LocalDate> ss = new ArrayList<>();
 
-
+    @FXML
+    RangeSlider test;
     private ObservableList<String> listOfPieChartOptions = FXCollections.observableArrayList("Functional Vs Faulty Returns", "Faulty Returns By Course Contribution");
 
     @FXML
@@ -64,6 +69,8 @@ public class AnalyticsTabViewController
             statisticsDatabase.addEntry(new Statistics(LocalDate.of(2016, i+1, ThreadLocalRandom.current().nextInt(1,31)),ThreadLocalRandom.current().nextLong(650000), 5, 5));
             statisticsDatabase.addEntry(new Statistics(LocalDate.of(2016, i+1, ThreadLocalRandom.current().nextInt(1,31)),ThreadLocalRandom.current().nextLong(650000), 5, 5));
         }*/
+
+        topLeftChart.setLegendVisible(false);
         pieChartComboBox.setItems(listOfPieChartOptions);
         pieChartComboBox.setValue(listOfPieChartOptions.get(0));
         pieChartComboBox.valueProperty().addListener((observable, oldValue, newValue) ->
@@ -80,9 +87,46 @@ public class AnalyticsTabViewController
         computeGlobalReturns();
         computeFaultyItemsByCategory();
         computeLineChart();
-        computeLineChartForPeriod(LocalDate.of(2016, 8, 28), LocalDate.of(2016, 12, 21)); // 2016-08-28 2016-12-21);
 
+        test.setLabelFormatter(new StringConverter<Number>()
+        {
+            @Override
+            public String toString(Number object)
+            {
+                return ss.get(object.intValue()).toString();
+            }
 
+            @Override
+            public Number fromString(String string)
+            {
+                for(int i = 0; i<ss.size();i++)
+                {
+                    if(ss.get(i).toString().equalsIgnoreCase(string))
+                    {
+                        return i;
+                    }
+                }
+                return 0;
+            }
+        });
+
+        test.setShowTickMarks(true);
+        test.setShowTickLabels(true);
+        test.setMax(ss.size()-1);
+        test.lowValueProperty().setValue(0);
+        test.highValueProperty().setValue(ss.size()-1);
+
+        test.highValueChangingProperty().addListener((observable, oldValue, newValue) ->
+        {
+            computeLineChartForPeriod(ss.get((int)test.getLowValue()), ss.get((int) test.getHighValue()));
+        });
+        test.lowValueChangingProperty().addListener(((observable, oldValue, newValue) ->
+        {
+            if(!test.isHighValueChanging())
+            {
+                computeLineChartForPeriod(ss.get((int)test.getLowValue()), ss.get((int) test.getHighValue()));
+            }
+        }));
     }
 
     private void computeGlobalReturns()
@@ -201,6 +245,7 @@ public class AnalyticsTabViewController
 
         for(LocalDate s : sortedMap.keySet())
         {
+            ss.add(s);
             series.getData().add(new XYChart.Data<>(s.toString(), sortedMap.get(s)/3600));
         }
         topLeftChart.getData().add(series);
@@ -216,7 +261,7 @@ public class AnalyticsTabViewController
         {
             if(s.isEqual(startDate) || s.isEqual(endDate) || (s.isAfter(startDate) && s.isBefore(endDate)))
             {
-                System.out.println("Hello");
+
                 series.getData().add(new XYChart.Data<>(s.toString(), sortedMap.get(s)/3600));
             }
         }
@@ -258,30 +303,28 @@ public class AnalyticsTabViewController
             }
             return null;
         });
-        Optional<Pair<String, String>> result = dialog.showAndWait();
 
+        Optional<Pair<String, String>> result = dialog.showAndWait();
         result.ifPresent(startEndDate ->
         {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             try
             {
-                simpleDateFormat.parse(startDate.getText());
-                simpleDateFormat.parse(endDate.getText());
-                System.out.println("DATE = " + startDate.getText() + "END DATE = " + endDate.getText());
-                computeLineChartForPeriod(
-                        LocalDate.of(Integer.parseInt(startDate.getText().substring(0,3)),
-                                Integer.parseInt(startDate.getText().substring(5,6)),
-                                        Integer.parseInt(startDate.getText().substring(8,9))),
-
-                        LocalDate.of(Integer.parseInt(endDate.getText().substring(0,3)),
-                                Integer.parseInt(endDate.getText().substring(5,6)),
-                                Integer.parseInt(endDate.getText().substring(8,9))));
+                computeLineChartForPeriod(LocalDate.parse(startDate.getText()), LocalDate.parse(endDate.getText()));
             }
-            catch (ParseException e)
+            catch (DateTimeParseException e)
             {
                 e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Unidentified Input");
+                alert.setHeaderText("Unable to complete operation");
+                alert.setContentText("Please make sure of the input data");
+                alert.showAndWait();
             }
-        });
 
+        });
+    }
+    private double rangeSliderHighestVal()
+    {
+        return sortedMap.size();
     }
 }

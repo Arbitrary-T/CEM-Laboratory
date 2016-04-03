@@ -15,8 +15,8 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.RangeSlider?>
 
-<?import java.time.LocalDate?>
 <HBox xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.tabs.AnalyticsTabViewController">
    <children>
       <GridPane HBox.hgrow="ALWAYS">
@@ -31,22 +31,36 @@
          <children>
             <VBox>
                <children>
-                  <Label fx:id="topLeftLabel" text="Label">
-                     <font>
-                        <Font name="System Bold" size="15.0" />
-                     </font>
+                  <HBox>
                      <VBox.margin>
                         <Insets left="5.0" />
                      </VBox.margin>
-                  </Label>
-                  <LineChart fx:id="topLeftChart" VBox.vgrow="ALWAYS">
-                      <xAxis>
-                          <CategoryAxis/>
-                      </xAxis>
-                      <yAxis>
-                          <NumberAxis />
-                      </yAxis>
-                  </LineChart>
+                     <children>
+                        <Label fx:id="topLeftLabel" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Label>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="topLeftComboBox" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                   <LineChart fx:id="topLeftChart" VBox.vgrow="ALWAYS">
+                       <xAxis>
+                           <CategoryAxis />
+                       </xAxis>
+                       <yAxis>
+                           <NumberAxis />
+                       </yAxis>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                   </LineChart>
+                  <RangeSlider fx:id="test" majorTickUnit="7.0" minorTickCount="1" showTickLabels="true" showTickMarks="true">
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="10.0" />
+                     </padding>
+                  </RangeSlider>
                </children>
             </VBox>
             <VBox GridPane.columnIndex="1">
