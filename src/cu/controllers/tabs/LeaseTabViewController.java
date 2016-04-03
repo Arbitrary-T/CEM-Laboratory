@@ -220,6 +220,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
             {
                 if(!totalNumberOfReturns.isVisible())
                 {
+                    totalNumberOfReturns.setTitle("Total number of returns");
                     totalNumberOfReturns.setVisible(true);
                     ObservableList<Data> pieChartData = FXCollections.observableArrayList(new Data("Faulty", Main.currentStudent.getFaultyReturns()), new Data("Functioning", Main.currentStudent.getTotalReturns()-Main.currentStudent.getFaultyReturns()));
                     totalNumberOfReturns.setData(pieChartData);

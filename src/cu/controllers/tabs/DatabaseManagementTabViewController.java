@@ -42,6 +42,8 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
 {
     int equipmentTableCurrentRow = 0;
     @FXML
+    private TabPane tabPane;
+    @FXML
     private ImageView contextImageView;
     @FXML
     private TextField filterTextField;
@@ -574,10 +576,11 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
     {
         Platform.runLater(()->
         {
-            if(MainViewController.index == 1 && this.equipmentTableView.isVisible())
+            if(MainViewController.index == 1 && tabPane.getSelectionModel().getSelectedIndex()==1)
             {
                 equipmentFilterTextField.clear();
                 equipmentFilterTextField.setText(QRCode);
+                equipmentFilterTextField.selectAll();
                 equipmentFilterTextField.requestFocus();
             }
         });

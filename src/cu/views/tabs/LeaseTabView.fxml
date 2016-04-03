@@ -42,7 +42,7 @@
                               <Region prefHeight="87.0" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
-                        <PieChart fx:id="totalNumberOfReturns" layoutY="515.0" prefHeight="203.0" prefWidth="338.0" title="Total number of returns" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                        <PieChart fx:id="totalNumberOfReturns" layoutY="515.0" prefHeight="280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                         <Group fx:id="studentDetailsTextGroup">
                            <children>
                               <VBox fx:id="labelsVBox" layoutX="10.0" layoutY="-5.0">

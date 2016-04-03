@@ -16,6 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import java.time.LocalDate?>
 <HBox xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cu.controllers.tabs.AnalyticsTabViewController">
    <children>
       <GridPane HBox.hgrow="ALWAYS">
@@ -32,19 +33,19 @@
                <children>
                   <Label fx:id="topLeftLabel" text="Label">
                      <font>
-                        <Font size="15.0" />
+                        <Font name="System Bold" size="15.0" />
                      </font>
                      <VBox.margin>
                         <Insets left="5.0" />
                      </VBox.margin>
                   </Label>
                   <LineChart fx:id="topLeftChart" VBox.vgrow="ALWAYS">
-                    <xAxis>
-                      <CategoryAxis side="BOTTOM" />
-                    </xAxis>
-                    <yAxis>
-                      <NumberAxis side="LEFT" />
-                    </yAxis>
+                      <xAxis>
+                          <CategoryAxis/>
+                      </xAxis>
+                      <yAxis>
+                          <NumberAxis />
+                      </yAxis>
                   </LineChart>
                </children>
             </VBox>
@@ -52,7 +53,7 @@
                <children>
                   <Label fx:id="topRightLabel" text="Label">
                      <font>
-                        <Font size="15.0" />
+                        <Font name="System Bold" size="15.0" />
                      </font>
                      <VBox.margin>
                         <Insets left="5.0" />
@@ -75,7 +76,7 @@
                         <Insets left="5.0" />
                      </VBox.margin>
                      <children>
-                        <Label fx:id="bottomLeftLabel" text="Functional vs Faulty returns" HBox.hgrow="ALWAYS">
+                        <Label fx:id="numberOfStudentsComputed" HBox.hgrow="ALWAYS">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
@@ -84,19 +85,14 @@
                         <ComboBox fx:id="pieChartComboBox" />
                      </children>
                   </HBox>
-                  <Label fx:id="numberOfStudentsComputed">
-                     <VBox.margin>
-                        <Insets left="5.0" />
-                     </VBox.margin>
-                  </Label>
                   <PieChart fx:id="bottomLeftPieChart" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
             <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <Label fx:id="bottomRightLabel" text="Label">
+                  <Label fx:id="bottomRightLabel">
                      <font>
-                        <Font size="15.0" />
+                        <Font name="System Bold" size="15.0" />
                      </font>
                      <VBox.margin>
                         <Insets left="5.0" />
