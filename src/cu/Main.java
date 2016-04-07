@@ -30,6 +30,7 @@ public class Main extends Application
 
     public static void main(String[] args)
     {
+
         ExecutorService exec = Executors.newFixedThreadPool(2);
         exec.submit(new CodeScannedListener());
         exec.submit(new CardListener());

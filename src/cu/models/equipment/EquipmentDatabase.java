@@ -104,6 +104,7 @@ public class EquipmentDatabase extends Database
         try
         {
             deleteAll.executeUpdate();
+            agent.onEquipmentDatabaseUpdate();
             return true;
         }
         catch (SQLException e)

@@ -1,0 +1,28 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" build-on-make="true" name="CU Laboratory Equipment Manager">
+    <output-path>$PROJECT_DIR$/out/artifacts/CU_Laboratory_Equipment_Manager</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="cu.Main" />
+        <option name="description" value="" />
+        <option name="htmlParamFile" value="" />
+        <option name="paramFile" value="" />
+        <option name="title" value="" />
+        <option name="vendor" value="" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="CU_Laboratory_Equipment_Manager.jar">
+        <element id="module-output" name="CU Laboratory Equipment Manager" />
+      </element>
+      <element id="file-copy" path="$USER_HOME$/Downloads/commons-io-2.4-bin/commons-io-2.4/commons-io-2.4.jar" />
+      <element id="file-copy" path="$USER_HOME$/Downloads/commons-lang3-3.4-bin/commons-lang3-3.4/commons-lang3-3.4.jar" />
+      <element id="file-copy" path="$USER_HOME$/Downloads/controlsfx-8.40.10/controlsfx-8.40.10.jar" />
+      <element id="file-copy" path="$USER_HOME$/Downloads/core-3.2.1.jar" />
+      <element id="file-copy" path="C:/Program Files/Java/jdk1.8.0_65/db/lib/derby.jar" />
+      <element id="file-copy" path="$USER_HOME$/Downloads/javase-3.2.1.jar" />
+      <element id="file-copy" path="$USER_HOME$/Downloads/pdfbox-app-2.0.0.jar" />
+      <element id="file-copy" path="C:/Program Files/Java/jdk1.8.0_65/jre/lib/ext/RXTXcomm.jar" />
+    </root>
+  </artifact>
+</component>

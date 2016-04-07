@@ -18,8 +18,9 @@ public class StatisticsDatabase extends Database
     private PreparedStatement updateData;
     private PreparedStatement doesExist;
     private PreparedStatement getData;
+    private PreparedStatement deleteAll;
 
-    String createTableStatement = "CREATE TABLE Stats(" +
+    private String createTableStatement = "CREATE TABLE Stats(" +
             "entryDate DATE NOT NULL PRIMARY KEY, " +
             "averageUsage BIGINT, " +
             "faultyReturns INT, " +
@@ -37,6 +38,7 @@ public class StatisticsDatabase extends Database
                 updateData = databaseConnection.prepareStatement("UPDATE Stats SET averageUsage=?, faultyReturns=? , totalReturns=? WHERE entryDate = ?");
                 doesExist = databaseConnection.prepareStatement("SELECT * FROM Stats WHERE entryDate = ?");
                 getData = databaseConnection.prepareStatement("SELECT * FROM Stats");
+                deleteAll = databaseConnection.prepareStatement("DELETE FROM Stats WHERE 1=1");
             }
         }
         catch (SQLException e)
@@ -85,6 +87,23 @@ public class StatisticsDatabase extends Database
             }
         }
         return false;
+    }
+
+    public boolean deleteAll()
+    {
+        if(databaseConnection != null)
+        {
+            try
+            {
+                deleteAll.executeUpdate();
+            }
+            catch (SQLException e)
+            {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
     }
 
     public Statistics doesExist(LocalDate date)
@@ -145,7 +164,7 @@ public class StatisticsDatabase extends Database
             {
                 while (resultSet.next())
                 {
-                    statArrayList.add(new Statistics(resultSet.getDate(1).toLocalDate(), resultSet.getLong(2), resultSet.getInt(3), resultSet.getInt(3)));
+                    statArrayList.add(new Statistics(resultSet.getDate(1).toLocalDate(), resultSet.getLong(2), resultSet.getInt(3), resultSet.getInt(4)));
                 }
                 resultSet.close();
             }

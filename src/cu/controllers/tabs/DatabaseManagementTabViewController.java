@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  */
 public class DatabaseManagementTabViewController implements DatabaseInterface, CodeScannerInterface
 {
-    int equipmentTableCurrentRow = 0;
+    private int equipmentTableCurrentRow = 0;
     @FXML
     private TabPane tabPane;
     @FXML
@@ -105,6 +105,14 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
         equipmentCount = equipmentObservableList.size();
         equipmentTableView.setEditable(true);
         equipmentTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        equipmentTableView.setOnKeyPressed(event ->
+        {
+            if(event.isControlDown() && event.getCode().equals(KeyCode.N))
+            {
+                if(equipmentDatabase.getAllEquipment().size() != 0)
+                    equipmentDatabase.addEquipmentEntry(new Equipment(equipmentObservableList.get(equipmentCount-1).getItemID()+1,"New", "New", true, "New"));
+            }
+        });
         equipmentTableView.setRowFactory(param ->
         {
             final TableRow<Equipment> row = new TableRow<>();
@@ -134,6 +142,18 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
                         event.consume();
                     }
                 }
+
+                if(event.isControlDown() && event.getCode().equals(KeyCode.N))
+                {
+                    if(equipmentDatabase.getAllEquipment().size() != 0)
+                        equipmentDatabase.addEquipmentEntry(new Equipment(equipmentObservableList.get(equipmentCount-1).getItemID()+1,"New", "New", true, "New"));
+                    else
+                        equipmentDatabase.addEquipmentEntry(new Equipment(0,"New", "New", true, "New"));
+                    System.out.println("HELLO");
+                    equipmentTableView.edit(equipmentTableView.getItems().size(), equipmentTableView.getColumns().get(0));
+                    event.consume();
+                    equipmentTableView.getSelectionModel().select(equipmentTableView.getItems().size()-1);
+                }
                 if(event.isControlDown() && event.getCode().equals(KeyCode.C))
                 {
                     System.out.println("CTRL IS DOWN AND C IS PRESSED");
@@ -155,16 +175,6 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
                             equipmentTableView.getFocusModel().focus(rowa);
                         }
                     }
-                }
-                if(event.isControlDown() && event.getCode().equals(KeyCode.N))
-                {
-                    if(equipmentDatabase.getAllEquipment().size() != 0)
-                        equipmentDatabase.addEquipmentEntry(new Equipment(equipmentObservableList.get(equipmentCount-1).getItemID()+1,"New", "New", true, "New"));
-                    else
-                        equipmentDatabase.addEquipmentEntry(new Equipment(0,"New", "New", true, "New"));
-                    equipmentTableView.edit(equipmentTableView.getItems().size(), equipmentTableView.getColumns().get(0));
-                    event.consume();
-                    equipmentTableView.getSelectionModel().select(equipmentTableView.getItems().size()-1);
                 }
             });
             MenuItem equipmentNewMenuItem = new MenuItem("New item");
@@ -220,7 +230,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
         idTableColumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 
         nameTableColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
-        nameTableColumn.setCellFactory(TextFieldTableCell.<Equipment>forTableColumn());
+        nameTableColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         nameTableColumn.setOnEditCommit((CellEditEvent<Equipment, String> event) ->
         {
 
@@ -233,7 +243,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
         });
 
         categoryTableColumn.setCellValueFactory(new PropertyValueFactory<>("itemCategory"));
-        categoryTableColumn.setCellFactory(TextFieldTableCell.<Equipment>forTableColumn());
+        categoryTableColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         categoryTableColumn.setOnEditCommit((CellEditEvent<Equipment, String> event) ->
         {
             tempEquipment = event.getTableView().getItems().get(event.getTablePosition().getRow());
@@ -249,7 +259,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
         {
             tempEquipment = event.getTableView().getItems().get(event.getTablePosition().getRow());
             System.out.println("THE COMBO BOX SAYS: ? " + event.getNewValue());
-            if(event.getNewValue().equals("Yes"))
+            if(event.getNewValue().equals("Functional"))
             {
                 tempEquipment.setFunctional(true);
             }
@@ -341,44 +351,6 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
         SortedList<Equipment> equipmentSortedList = new SortedList<>(equipmentFilteredData);
         equipmentSortedList.comparatorProperty().bind(equipmentTableView.comparatorProperty());
         equipmentTableView.setItems(equipmentSortedList);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        ///////////////
-
         equipmentTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
         {
             if(equipmentObservableList.size() > 0)
@@ -389,33 +361,6 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
                 contextImageView.setImage(QRGenerator.generateQRCode(temp.getItemID() + temp.getItemName(), 300, 300));
             }
         });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         /////////////////@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@////////////////////////////////////////////////////////////////////////////////////
         studentTableView.setPlaceholder(new Label("No students registered!"));

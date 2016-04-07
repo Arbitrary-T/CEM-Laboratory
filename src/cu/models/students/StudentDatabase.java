@@ -19,6 +19,8 @@ public class StudentDatabase extends Database
     private PreparedStatement updateStudent;
     private PreparedStatement searchStudent;
     private PreparedStatement getAllStudents;
+    private PreparedStatement deleteAll;
+
     String createTableStatement = "CREATE TABLE Students(" +
             "cardUID VARCHAR(256) NOT NULL PRIMARY KEY, " +
             "studentName VARCHAR(256), " +
@@ -50,6 +52,7 @@ public class StudentDatabase extends Database
                 updateStudent = databaseConnection.prepareStatement("UPDATE Students SET studentName=?, studentID=? , studentEmail=?, studentCourse=?, studentPhoneNumber=?,studentFaultyReturns=?, studentTotalReturns=?, studentUsageTime=?, returnNotOnTime=? WHERE cardUID = ?");
                 searchStudent = databaseConnection.prepareStatement("SELECT * FROM Students WHERE cardUID = ?"); /////
                 getAllStudents = databaseConnection.prepareStatement("SELECT * FROM Students");
+                deleteAll = databaseConnection.prepareStatement("DELETE FROM Students WHERE 1=1");
             }
         }
         catch (SQLException e)
@@ -106,6 +109,25 @@ public class StudentDatabase extends Database
         }
         return false;
     }
+
+    public boolean deleteAll()
+    {
+        if(databaseConnection != null)
+        {
+            try
+            {
+                deleteAll.executeUpdate();
+                databaseAgent.onStudentDatabaseUpdate();
+            }
+            catch (SQLException e)
+            {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean addStudentEntry(Student studentData)
     {
         if(databaseConnection != null)

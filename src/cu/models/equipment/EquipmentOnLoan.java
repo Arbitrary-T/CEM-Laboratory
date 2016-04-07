@@ -2,6 +2,7 @@ package cu.models.equipment;
 
 import cu.models.students.Student;
 import cu.models.students.StudentDatabase;
+import cu.models.utilities.EmailService;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.time.Duration;
@@ -26,6 +27,7 @@ public class EquipmentOnLoan
     private boolean stopTimer = false;
     private long secondsPassed = 0;
     private StudentDatabase studentDatabase;
+    private EmailService emailService = new EmailService();
 
     public EquipmentOnLoan(StudentDatabase studentDatabase, Student student, List<Equipment> equipment, int hours, String remarks)
     {
@@ -97,13 +99,13 @@ public class EquipmentOnLoan
                 }
                 else
                 {
-
                     if(leaseTimeLeft.isZero() || leaseTimeLeft.isNegative())
                     {
                         student.setReturnNotOnTime(student.getReturnNotOnTime());
                         studentDatabase.editStudentEntry(student);
-                        //Call method to increase the student's counter in terms of not successfully returning an item
-                        //send email to student
+                        student.setReturnNotOnTime(student.getReturnNotOnTime() + 1);
+                        studentDatabase.editStudentEntry(student);
+                        emailService.sendEmail(student.getStudentEmail(),"Late", "You have missed the deadline for returning the borrowed items!\nThe current number of times you missed the deadline is now: " +student.getReturnNotOnTime());
                     }
                     updateTimeLeft.cancel();
                     updateTimeLeft.purge();

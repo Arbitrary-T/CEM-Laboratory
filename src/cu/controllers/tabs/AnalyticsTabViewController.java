@@ -6,21 +6,15 @@ import cu.models.statistics.Statistics;
 import cu.models.statistics.StatisticsDatabase;
 import cu.models.students.Student;
 import cu.models.students.StudentDatabase;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.util.Pair;
 import javafx.util.StringConverter;
 import org.controlsfx.control.RangeSlider;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -31,46 +25,78 @@ import java.util.stream.Collectors;
  */
 public class AnalyticsTabViewController
 {
-    StatisticsDatabase statisticsDatabase = new StatisticsDatabase("stats");
-    StudentDatabase studentDatabase = new StudentDatabase("students");
-    EquipmentDatabase equipmentDatabase = new EquipmentDatabase("equipment");
+    private StatisticsDatabase statisticsDatabase = new StatisticsDatabase("stats");
+    private StudentDatabase studentDatabase = new StudentDatabase("students");
+    private EquipmentDatabase equipmentDatabase = new EquipmentDatabase("equipment");
 
     @FXML
-    Label bottomRightLabel;
+    private Label bottomRightLabel;
     @FXML
-    Label topLeftLabel;
+    private Label topLeftLabel;
     @FXML
-    Label topRightLabel;
+    private Label topRightLabel;
     @FXML
-    Label numberOfStudentsComputed;
+    private Label numberOfStudentsComputed;
     @FXML
-    ComboBox<String> pieChartComboBox;
+    private ComboBox<String> pieChartComboBox;
     @FXML
-    LineChart<String, Number> topLeftChart;
+    private LineChart<String, Number> topLeftChart;
     @FXML
-    LineChart topRightChart;
+    private PieChart bottomLeftPieChart;
     @FXML
-    PieChart bottomLeftPieChart;
+    private BarChart<String, Integer> bottomRightBarChart;
     @FXML
-    BarChart<String, Integer> bottomRightBarChart;
-
-    Map<LocalDate, Long> sortedMap = new TreeMap<>();
-    List<LocalDate> ss = new ArrayList<>();
-
+    private RangeSlider test;
     @FXML
-    RangeSlider test;
+    private ComboBox<String> topComboBox;
     private ObservableList<String> listOfPieChartOptions = FXCollections.observableArrayList("Functional Vs Faulty Returns", "Faulty Returns By Course Contribution");
+    private ObservableList<String> listOfLineChartOptions = FXCollections.observableArrayList("Average usage", "Item returns condition");
 
+    private Map<LocalDate, Long> sortedMap = new TreeMap<>();
+    private List<LocalDate> ss = new ArrayList<>();
+    private List<LocalDate> t1 = new ArrayList<>();
+
+    private TreeMap<LocalDate, Integer> lineC = new TreeMap<>();
+    private TreeMap<LocalDate, Integer> lineC2 = new TreeMap<>();
     @FXML
     private void initialize()
     {
         /*for(int i = 0; i < 12; i++)
         {
-            statisticsDatabase.addEntry(new Statistics(LocalDate.of(2016, i+1, ThreadLocalRandom.current().nextInt(1,31)),ThreadLocalRandom.current().nextLong(650000), 5, 5));
-            statisticsDatabase.addEntry(new Statistics(LocalDate.of(2016, i+1, ThreadLocalRandom.current().nextInt(1,31)),ThreadLocalRandom.current().nextLong(650000), 5, 5));
+            for(int j = 1; j < 28; j++)
+            {
+                statisticsDatabase.addEntry(new Statistics(LocalDate.of(2017, i+1, j),ThreadLocalRandom.current().nextLong(650000), ThreadLocalRandom.current().nextInt(0,20), ThreadLocalRandom.current().nextInt(20,30)));
+            }
         }*/
 
         topLeftChart.setLegendVisible(false);
+        topComboBox.setItems(listOfLineChartOptions);
+        topComboBox.setValue(listOfLineChartOptions.get(0));
+        topComboBox.valueProperty().addListener((observable, oldValue, newValue) ->
+        {
+            if(newValue.equals(listOfLineChartOptions.get(0)))
+            {
+                if(!ss.isEmpty())
+                {
+                    computeLineChartForPeriod(ss.get((int)test.getLowValue()),ss.get((int)test.getHighValue()));
+                }
+                else
+                {
+                    computeLineChart();
+                }
+            }
+            else
+            {
+                if(!t1.isEmpty())
+                {
+                    computeLineReturnsForPeriod(t1.get((int)test.getLowValue()),t1.get((int)test.getHighValue()));
+                }
+                else
+                {
+                    computeLineReturns();
+                }
+            }
+        });
         pieChartComboBox.setItems(listOfPieChartOptions);
         pieChartComboBox.setValue(listOfPieChartOptions.get(0));
         pieChartComboBox.valueProperty().addListener((observable, oldValue, newValue) ->
@@ -87,46 +113,8 @@ public class AnalyticsTabViewController
         computeGlobalReturns();
         computeFaultyItemsByCategory();
         computeLineChart();
-
-        test.setLabelFormatter(new StringConverter<Number>()
-        {
-            @Override
-            public String toString(Number object)
-            {
-                return ss.get(object.intValue()).toString();
-            }
-
-            @Override
-            public Number fromString(String string)
-            {
-                for(int i = 0; i<ss.size();i++)
-                {
-                    if(ss.get(i).toString().equalsIgnoreCase(string))
-                    {
-                        return i;
-                    }
-                }
-                return 0;
-            }
-        });
-
-        test.setShowTickMarks(true);
-        test.setShowTickLabels(true);
-        test.setMax(ss.size()-1);
-        test.lowValueProperty().setValue(0);
-        test.highValueProperty().setValue(ss.size()-1);
-
-        test.highValueChangingProperty().addListener((observable, oldValue, newValue) ->
-        {
-            computeLineChartForPeriod(ss.get((int)test.getLowValue()), ss.get((int) test.getHighValue()));
-        });
-        test.lowValueChangingProperty().addListener(((observable, oldValue, newValue) ->
-        {
-            if(!test.isHighValueChanging())
-            {
-                computeLineChartForPeriod(ss.get((int)test.getLowValue()), ss.get((int) test.getHighValue()));
-            }
-        }));
+        setupLineChart();
+        computeLineReturns();
     }
 
     private void computeGlobalReturns()
@@ -140,6 +128,7 @@ public class AnalyticsTabViewController
             globalFaultyReturns+=student.getFaultyReturns();
             globalTotalReturns+=student.getTotalReturns();
         }
+        globalTotalReturns = globalTotalReturns-globalFaultyReturns;
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(new PieChart.Data("Faulty", globalFaultyReturns), new PieChart.Data("Functioning", globalTotalReturns));
         bottomLeftPieChart.setData(pieChartData);
         bottomLeftPieChart.setTitle(pieChartComboBox.getSelectionModel().getSelectedItem());
@@ -166,9 +155,41 @@ public class AnalyticsTabViewController
         bottomLeftPieChart.setData(pieChartData);
         bottomLeftPieChart.setTitle(pieChartComboBox.getSelectionModel().getSelectedItem());
         numberOfStudentsComputed.setText("A total of " + studentList.size() + " students were computed");
-        createChartDurationAlert();
     }
 
+    private void computeLineReturns()
+    {
+        List<Statistics> statisticsList = statisticsDatabase.getAll();
+
+        for(Statistics s : statisticsList)
+        {
+            t1.add(s.getDate());
+            lineC.put(s.getDate(), s.getTotalReturns());
+            lineC2.put(s.getDate(), s.getFaultyReturns());
+        }
+        XYChart.Series<String, Number> tot = new XYChart.Series<>();
+        XYChart.Series<String, Number> fault = new XYChart.Series<>();
+        lineC.keySet().stream().forEach(e -> tot.getData().add(new XYChart.Data<>(e.toString(),lineC.get(e))));
+        lineC2.keySet().stream().forEach(e -> fault.getData().add(new XYChart.Data<>(e.toString(),lineC2.get(e))));
+
+       // topLeftChart.getData().clear();
+        //topLeftChart.getData().addAll(tot,fault);
+        System.out.println(lineC);
+        System.out.println(lineC2);
+
+    }
+    private void computeLineReturnsForPeriod(LocalDate startDate, LocalDate endDate)
+    {
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        XYChart.Series<String, Number> series2 = new XYChart.Series<>();
+        System.out.println(startDate.toString() + endDate.toString());
+        lineC.keySet().stream().filter(s -> s.isEqual(startDate) || s.isEqual(endDate) || (s.isAfter(startDate) && s.isBefore(endDate))).forEach(s -> series.getData().add(new XYChart.Data<>(s.toString(), lineC.get(s))));
+        lineC2.keySet().stream().filter(s -> s.isEqual(startDate) || s.isEqual(endDate) || (s.isAfter(startDate) && s.isBefore(endDate))).forEach(s -> series2.getData().add(new XYChart.Data<>(s.toString(), lineC2.get(s))));
+        topLeftChart.getData().clear();
+        topLeftChart.getData().addAll(series,series2);
+        topLeftChart.getXAxis().setLabel("Day");
+        topLeftChart.getYAxis().setLabel("Number of Returns");
+    }
     private void computeFaultyItemsByCategory()
     {
         HashMap<String, Integer> barChartHashMap = new HashMap<>();
@@ -221,12 +242,11 @@ public class AnalyticsTabViewController
 
         for(Statistics s : statisticsList)
         {
-            //Populate Hashmap
+            //Populate HashMap
             if(sortedMap.containsKey(s.getDate()))
             {
                 numberOfOccurrencesPerMonth[s.getDate().getMonth().getValue()-1]++;
                 sortedMap.put(s.getDate(), sortedMap.get(s.getDate()) + s.getAverageUsage());
-                System.out.println(sortedMap.get(s.getDate()) + s.getAverageUsage());
             }
             else
             {
@@ -241,13 +261,12 @@ public class AnalyticsTabViewController
         }
 
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        System.out.println(sortedMap);
-
         for(LocalDate s : sortedMap.keySet())
         {
             ss.add(s);
             series.getData().add(new XYChart.Data<>(s.toString(), sortedMap.get(s)/3600));
         }
+        topLeftChart.getData().clear();
         topLeftChart.getData().add(series);
         topLeftChart.getXAxis().setLabel("Day");
         topLeftChart.getYAxis().setLabel("Average usage of equipment (hours)");
@@ -257,74 +276,82 @@ public class AnalyticsTabViewController
     {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         System.out.println(startDate.toString() + endDate.toString());
-        for(LocalDate s : sortedMap.keySet())
-        {
-            if(s.isEqual(startDate) || s.isEqual(endDate) || (s.isAfter(startDate) && s.isBefore(endDate)))
-            {
-
-                series.getData().add(new XYChart.Data<>(s.toString(), sortedMap.get(s)/3600));
-            }
-        }
+        sortedMap.keySet().stream().filter(s -> s.isEqual(startDate) || s.isEqual(endDate) || (s.isAfter(startDate) && s.isBefore(endDate))).forEach(s -> series.getData().add(new XYChart.Data<>(s.toString(), sortedMap.get(s) / 3600)));
         topLeftChart.getData().clear();
         topLeftChart.getData().add(series);
         topLeftChart.getXAxis().setLabel("Day");
         topLeftChart.getYAxis().setLabel("Average usage of equipment (hours)");
     }
 
-    private void createChartDurationAlert()
+    private void setupLineChart()
     {
-        Dialog<Pair<String, String>> dialog = new Dialog<>();
-        dialog.setTitle("Input Dialog");
-        dialog.setHeaderText("Please enter the duration for the chart");
-
-        ButtonType loginButtonType = new ButtonType("Compute", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
-
-        TextField startDate = new TextField();
-        startDate.setPromptText("yyyy-MM-dd");
-        TextField endDate = new TextField();
-        endDate.setPromptText("yyyy-MM-dd");
-
-        grid.add(new Label("Start Date:"), 0, 0);
-        grid.add(startDate, 1, 0);
-        grid.add(new Label("End Date:"), 0, 1);
-        grid.add(endDate, 1, 1);
-        dialog.getDialogPane().setContent(grid);
-        dialog.setResultConverter(dialogButton ->
+        topLeftLabel.setText("");
+        test.setLabelFormatter(new StringConverter<Number>()
         {
-            if (dialogButton == loginButtonType)
+            @Override
+            public String toString(Number object)
             {
-                return new Pair<>(startDate.getText(), endDate.getText());
+                if(ss.size() > 0)
+                {
+                    return ss.get(object.intValue()).toString();
+                }
+                return "No Data";
             }
-            return null;
-        });
 
-        Optional<Pair<String, String>> result = dialog.showAndWait();
-        result.ifPresent(startEndDate ->
+            @Override
+            public Number fromString(String string)
+            {
+                for(int i = 0; i<ss.size();i++)
+                {
+                    if(ss.get(i).toString().equalsIgnoreCase(string))
+                    {
+                        return i;
+                    }
+                }
+                return 0;
+            }
+        });
+        test.setShowTickMarks(true);
+        test.setShowTickLabels(true);
+
+        if(ss.size() > 0)
         {
-            try
+            test.setMax(ss.size()-1);
+            test.lowValueProperty().setValue(0);
+            test.highValueProperty().setValue(ss.size()-1);
+            test.highValueChangingProperty().addListener((observable, oldValue, newValue) ->
             {
-                computeLineChartForPeriod(LocalDate.parse(startDate.getText()), LocalDate.parse(endDate.getText()));
-            }
-            catch (DateTimeParseException e)
+                if(topComboBox.getSelectionModel().getSelectedIndex() == 0)
+                {
+                    topLeftChart.getData().clear();
+                    topLeftLabel.setText("Showing the period between " +ss.get((int)test.getLowValue()) + " and " + ss.get((int) test.getHighValue()));
+                    computeLineChartForPeriod(ss.get((int)test.getLowValue()), ss.get((int) test.getHighValue()));
+                }
+                else
+                {
+                    topLeftChart.getData().clear();
+                    computeLineReturnsForPeriod(t1.get((int) test.getLowValue()), t1.get((int) test.getHighValue()));
+                }
+            });
+            test.lowValueChangingProperty().addListener(((observable, oldValue, newValue) ->
             {
-                e.printStackTrace();
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Unidentified Input");
-                alert.setHeaderText("Unable to complete operation");
-                alert.setContentText("Please make sure of the input data");
-                alert.showAndWait();
-            }
+                if(!test.isHighValueChanging())
+                {
+                    if(topComboBox.getSelectionModel().getSelectedIndex() == 0)
+                    {
+                        topLeftLabel.setText("Showing the period between " + ss.get((int) test.getLowValue()) + " and " + ss.get((int) test.getHighValue()));
+                        topLeftChart.getData().clear();
+                        computeLineChartForPeriod(ss.get((int) test.getLowValue()), ss.get((int) test.getHighValue()));
+                    }
+                    else
+                    {
+                        topLeftChart.getData().clear();
+                        computeLineReturnsForPeriod(t1.get((int) test.getLowValue()), t1.get((int) test.getHighValue()));
+                    }
+                }
+            }));
+            topLeftLabel.setText("Showing the period between " +ss.get(0) + " and " + ss.get(ss.size()-1));
+        }
 
-        });
-    }
-    private double rangeSliderHighestVal()
-    {
-        return sortedMap.size();
     }
 }

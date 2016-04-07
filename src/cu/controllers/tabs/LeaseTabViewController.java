@@ -109,24 +109,53 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
 
     private ObservableList<EquipmentOnLoan> itemsOnLeaseObservableList = FXCollections.observableArrayList();
 
+    private Runnable configureStudentCard = () ->
+    {
+        stdNameLabel.setText(Main.currentStudent.getStudentName());
+        stdIDLabel.setText(""+ Main.currentStudent.getStudentID());
+        stdEmailLabel.setText(Main.currentStudent.getStudentEmail());
+        stdCourseLabel.setText(Main.currentStudent.getStudentCourse());
+        stdPhoneNumberLabel.setText(Main.currentStudent.getStudentPhoneNumber());
+    };
+
+    private Runnable openReturnsWindow = () ->
+    {
+        try
+        {
+            isReturnsWindowOpen = true;
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/dialogues/ReturnsDialogue.fxml")); // Load the fxml file and create a new stage for the popup
+            DialogPane page = loader.load();
+            Stage dialogStage = new Stage();
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+            dialogStage.setTitle("Return Items");
+            ReturnsDialogueController controller = loader.getController();
+            controller.setup(dialogStage, studentDatabase, equipmentDatabase, getEquipmentOnLoan(Main.currentStudent), leasedItemsTableView);
+            dialogStage.setOnCloseRequest((event ->
+            {
+                isReturnsWindowOpen = false;
+                Platform.runLater(this::clearMainStudent);
+            }));
+            dialogStage.showAndWait();
+
+        }
+        catch(IOException e)
+        {
+            // Exception gets thrown if the fxml file could not be loaded
+            e.printStackTrace();
+        }
+    };
+
     @FXML
-    void initialize()
+    private void initialize()
     {
         CardListener.activateAgent(this);
         CodeScannedListener.activateAgent(this);
+
+        totalNumberOfReturns.setLabelsVisible(false);
         totalNumberOfReturns.setVisible(false);
         leasedItemsTableView.setPlaceholder(new Label("No borrowed items!"));
-        timeComboBox.valueProperty().addListener((observable1, oldValue1, newValue1) ->
-        {
-            if(newValue1.equals("CUSTOM"))
-            {
-                customTimeTextField.setDisable(false);
-            }
-            else
-            {
-                customTimeTextField.setDisable(true);
-            }
-        });
+        customTimeTextField.disableProperty().bind(timeComboBox.getSelectionModel().selectedItemProperty().isNotEqualTo("CUSTOM"));
         timeComboBox.setItems(timeComboBoxOptions);
         timeComboBox.setValue(timeComboBoxOptions.get(2));
         leftAnchorPane.maxWidthProperty().bind(mainVerticalSplitPane.widthProperty().multiply(0.2));
@@ -156,56 +185,6 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         leasedToTableColumn.setCellValueFactory(p-> new ReadOnlyObjectWrapper<>(p.getValue().getStudent().getStudentName()+" ("+p.getValue().getStudent().getStudentID() +")"));
         remarksTableColumn.setEditable(false);
         remarksTableColumn.setCellValueFactory(p-> new ReadOnlyObjectWrapper<>(p.getValue().getRemarks()));
-        confirmLeaseButton.setOnMouseClicked(event ->
-        {
-            if(selectedItemsListView.getItems().size() > 0)
-            {
-                if(Main.currentStudent != null)
-                {
-                    switch(timeComboBox.getSelectionModel().getSelectedIndex())
-                    {
-                        case 0:
-                            itemsOnLeaseObservableList.add(new EquipmentOnLoan(studentDatabase, Main.currentStudent, scannedItems.subList(0,scannedItems.size()),1,remarksTextArea.getText()));
-                            break;
-                        case 1:
-                            itemsOnLeaseObservableList.add(new EquipmentOnLoan(studentDatabase, Main.currentStudent, scannedItems.subList(0,scannedItems.size()),2,remarksTextArea.getText()));
-                            break;
-                        case 2:
-                            itemsOnLeaseObservableList.add(new EquipmentOnLoan(studentDatabase, Main.currentStudent, scannedItems.subList(0,scannedItems.size()),3,remarksTextArea.getText()));
-                            break;
-                        case 3:
-                            try
-                            {
-                                itemsOnLeaseObservableList.add(new EquipmentOnLoan(studentDatabase, Main.currentStudent, scannedItems.subList(0,scannedItems.size()),Integer.parseInt(customTimeTextField.getText()),remarksTextArea.getText()));
-                            }
-                            catch (NumberFormatException e)
-                            {
-                                alertBuilder("Error!", "Unrecognised input!", "Please make sure the time entered is a whole number!");
-                            }
-                            break;
-                    }
-
-                }
-                clearOptionsButton.fireEvent(event);
-            }
-            else if(Main.currentStudent != null)
-            {
-                alertBuilder("Error!", "No items scanned!", "Please scan the wanted items prior to confirming!");
-            }
-            else
-            {
-                alertBuilder("Error!", "Student not found!", "Please scan your student card prior to scanning items!");
-            }
-        });
-
-        clearOptionsButton.setOnMouseClicked(event ->
-        {
-            searchDatabaseTextField.clear();
-            customTimeTextField.clear();
-            scannedItems.clear();
-            remarksTextArea.clear();
-            clearMainStudent();
-        });
     }
 
     @Override
@@ -229,14 +208,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
             });
             System.out.println("TOTAL USAGE TIME = " + Main.currentStudent.getEquipmentUsageTime() + " FAULTY RETURNS = " + Main.currentStudent.getFaultyReturns() + " Total Loans = " + Main.currentStudent.getTotalReturns());
         }
-        Runnable configureStudentCard = () ->
-        {
-            stdNameLabel.setText(Main.currentStudent.getStudentName());
-            stdIDLabel.setText(""+ Main.currentStudent.getStudentID());
-            stdEmailLabel.setText(Main.currentStudent.getStudentEmail());
-            stdCourseLabel.setText(Main.currentStudent.getStudentCourse());
-            stdPhoneNumberLabel.setText(Main.currentStudent.getStudentPhoneNumber());
-        };
+
         //else if the student is not in the database open a new window and register the student
         if(!isRegistrationWindowOpen && Main.currentStudent == null) {
             System.out.println("Student does no exist in database -> Opening registration window");
@@ -275,36 +247,9 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         }
         else if(Main.currentStudent != null && studentExistsInTable() && !isReturnsWindowOpen)
         {
-            System.out.println("HI");
-            Runnable openRegistrationWindow = () ->
-            {
-                try
-                {
-                    isReturnsWindowOpen = true;
-                    FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/dialogues/ReturnsDialogue.fxml")); // Load the fxml file and create a new stage for the popup
-                    DialogPane page = loader.load();
-                    Stage dialogStage = new Stage();
-                    Scene scene = new Scene(page);
-                    dialogStage.setScene(scene);
-                    dialogStage.setTitle("Return Items");
-                    ReturnsDialogueController controller = loader.getController();
-                    controller.setup(dialogStage, studentDatabase, equipmentDatabase, getEquipmentOnLoan(Main.currentStudent), leasedItemsTableView);
-                    dialogStage.setOnCloseRequest((event ->
-                    {
-                        isReturnsWindowOpen = false;
-                        Platform.runLater(this::clearMainStudent);
-                    }));
-                    dialogStage.showAndWait();
 
-                }
-                catch(IOException e)
-                {
-                    // Exception gets thrown if the fxml file could not be loaded
-                    e.printStackTrace();
-                }
-            };
             Platform.runLater(configureStudentCard);
-            Platform.runLater(openRegistrationWindow);
+            Platform.runLater(openReturnsWindow);
         }
         else if (!isRegistrationWindowOpen)
         {
@@ -375,6 +320,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         }
         return false;
     }
+
     private boolean itemAlreadyExists(Equipment scannedItem)
     {
         for(EquipmentOnLoan equipmentOnLoan:leasedItemsTableView.getItems())
@@ -386,6 +332,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         }
         return false;
     }
+
     private EquipmentOnLoan getEquipmentOnLoan(Student student)
     {
         for(EquipmentOnLoan equipmentOnLoan : leasedItemsTableView.getItems())
@@ -410,12 +357,63 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
     {
         Main.currentStudent = null;
         totalNumberOfReturns.setVisible(false);
-        //totalNumberOfReturns.getData().clear();
         VBox s = (VBox) studentDetailsTextGroup.getChildren().get(0);
         for(int i=0;i<5; i++)
         {
             Label temp = (Label) s.getChildren().get(i);
             temp.setText("");
         }
+    }
+    @FXML
+    private void onConfirmButtonClicked()
+    {
+        if(selectedItemsListView.getItems().size() > 0)
+        {
+            if(Main.currentStudent != null)
+            {
+                switch(timeComboBox.getSelectionModel().getSelectedIndex())
+                {
+                    case 0:
+                        itemsOnLeaseObservableList.add(new EquipmentOnLoan(studentDatabase, Main.currentStudent, scannedItems.subList(0,scannedItems.size()),1,remarksTextArea.getText()));
+                        break;
+                    case 1:
+                        itemsOnLeaseObservableList.add(new EquipmentOnLoan(studentDatabase, Main.currentStudent, scannedItems.subList(0,scannedItems.size()),2,remarksTextArea.getText()));
+                        break;
+                    case 2:
+                        itemsOnLeaseObservableList.add(new EquipmentOnLoan(studentDatabase, Main.currentStudent, scannedItems.subList(0,scannedItems.size()),3,remarksTextArea.getText()));
+                        break;
+                    case 3:
+                        try
+                        {
+                            itemsOnLeaseObservableList.add(new EquipmentOnLoan(studentDatabase, Main.currentStudent, scannedItems.subList(0,scannedItems.size()),Integer.parseInt(customTimeTextField.getText()),remarksTextArea.getText()));
+                        }
+                        catch (NumberFormatException e)
+                        {
+                            alertBuilder("Error!", "Unrecognised input!", "Please make sure the time entered is a whole number!");
+                        }
+                        break;
+                }
+
+            }
+            onClearButtonClicked();
+        }
+        else if(Main.currentStudent != null)
+        {
+            alertBuilder("Error!", "No items scanned!", "Please scan the wanted items prior to confirming!");
+        }
+        else
+        {
+            alertBuilder("Error!", "Student not found!", "Please scan your student card prior to scanning items!");
+        }
+    }
+
+    @FXML
+    private void onClearButtonClicked()
+    {
+        searchDatabaseTextField.clear();
+        customTimeTextField.clear();
+        scannedItems.clear();
+        remarksTextArea.clear();
+        clearMainStudent();
     }
 }

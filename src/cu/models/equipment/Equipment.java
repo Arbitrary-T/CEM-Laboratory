@@ -10,7 +10,6 @@ public class Equipment
     private String itemName;
     private String itemCategory;
     private String partOfBundle;
-    private String functionalWrapper = "";
 
     public Equipment(int itemID, String itemName, String itemCategory, boolean functional, String bundle)
     {

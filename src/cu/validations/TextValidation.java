@@ -12,7 +12,7 @@ public class TextValidation
 
     public boolean checkValidEmail(String email)
     {
-        return email.endsWith("@coventry.ac.uk");
+        return email.endsWith("@uni.coventry.ac.uk");
     }
 
     public boolean isValidPhoneNumber(String phoneNumber)

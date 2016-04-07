@@ -1,5 +1,6 @@
 package cu.models.listeners;
 import cu.interfaces.CodeScannerInterface;
+import cu.models.utilities.PropertiesManager;
 import gnu.io.*;
 import gnu.io.CommPortIdentifier;
 import javafx.application.Platform;
@@ -14,34 +15,22 @@ public class CodeScannedListener implements Runnable, SerialPortEventListener
     private static ArrayList<CodeScannerInterface> agents = new ArrayList<>();
 
     private CommPortIdentifier portId;
-    private Enumeration portList;
     private InputStream inputStream;
     private SerialPort serialPort;
+    private PropertiesManager propertiesManager = new PropertiesManager();
 
     public CodeScannedListener()
     {
-        portList = CommPortIdentifier.getPortIdentifiers();
-
-        while (portList.hasMoreElements())
-        {
-            portId = (CommPortIdentifier) portList.nextElement();
-            if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL)
-            {
-                if (portId.getName().equals("COM5"))
-                {
-                    //if (portId.getName().equals("/dev/term/a")) {
-                }
-            }
-        }
         try
         {
-            serialPort = (gnu.io.SerialPort) portId.open("SimpleReadApp", 2000);
+            portId = CommPortIdentifier.getPortIdentifier(propertiesManager.getProperty("default.port"));
+            serialPort = (gnu.io.SerialPort) portId.open("Barcode Listener", 2000);
             inputStream = serialPort.getInputStream();
             serialPort.addEventListener(this);
             serialPort.notifyOnDataAvailable(true);
             serialPort.setSerialPortParams(9600, gnu.io.SerialPort.DATABITS_8, gnu.io.SerialPort.STOPBITS_1, gnu.io.SerialPort.PARITY_NONE);
         }
-        catch (UnsupportedCommOperationException | TooManyListenersException | IOException | PortInUseException e)
+        catch (UnsupportedCommOperationException | TooManyListenersException | IOException | PortInUseException | NoSuchPortException e)
         {
             e.printStackTrace();
         }
