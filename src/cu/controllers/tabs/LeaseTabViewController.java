@@ -55,6 +55,8 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
 
     //View related variables
     @FXML
+    private Label returnsNotOnTimeLabel;
+    @FXML
     private AnchorPane leftAnchorPane;
     @FXML
     private SplitPane mainVerticalSplitPane;
@@ -199,6 +201,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
             {
                 if(!totalNumberOfReturns.isVisible())
                 {
+                    returnsNotOnTimeLabel.setText("Number of times not returned on time: " + Main.currentStudent.getReturnNotOnTime());
                     totalNumberOfReturns.setTitle("Total number of returns");
                     totalNumberOfReturns.setVisible(true);
                     ObservableList<Data> pieChartData = FXCollections.observableArrayList(new Data("Faulty", Main.currentStudent.getFaultyReturns()), new Data("Functioning", Main.currentStudent.getTotalReturns()-Main.currentStudent.getFaultyReturns()));
@@ -414,6 +417,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         customTimeTextField.clear();
         scannedItems.clear();
         remarksTextArea.clear();
+        returnsNotOnTimeLabel.setText("");
         clearMainStudent();
     }
 }

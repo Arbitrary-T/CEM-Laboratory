@@ -159,6 +159,6 @@ public class NewRegistrationDialogueController
     }
     private boolean isValidEmail(String email)
     {
-        return email.endsWith("@coventry.ac.uk");
+        return validation.checkValidEmail(email);
     }
 }
