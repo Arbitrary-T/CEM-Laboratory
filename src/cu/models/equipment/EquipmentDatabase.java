@@ -20,7 +20,7 @@ public class EquipmentDatabase extends Database
     private PreparedStatement getAllEquipment;
     private PreparedStatement getItem;
     private ObservableList<Equipment> equipmentObservableList = FXCollections.observableArrayList();
-    private  static DatabaseInterface agent;
+    private static DatabaseInterface agent;
 
     public static void activateAgent(DatabaseInterface mainAgent)
     {

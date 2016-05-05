@@ -1,6 +1,7 @@
 package cu.controllers.dialogues;
 
 import cu.Main;
+import cu.models.students.CurrentStudent;
 import cu.models.students.Student;
 import cu.models.students.StudentDatabase;
 import cu.validations.TextValidation;
@@ -127,7 +128,7 @@ public class NewRegistrationDialogueController
             else
             {
                 System.out.println("Successfully added " + stdName.getText() + " to the 'Students' database.");
-                Main.currentStudent = newStudent;
+                CurrentStudent.getInstance().setLoadedStudent(newStudent);
             }
             dialogStage.fireEvent(new WindowEvent(dialogStage, WindowEvent.WINDOW_CLOSE_REQUEST));
             dialogStage.close();

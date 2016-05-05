@@ -11,8 +11,10 @@ import cu.models.equipment.EquipmentDatabase;
 import cu.models.equipment.EquipmentOnLoan;
 import cu.models.listeners.CardListener;
 import cu.models.listeners.CodeScannedListener;
+import cu.models.students.CurrentStudent;
 import cu.models.students.Student;
 import cu.models.students.StudentDatabase;
+import cu.validations.TextValidation;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -30,6 +32,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
@@ -108,16 +111,19 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
     private PieChart totalNumberOfReturns;
     @FXML
     private ListView<Equipment> selectedItemsListView;
-
+    @FXML
+    private HBox mainPane;
+    private TextValidation textValidation = new TextValidation();
+    private TabPane rootPane;
     private ObservableList<EquipmentOnLoan> itemsOnLeaseObservableList = FXCollections.observableArrayList();
 
     private Runnable configureStudentCard = () ->
     {
-        stdNameLabel.setText(Main.currentStudent.getStudentName());
-        stdIDLabel.setText(""+ Main.currentStudent.getStudentID());
-        stdEmailLabel.setText(Main.currentStudent.getStudentEmail());
-        stdCourseLabel.setText(Main.currentStudent.getStudentCourse());
-        stdPhoneNumberLabel.setText(Main.currentStudent.getStudentPhoneNumber());
+        stdNameLabel.setText(CurrentStudent.getInstance().getLoadedStudent().getStudentName());
+        stdIDLabel.setText(""+ CurrentStudent.getInstance().getLoadedStudent().getStudentID());
+        stdEmailLabel.setText(CurrentStudent.getInstance().getLoadedStudent().getStudentEmail());
+        stdCourseLabel.setText(CurrentStudent.getInstance().getLoadedStudent().getStudentCourse());
+        stdPhoneNumberLabel.setText(CurrentStudent.getInstance().getLoadedStudent().getStudentPhoneNumber());
     };
 
     private Runnable openReturnsWindow = () ->
@@ -132,7 +138,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
             dialogStage.setScene(scene);
             dialogStage.setTitle("Return Items");
             ReturnsDialogueController controller = loader.getController();
-            controller.setup(dialogStage, studentDatabase, equipmentDatabase, getEquipmentOnLoan(Main.currentStudent), leasedItemsTableView);
+            controller.setup(dialogStage, studentDatabase, equipmentDatabase, getEquipmentOnLoan(CurrentStudent.getInstance().getLoadedStudent()), leasedItemsTableView);
             dialogStage.setOnCloseRequest((event ->
             {
                 isReturnsWindowOpen = false;
@@ -194,26 +200,26 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
     {
         System.out.println("Card scanned event received: " + System.currentTimeMillis());
         //If the student is in the database, the CardImage update's with the student details.
-        Main.currentStudent = studentDatabase.searchDatabase(cardUID);
-        if(Main.currentStudent != null)
+        CurrentStudent.getInstance().setLoadedStudent(studentDatabase.searchDatabase(cardUID));
+        if(CurrentStudent.getInstance().getLoadedStudent() != null)
         {
             Platform.runLater(()->
             {
                 if(!totalNumberOfReturns.isVisible())
                 {
-                    returnsNotOnTimeLabel.setText("Number of times not returned on time: " + Main.currentStudent.getReturnNotOnTime());
+                    returnsNotOnTimeLabel.setText("Number of times not returned on time: " + CurrentStudent.getInstance().getLoadedStudent().getReturnNotOnTime());
                     totalNumberOfReturns.setTitle("Total number of returns");
                     totalNumberOfReturns.setVisible(true);
-                    ObservableList<Data> pieChartData = FXCollections.observableArrayList(new Data("Faulty", Main.currentStudent.getFaultyReturns()), new Data("Functioning", Main.currentStudent.getTotalReturns()-Main.currentStudent.getFaultyReturns()));
+                    ObservableList<Data> pieChartData = FXCollections.observableArrayList(new Data("Faulty", CurrentStudent.getInstance().getLoadedStudent().getFaultyReturns()), new Data("Functioning", CurrentStudent.getInstance().getLoadedStudent().getTotalReturns() - CurrentStudent.getInstance().getLoadedStudent().getFaultyReturns()));
                     totalNumberOfReturns.setData(pieChartData);
                 }
 
             });
-            System.out.println("TOTAL USAGE TIME = " + Main.currentStudent.getEquipmentUsageTime() + " FAULTY RETURNS = " + Main.currentStudent.getFaultyReturns() + " Total Loans = " + Main.currentStudent.getTotalReturns());
+            System.out.println("TOTAL USAGE TIME = " + CurrentStudent.getInstance().getLoadedStudent().getEquipmentUsageTime() + " FAULTY RETURNS = " + CurrentStudent.getInstance().getLoadedStudent().getFaultyReturns() + " Total Loans = " + CurrentStudent.getInstance().getLoadedStudent().getTotalReturns());
         }
 
         //else if the student is not in the database open a new window and register the student
-        if(!isRegistrationWindowOpen && Main.currentStudent == null) {
+        if(!isRegistrationWindowOpen && CurrentStudent.getInstance().getLoadedStudent() == null) {
             System.out.println("Student does no exist in database -> Opening registration window");
             //Running the UI manipulating code in the UI thread
             Runnable openRegistrationWindow = () ->
@@ -233,7 +239,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
                     {
                         isRegistrationWindowOpen = false;
                         System.out.println("Registration window closed.");
-                        if(Main.currentStudent != null)
+                        if(CurrentStudent.getInstance().getLoadedStudent() != null)
                         {
                             Platform.runLater(configureStudentCard);
                         }
@@ -248,7 +254,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
             };
             Platform.runLater(openRegistrationWindow);
         }
-        else if(Main.currentStudent != null && studentExistsInTable() && !isReturnsWindowOpen)
+        else if(CurrentStudent.getInstance().getLoadedStudent() != null && studentExistsInTable() && !isReturnsWindowOpen)
         {
 
             Platform.runLater(configureStudentCard);
@@ -264,23 +270,13 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
     public void onCodeScanner(String QRCode)
     {
         System.out.println(QRCode);
-        if(MainViewController.index == 0)
+        rootPane = (TabPane) mainPane.getParent().getParent().getParent().getChildrenUnmodifiable().get(0);
+
+        if(rootPane.getSelectionModel().getSelectedIndex() == 0)
         {
-            if(Main.currentStudent != null && !isReturnsWindowOpen)
+            if(CurrentStudent.getInstance().getLoadedStudent() != null && !isReturnsWindowOpen)
             {
-                Pattern intsOnly = Pattern.compile("^[\\d]*");
-                Matcher makeMatch = intsOnly.matcher(QRCode);
-                makeMatch.find();
-                String inputInt = makeMatch.group();
-                int inputToInt = -1;
-                try
-                {
-                    inputToInt = Integer.parseInt(inputInt);
-                }
-                catch (NumberFormatException e)
-                {
-                    e.printStackTrace();
-                }
+                int inputToInt = textValidation.textToFirstInt(QRCode);
                 Equipment s = equipmentDatabase.getItem(inputToInt);
                 if(s != null)
                 {
@@ -305,7 +301,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
                     selectedItemsListView.setItems(scannedItems);
                 }
             }
-            else if(Main.currentStudent == null && !isReturnsWindowOpen)
+            else if(CurrentStudent.getInstance().getLoadedStudent() == null && !isReturnsWindowOpen)
             {
                 alertBuilder("Error!", "Student/Items not found!", "Please scan your student card and the wanted items prior to confirming!");
             }
@@ -316,7 +312,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
     {
         for(EquipmentOnLoan equipmentOnLoan:leasedItemsTableView.getItems())
         {
-            if(equipmentOnLoan.getStudent().equals(Main.currentStudent))
+            if(equipmentOnLoan.getStudent().equals(CurrentStudent.getInstance().getLoadedStudent()))
             {
                 return true;
             }
@@ -358,7 +354,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
     }
     private void clearMainStudent()
     {
-        Main.currentStudent = null;
+        CurrentStudent.getInstance().setLoadedStudent(null);
         totalNumberOfReturns.setVisible(false);
         VBox s = (VBox) studentDetailsTextGroup.getChildren().get(0);
         for(int i=0;i<5; i++)
@@ -372,23 +368,23 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
     {
         if(selectedItemsListView.getItems().size() > 0)
         {
-            if(Main.currentStudent != null)
+            if(CurrentStudent.getInstance().getLoadedStudent() != null)
             {
                 switch(timeComboBox.getSelectionModel().getSelectedIndex())
                 {
                     case 0:
-                        itemsOnLeaseObservableList.add(new EquipmentOnLoan(studentDatabase, Main.currentStudent, scannedItems.subList(0,scannedItems.size()),1,remarksTextArea.getText()));
+                        itemsOnLeaseObservableList.add(new EquipmentOnLoan(studentDatabase, CurrentStudent.getInstance().getLoadedStudent(), scannedItems.subList(0,scannedItems.size()),1,remarksTextArea.getText()));
                         break;
                     case 1:
-                        itemsOnLeaseObservableList.add(new EquipmentOnLoan(studentDatabase, Main.currentStudent, scannedItems.subList(0,scannedItems.size()),2,remarksTextArea.getText()));
+                        itemsOnLeaseObservableList.add(new EquipmentOnLoan(studentDatabase, CurrentStudent.getInstance().getLoadedStudent(), scannedItems.subList(0,scannedItems.size()),2,remarksTextArea.getText()));
                         break;
                     case 2:
-                        itemsOnLeaseObservableList.add(new EquipmentOnLoan(studentDatabase, Main.currentStudent, scannedItems.subList(0,scannedItems.size()),3,remarksTextArea.getText()));
+                        itemsOnLeaseObservableList.add(new EquipmentOnLoan(studentDatabase, CurrentStudent.getInstance().getLoadedStudent(), scannedItems.subList(0,scannedItems.size()),3,remarksTextArea.getText()));
                         break;
                     case 3:
                         try
                         {
-                            itemsOnLeaseObservableList.add(new EquipmentOnLoan(studentDatabase, Main.currentStudent, scannedItems.subList(0,scannedItems.size()),Integer.parseInt(customTimeTextField.getText()),remarksTextArea.getText()));
+                            itemsOnLeaseObservableList.add(new EquipmentOnLoan(studentDatabase, CurrentStudent.getInstance().getLoadedStudent(), scannedItems.subList(0,scannedItems.size()),Integer.parseInt(customTimeTextField.getText()),remarksTextArea.getText()));
                         }
                         catch (NumberFormatException e)
                         {
@@ -400,7 +396,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
             }
             onClearButtonClicked();
         }
-        else if(Main.currentStudent != null)
+        else if(CurrentStudent.getInstance().getLoadedStudent() != null)
         {
             alertBuilder("Error!", "No items scanned!", "Please scan the wanted items prior to confirming!");
         }

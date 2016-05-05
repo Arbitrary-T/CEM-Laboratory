@@ -2,7 +2,6 @@ package cu;
 
 import cu.models.listeners.CardListener;
 import cu.models.listeners.CodeScannedListener;
-import cu.models.students.Student;
 import javafx.application.Application;
 
 import javafx.fxml.FXMLLoader;
@@ -15,8 +14,6 @@ import java.util.concurrent.Executors;
 
 public class Main extends Application
 {
-    //maybe change to context..?
-    public static Student currentStudent;
 
     @Override
     public void start(Stage primaryStage) throws Exception
@@ -30,7 +27,6 @@ public class Main extends Application
 
     public static void main(String[] args)
     {
-
         ExecutorService exec = Executors.newFixedThreadPool(2);
         exec.submit(new CodeScannedListener());
         exec.submit(new CardListener());

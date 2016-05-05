@@ -1,6 +1,5 @@
 package cu.controllers.dialogues;
 
-import cu.Main;
 import cu.interfaces.CodeScannerInterface;
 import cu.models.equipment.Equipment;
 import cu.models.equipment.EquipmentDatabase;
@@ -8,6 +7,7 @@ import cu.models.equipment.EquipmentOnLoan;
 import cu.models.listeners.CodeScannedListener;
 import cu.models.statistics.Statistics;
 import cu.models.statistics.StatisticsDatabase;
+import cu.models.students.CurrentStudent;
 import cu.models.students.Student;
 import cu.models.students.StudentDatabase;
 import javafx.collections.FXCollections;
@@ -117,7 +117,7 @@ public class ReturnsDialogueController implements CodeScannerInterface
                 equipmentDatabase.editEquipmentEntry(itemsToScanList.getItems().get(i), itemsToScanList.getItems().get(i).getItemID());
             }
         }
-        Student temp = Main.currentStudent;
+        Student temp = CurrentStudent.getInstance().getLoadedStudent();
         temp.setFaultyReturns(temp.getFaultyReturns()+faultyItems);
         //another int to check number of returns ONTIME / NOT
         temp.setTotalReturns(temp.getTotalReturns()+itemsToScanList.getItems().size());

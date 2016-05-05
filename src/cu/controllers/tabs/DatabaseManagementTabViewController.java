@@ -1,6 +1,5 @@
 package cu.controllers.tabs;
 
-import cu.controllers.MainViewController;
 import cu.interfaces.CodeScannerInterface;
 import cu.interfaces.DatabaseInterface;
 import cu.models.equipment.Equipment;
@@ -25,6 +24,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import javafx.util.converter.IntegerStringConverter;
 
 import java.util.ArrayList;
@@ -32,8 +32,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-//Test
-//TO DO FIX THE CONTEXTMENU TO BE ON ROW RATHER THAN TABLE. FIX EQUIPMENT PRIMARY KEY ISSUE.
 
 /**
  * Created by T on 22/12/2015.
@@ -81,7 +79,8 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
     private Button addBundleButton;
     @FXML
     private Button clearBundleButton;
-
+    @FXML
+    private HBox mainPane;
     private ObservableList<String> isFunctionalObservableList = FXCollections.observableArrayList("Functional", "Faulty");
     private ObservableList<Student> studentsObservableList;
     private ObservableList<Equipment> equipmentObservableList;
@@ -91,6 +90,8 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
     private Student tempStudent;
     private Equipment tempEquipment;
     private int equipmentCount;
+    private TextValidation textValidation = new TextValidation();
+
     @FXML
     void initialize()
     {
@@ -99,7 +100,6 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
         CodeScannedListener.activateAgent(this);
         studentTableView.setEditable(true);
         studentTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
         studentsObservableList = studentDatabase.getAllStudents();
         equipmentObservableList = equipmentDatabase.getAllEquipment();
         equipmentCount = equipmentObservableList.size();
@@ -123,7 +123,6 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
                 {
                     if(equipmentTableView.getSelectionModel().getSelectedCells().size() > 0)
                     {
-
                         Alert confirmDeletion = new Alert(Alert.AlertType.CONFIRMATION);
                         confirmDeletion.setTitle("Delete item");
                         confirmDeletion.setHeaderText("Warning this cannot be undone!");
@@ -149,14 +148,12 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
                         equipmentDatabase.addEquipmentEntry(new Equipment(equipmentObservableList.get(equipmentCount-1).getItemID()+1,"New", "New", true, "New"));
                     else
                         equipmentDatabase.addEquipmentEntry(new Equipment(0,"New", "New", true, "New"));
-                    System.out.println("HELLO");
                     equipmentTableView.edit(equipmentTableView.getItems().size(), equipmentTableView.getColumns().get(0));
                     event.consume();
                     equipmentTableView.getSelectionModel().select(equipmentTableView.getItems().size()-1);
                 }
                 if(event.isControlDown() && event.getCode().equals(KeyCode.C))
                 {
-                    System.out.println("CTRL IS DOWN AND C IS PRESSED");
                     if(equipmentObservableList.size() > 0)
                     {
                         int rowa = equipmentTableView.getFocusModel().getFocusedCell().getRow();
@@ -356,9 +353,15 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
             if(equipmentObservableList.size() > 0)
             {
                 equipmentTableCurrentRow = equipmentTableView.getSelectionModel().getSelectedIndex();
-                System.out.println("Current Row: " + equipmentTableCurrentRow);
-                Equipment temp = equipmentObservableList.get(equipmentTableView.getSelectionModel().getSelectedIndex());
-                contextImageView.setImage(QRGenerator.generateQRCode(temp.getItemID() + temp.getItemName(), 300, 300));
+                if(equipmentTableCurrentRow > -1)
+                {
+                    Equipment temp = equipmentObservableList.get(equipmentTableView.getSelectionModel().getSelectedIndex());
+                    contextImageView.setImage(QRGenerator.generateQRCode(temp.getItemID() + temp.getItemName(), 300, 300));
+                }
+                else
+                {
+                    contextImageView.setImage(null);
+                }
             }
         });
 
@@ -519,12 +522,13 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
     @Override
     public void onCodeScanner(String QRCode)
     {
+        TabPane rootPane = (TabPane) mainPane.getParent().getParent().getParent().getChildrenUnmodifiable().get(0);
         Platform.runLater(()->
         {
-            if(MainViewController.index == 1 && tabPane.getSelectionModel().getSelectedIndex()==1)
+            if(rootPane.getSelectionModel().getSelectedIndex() == 1 && tabPane.getSelectionModel().getSelectedIndex()==1)
             {
                 equipmentFilterTextField.clear();
-                equipmentFilterTextField.setText(QRCode);
+                equipmentFilterTextField.setText(textValidation.textToFirstInt(QRCode)+"");
                 equipmentFilterTextField.selectAll();
                 equipmentFilterTextField.requestFocus();
             }
@@ -534,6 +538,8 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
     @FXML
     private void onPrintClicked()
     {
+        System.out.println(mainPane.getParent().getParent().getParent().getChildrenUnmodifiable().get(0).toString());
+
         if(equipmentTableView.getSelectionModel().getSelectedCells().size() > 0)
         {
             Runnable runnable = ()->
