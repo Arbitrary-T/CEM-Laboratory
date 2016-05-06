@@ -5,6 +5,8 @@ package cu.models.equipment;
  */
 public class Equipment
 {
+    //A generic pojo.
+
     private int itemID;
     private boolean functional;
     private String itemName;

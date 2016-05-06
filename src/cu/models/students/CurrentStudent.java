@@ -5,6 +5,7 @@ package cu.models.students;
  */
 public class CurrentStudent
 {
+    //Singleton to manage the current 'scanned' student
     private Student loadedStudent = null;
     private static CurrentStudent instance;
 

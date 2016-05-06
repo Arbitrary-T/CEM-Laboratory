@@ -36,6 +36,9 @@ public class SettingsTabViewController
         portsComboBox.setItems(portsComboBoxOptions);
     }
 
+    /**
+     * populates a combobox with available COM ports
+     */
     private void populateComboBox()
     {
         CommPortIdentifier portId;
@@ -53,9 +56,13 @@ public class SettingsTabViewController
         }
     }
 
+    /**
+     * saves the entered details via the property manager
+     */
     @FXML
     private void onSaveGmailSettingsButton()
     {
+        //Could be enhanced by encrypting the data
         if(!emailAddressTextField.getText().isEmpty() && !passwordField.getText().isEmpty())
         {
             propertiesManager.setProperties("email", emailAddressTextField.getText());
@@ -71,6 +78,9 @@ public class SettingsTabViewController
         }
     }
 
+    /**
+     * saves the default COM port to use via the property manager
+     */
     @FXML
     private void onSavePortDefaultButton()
     {
@@ -81,6 +91,9 @@ public class SettingsTabViewController
         }
     }
 
+    /**
+     * completely delete the database
+     */
     @FXML
     private void onEquipmentCompleteWipe()
     {
@@ -123,6 +136,13 @@ public class SettingsTabViewController
         }
     }
 
+    /**
+     * generates a dialog box
+     * @param title the title of the dialog box
+     * @param header the header of the dialog box
+     * @param content the contents of the dialog box
+     * @return returns whether the user's input
+     */
     private TextInputDialog generateDialog(String title, String header, String content)
     {
         TextInputDialog dialog = new TextInputDialog();

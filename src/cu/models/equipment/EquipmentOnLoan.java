@@ -17,7 +17,7 @@ import java.util.TimerTask;
  */
 public class EquipmentOnLoan
 {
-    //should have items....
+
     private Student student;
     private List<Equipment> equipment = new ArrayList<>();
     private LocalTime leaseStartTime;
@@ -29,6 +29,14 @@ public class EquipmentOnLoan
     private StudentDatabase studentDatabase;
     private EmailService emailService = new EmailService();
 
+    /**
+     * EquipmentOnLoan constructor
+     * @param studentDatabase a reference to the students database
+     * @param student the student to lease to
+     * @param equipment list of equipment (scanned by user)
+     * @param hours lease duration
+     * @param remarks any remarks e.g. more time for a reason...
+     */
     public EquipmentOnLoan(StudentDatabase studentDatabase, Student student, List<Equipment> equipment, int hours, String remarks)
     {
         this.studentDatabase = studentDatabase;
@@ -47,6 +55,11 @@ public class EquipmentOnLoan
     {
         this.student = student;
     }
+
+    /**
+     * method used to stop the Timer thread
+     * @param stopTimer boolean flag, false stops the thread.
+     */
     public void stopTimer(boolean stopTimer)
     {
         this.stopTimer = stopTimer;
@@ -67,7 +80,7 @@ public class EquipmentOnLoan
         return new SimpleStringProperty(leaseStartTime.getHour()+":"+leaseStartTime.getMinute()+":"+leaseStartTime.getSecond());
     }
 
-    public void setLeaseStartTime()
+    private void setLeaseStartTime()
     {
         this.leaseStartTime = LocalTime.now();
     }
@@ -80,7 +93,11 @@ public class EquipmentOnLoan
         return leaseTimeLeftWrapper;
     }
 
-    public void setLeaseTimeLeft(int hours)
+    /**
+     * sets the time left for lease and counts down until times out, if the item is not returned by then an email is sent to the student
+     * @param hours the lease's time
+     */
+    private void setLeaseTimeLeft(int hours)
     {
         leaseTimeLeft = Duration.ofHours(hours);
         leaseTimeLeftWrapper.set(String.format("%d:%02d:%02d", hours*60*60 / 3600, (hours*60*60 % 3600) / 60, (hours*60*60 % 60)));
@@ -120,7 +137,7 @@ public class EquipmentOnLoan
         return remarks;
     }
 
-    public void setRemarks(String remarks)
+    private void setRemarks(String remarks)
     {
         this.remarks = remarks;
     }

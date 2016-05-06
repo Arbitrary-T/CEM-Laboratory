@@ -61,14 +61,6 @@ public class AnalyticsTabViewController
     @FXML
     private void initialize()
     {
-        /*for(int i = 0; i < 12; i++)
-        {
-            for(int j = 1; j < 28; j++)
-            {
-                statisticsDatabase.addEntry(new Statistics(LocalDate.of(2017, i+1, j),ThreadLocalRandom.current().nextLong(650000), ThreadLocalRandom.current().nextInt(0,20), ThreadLocalRandom.current().nextInt(20,30)));
-            }
-        }*/
-
         topLeftChart.setLegendVisible(false);
         topComboBox.setItems(listOfLineChartOptions);
         topComboBox.setValue(listOfLineChartOptions.get(0));
@@ -117,6 +109,9 @@ public class AnalyticsTabViewController
         computeLineReturns();
     }
 
+    /**
+     * Aggregates the total number of returns vs faulty returns and displays them in the pie chart
+     */
     private void computeGlobalReturns()
     {
         List<Student> studentList = studentDatabase.getAllStudents();
@@ -135,6 +130,9 @@ public class AnalyticsTabViewController
         numberOfStudentsComputed.setText("A total of " + studentList.size() + " students were computed");
     }
 
+    /**
+     * Aggregates the total number of returns and arranges them by course contribution
+     */
     private void computeContributionByCourse()
     {
         HashMap<String, Integer> pieChartHashMap = new HashMap<>();
@@ -157,6 +155,9 @@ public class AnalyticsTabViewController
         numberOfStudentsComputed.setText("A total of " + studentList.size() + " students were computed");
     }
 
+    /**
+     * Aggregates the total/faulty returns and displays it in a line chart across days
+     */
     private void computeLineReturns()
     {
         List<Statistics> statisticsList = statisticsDatabase.getAll();
@@ -171,13 +172,13 @@ public class AnalyticsTabViewController
         XYChart.Series<String, Number> fault = new XYChart.Series<>();
         lineC.keySet().stream().forEach(e -> tot.getData().add(new XYChart.Data<>(e.toString(),lineC.get(e))));
         lineC2.keySet().stream().forEach(e -> fault.getData().add(new XYChart.Data<>(e.toString(),lineC2.get(e))));
-
-       // topLeftChart.getData().clear();
-        //topLeftChart.getData().addAll(tot,fault);
-        System.out.println(lineC);
-        System.out.println(lineC2);
-
     }
+
+    /**
+     * Aggregates the returns for a specific period and displays them in a line chart
+     * @param startDate the period's start date
+     * @param endDate the period's end date
+     */
     private void computeLineReturnsForPeriod(LocalDate startDate, LocalDate endDate)
     {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
@@ -190,6 +191,10 @@ public class AnalyticsTabViewController
         topLeftChart.getXAxis().setLabel("Day");
         topLeftChart.getYAxis().setLabel("Number of Returns");
     }
+
+    /**
+     * Aggregates faulty items by category and displays them in a bar chart
+     */
     private void computeFaultyItemsByCategory()
     {
         HashMap<String, Integer> barChartHashMap = new HashMap<>();
@@ -234,6 +239,9 @@ public class AnalyticsTabViewController
         System.out.println(barChartHashMap);
     }
 
+    /**
+     * Aggregates the daily time usage and displays it in a line chart across days
+     */
     private void computeLineChart()
     {
         int[] numberOfOccurrencesPerMonth = new int[12];
@@ -256,7 +264,6 @@ public class AnalyticsTabViewController
         }
         for(LocalDate s : sortedMap.keySet())
         {
-            //compute avg..
             sortedMap.put(s,sortedMap.get(s)/numberOfOccurrencesPerMonth[s.getMonth().getValue()-1]);
         }
 
@@ -272,6 +279,11 @@ public class AnalyticsTabViewController
         topLeftChart.getYAxis().setLabel("Average usage of equipment (hours)");
     }
 
+    /**
+     * Aggregates the time usage for a certain time period
+     * @param startDate the period's start date
+     * @param endDate the period's end date
+     */
     private void computeLineChartForPeriod(LocalDate startDate, LocalDate endDate)
     {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
@@ -283,6 +295,9 @@ public class AnalyticsTabViewController
         topLeftChart.getYAxis().setLabel("Average usage of equipment (hours)");
     }
 
+    /**
+     * configure the range slider and the line chart
+     */
     private void setupLineChart()
     {
         topLeftLabel.setText("");
@@ -352,6 +367,30 @@ public class AnalyticsTabViewController
             }));
             topLeftLabel.setText("Showing the period between " +ss.get(0) + " and " + ss.get(ss.size()-1));
         }
+    }
 
+    /**
+     * re-aggregates the bar chart
+     */
+    @FXML
+    private void refreshBarChart()
+    {
+        bottomRightBarChart.getData().clear();
+        computeFaultyItemsByCategory();
+    }
+
+    /**
+     * populate statistics database with fake testing data
+     * @param year the test data year, e.g. 2015, 2018...
+     */
+    private void populateTestData(int year)
+    {
+        for(int i = 0; i < 12; i++)
+        {
+            for(int j = 1; j < 28; j++)
+            {
+                statisticsDatabase.addEntry(new Statistics(LocalDate.of(year, i+1, j),ThreadLocalRandom.current().nextLong(650000), ThreadLocalRandom.current().nextInt(0,20), ThreadLocalRandom.current().nextInt(20,30)));
+            }
+        }
     }
 }

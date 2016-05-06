@@ -12,7 +12,6 @@ import java.sql.*;
  */
 public class StudentDatabase extends Database
 {
-    //Enhance program functionality - for future use, automatically reset the equipment, for example ICD.
     private Connection databaseConnection;
     private PreparedStatement insertStudent;
     private PreparedStatement deleteStudent;
@@ -21,7 +20,7 @@ public class StudentDatabase extends Database
     private PreparedStatement getAllStudents;
     private PreparedStatement deleteAll;
 
-    String createTableStatement = "CREATE TABLE Students(" +
+    private String createTableStatement = "CREATE TABLE Students(" +
             "cardUID VARCHAR(256) NOT NULL PRIMARY KEY, " +
             "studentName VARCHAR(256), " +
             "studentID INT," +
@@ -39,6 +38,7 @@ public class StudentDatabase extends Database
     {
         databaseAgent = mainAgent;
     }
+
     public StudentDatabase(String database)
     {
         activateAgent(databaseAgent);
@@ -47,6 +47,7 @@ public class StudentDatabase extends Database
         {
             if(databaseConnection != null)
             {
+                //setup the prepared statements to call when needed.
                 insertStudent = databaseConnection.prepareStatement("INSERT INTO Students VALUES (?,?,?,?,?,?,?,?,?,?)");
                 deleteStudent = databaseConnection.prepareStatement("DELETE FROM Students WHERE cardUID = ?");
                 updateStudent = databaseConnection.prepareStatement("UPDATE Students SET studentName=?, studentID=? , studentEmail=?, studentCourse=?, studentPhoneNumber=?,studentFaultyReturns=?, studentTotalReturns=?, studentUsageTime=?, returnNotOnTime=? WHERE cardUID = ?");
@@ -60,6 +61,12 @@ public class StudentDatabase extends Database
             e.printStackTrace();
         }
     }
+
+    /**
+     * edits a student entry in the database
+     * @param studentData the Student to edit
+     * @return true if the operation was successful
+     */
     public boolean editStudentEntry(Student studentData)
     {
         if(databaseConnection != null)
@@ -90,6 +97,12 @@ public class StudentDatabase extends Database
         }
         return false;
     }
+
+    /**
+     * deletes a student in the database
+     * @param cardUID the NFC card's Unique Identification Number (stored in the database once a student registers)
+     * @return true if operation was successful
+     */
     public boolean deleteStudentEntry(String cardUID)
     {
         if(databaseConnection != null)
@@ -110,6 +123,10 @@ public class StudentDatabase extends Database
         return false;
     }
 
+    /**
+     * deletes every entry in the database
+     * @return true if the operation was successful
+     */
     public boolean deleteAll()
     {
         if(databaseConnection != null)
@@ -128,6 +145,11 @@ public class StudentDatabase extends Database
         return true;
     }
 
+    /**
+     * adds a new student to the database
+     * @param studentData the Student to add
+     * @return true if the operation was successful
+     */
     public boolean addStudentEntry(Student studentData)
     {
         if(databaseConnection != null)
@@ -158,6 +180,11 @@ public class StudentDatabase extends Database
         }
         return false;
     }
+
+    /**
+     * loads the database into a ObservableList
+     * @return returns the loaded database
+     */
     public ObservableList<Student> getAllStudents()
     {
         ObservableList<Student> studentsFromDatabase = FXCollections.observableArrayList();
@@ -180,6 +207,12 @@ public class StudentDatabase extends Database
 
         return studentsFromDatabase;
     }
+
+    /**
+     * search the database for a Student
+     * @param cardUID the student's NFC Card UID
+     * @return the Student if found, else returns null
+     */
     public Student searchDatabase(String cardUID)
     {
         try

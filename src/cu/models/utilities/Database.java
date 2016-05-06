@@ -11,8 +11,14 @@ import java.sql.Statement;
  */
 public abstract class Database
 {
-    Connection databaseConnection;
+    private Connection databaseConnection;
 
+    /**
+     * loads a database into memory, if the database does not exist, it creates it
+     * @param database the name of the database
+     * @param createTableStatement SQL statement to create a new table
+     * @return
+     */
     public Connection loadDatabase(String database, String createTableStatement)
     {
         File databaseFile = new File(database);

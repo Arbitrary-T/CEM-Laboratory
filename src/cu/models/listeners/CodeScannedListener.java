@@ -12,13 +12,16 @@ import java.util.*;
  */
 public class CodeScannedListener implements Runnable, SerialPortEventListener
 {
-    private static ArrayList<CodeScannerInterface> agents = new ArrayList<>();
 
+    private static ArrayList<CodeScannerInterface> agents = new ArrayList<>();
     private CommPortIdentifier portId;
     private InputStream inputStream;
     private SerialPort serialPort;
     private PropertiesManager propertiesManager = new PropertiesManager();
 
+    /**
+     * A runnable that handles the QR Code reader, starts by configuring all parameters for the
+     */
     public CodeScannedListener()
     {
         try
@@ -37,6 +40,10 @@ public class CodeScannedListener implements Runnable, SerialPortEventListener
 
     }
 
+    /**
+     * Activates a interface that is bound to this thread and notifies the 'listeners' of updates
+     * @param mainAgent
+     */
     public static void activateAgent(CodeScannerInterface mainAgent)
     {
         agents.add(mainAgent);
@@ -61,6 +68,10 @@ public class CodeScannedListener implements Runnable, SerialPortEventListener
         }
     }
 
+    /**
+     * listens for serial events i.e. code scans.
+     * @param serialPortEvent the port to listen too
+     */
     @Override
     public void serialEvent(SerialPortEvent serialPortEvent)
     {
@@ -78,40 +89,40 @@ public class CodeScannedListener implements Runnable, SerialPortEventListener
                 break;
             case SerialPortEvent.DATA_AVAILABLE:
                 byte[] readBuffer = new byte[256];
-                ArrayList<Byte> eee = new ArrayList<>();
-                int a = 0;
+                ArrayList<Byte> byteArrayList = new ArrayList<>();
+                int readInput = 0;
                 try
                 {
                     while (inputStream.available() > 0)
                     {
-                        a = inputStream.available();
+                        readInput = inputStream.available();
                         int numBytes = inputStream.read(readBuffer);
                     }
-                    for (int i = 0; i < a; i++)
+                    for (int i = 0; i < readInput; i++)
                     {
-                        eee.add(readBuffer[i]);
+                        byteArrayList.add(readBuffer[i]);
                     }
-                    System.out.println(eee);
-                    byte[] array = new byte[eee.size()];
+                    System.out.println(byteArrayList);
+                    byte[] array = new byte[byteArrayList.size()];
                     int i = 0;
-                    for (Byte current : eee)
+                    for (Byte current : byteArrayList)
                     {
                         array[i] = current;
                         i++;
                     }
-                    String s = new String(array);
-                    System.out.println(s);
-                    if (s.length() > 1)
+                    String bytesToString = new String(array);
+                    System.out.println(bytesToString);
+                    if (bytesToString.length() > 1)
                     {
-                        if (s.charAt(0) == 'Q' && s.charAt(1) == 'R')
+                        if (bytesToString.charAt(0) == 'Q' && bytesToString.charAt(1) == 'R')
                         {
-                            s = s.substring(2, s.length());
+                            bytesToString = bytesToString.substring(2, bytesToString.length());
                             for (Iterator<CodeScannerInterface> codeScannerInterfaceIterator = agents.iterator(); codeScannerInterfaceIterator.hasNext();)
                             {
                                 CodeScannerInterface codeScannerInterface = codeScannerInterfaceIterator.next();
                                 if(codeScannerInterface != null)
                                 {
-                                    final String finalS = s;
+                                    final String finalS = bytesToString;
                                     Platform.runLater(() -> codeScannerInterface.onCodeScanner(finalS));
                                 }
                                 else
@@ -121,7 +132,6 @@ public class CodeScannedListener implements Runnable, SerialPortEventListener
                             }
                         }
                     }
-                    //(?<=QR).*
                 }
                 catch (IOException e)
                 {

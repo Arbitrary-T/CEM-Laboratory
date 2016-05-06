@@ -15,6 +15,11 @@ import java.util.concurrent.Executors;
 public class Main extends Application
 {
 
+    /**
+     * Method from parent class: loads the JavaFX Application
+     * @param primaryStage  The GUI window
+     * @throws Exception
+     */
     @Override
     public void start(Stage primaryStage) throws Exception
     {
@@ -24,7 +29,11 @@ public class Main extends Application
         primaryStage.show();
     }
 
-
+    /**
+     * Main program entry point, launches two threads for managing the NFC card reader and the QR Code scanner
+     * followed by starting the JavaFX application.
+     * @param args ...
+     */
     public static void main(String[] args)
     {
         ExecutorService exec = Executors.newFixedThreadPool(2);

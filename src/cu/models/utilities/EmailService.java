@@ -17,6 +17,9 @@ public class EmailService
         configureEmail();
     }
 
+    /**
+     * Configures email service
+     */
     private void configureEmail()
     {
         if(propertiesManager.getProperty("mail.smtp.auth") == null)
@@ -37,6 +40,12 @@ public class EmailService
         });
     }
 
+    /**
+     * sends an email to a recipient
+     * @param recipientEmail  email of the recipient
+     * @param subject the email's subject
+     * @param content the contents of the email
+     */
     public void sendEmail(String recipientEmail, String subject, String content)
     {
         try

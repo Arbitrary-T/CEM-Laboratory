@@ -21,6 +21,13 @@ import java.util.Map;
 public class QRGenerator
 {
 
+    /**
+     * Generates a QR Code Image via the ZXing library
+     * @param text contents of the QR code
+     * @param w the width of the image
+     * @param h the height of the image
+     * @return
+     */
     public static Image generateQRCode(String text, int w, int h)
     {
         Image imageFromString = null;
@@ -39,7 +46,13 @@ public class QRGenerator
         }
         return imageFromString;
     }
-
+    /**
+     * Generates a QR Code BufferedImage via the ZXing library
+     * @param text contents of the QR code
+     * @param w the width of the image
+     * @param h the height of the image
+     * @return
+     */
     public static BufferedImage generateBufferedQRCode(String text, int w, int h)
     {
         BufferedImage image = null;

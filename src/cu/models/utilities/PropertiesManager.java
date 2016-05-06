@@ -18,6 +18,9 @@ public class PropertiesManager
         configureProperties();
     }
 
+    /**
+     * configures the properties manager i.e. create/load properties file
+     */
     private void configureProperties()
     {
         try
@@ -41,6 +44,11 @@ public class PropertiesManager
         }
     }
 
+    /**
+     * sets/saves a property the method also updates existing properties
+     * @param key the property identifies e.g. firstRun
+     * @param value the property's value e.g. false
+     */
     public void setProperties(String key, String value)
     {
         try
@@ -81,11 +89,20 @@ public class PropertiesManager
         }
     }
 
+    /**
+     * returns a property value
+     * @param key the property to return
+     * @return
+     */
     public String getProperty(String key)
     {
         return properties.getProperty(key);
     }
 
+    /**
+     * accessor method
+     * @return properties
+     */
     public Properties getProperties()
     {
         return this.properties;

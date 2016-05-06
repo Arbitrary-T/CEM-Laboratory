@@ -1,6 +1,5 @@
 package cu.controllers.dialogues;
 
-import cu.Main;
 import cu.models.students.CurrentStudent;
 import cu.models.students.Student;
 import cu.models.students.StudentDatabase;
@@ -38,6 +37,10 @@ public class NewRegistrationDialogueController
     private String cardUID;
 
     private TextValidation validation = new TextValidation();
+
+    /**
+     * sets up the new registration window
+     */
     @FXML
     private void initialize()
     {
@@ -134,6 +137,10 @@ public class NewRegistrationDialogueController
             dialogStage.close();
         }
     }
+
+    /**
+     * closes the window when canceled
+     */
     @FXML
     private void onCancel()
     {
@@ -142,11 +149,20 @@ public class NewRegistrationDialogueController
         System.out.println("Canceled by user.");
     }
 
+    /**
+     * sets up the dialog window
+     * @param dialogStage the dialog window
+     * @param cardUID the scanned card to be associated with the registration
+     */
     public void configureDialogStage(Stage dialogStage, String cardUID)
     {
         this.dialogStage = dialogStage;
         this.cardUID = cardUID;
     }
+
+    /**
+     * validates if the user's input is correct
+     */
     private void validateFields()
     {
         if(stdID.getText().length() < 6  || stdName.getText().isEmpty() || !isValidEmail(stdEmail.getText()) || stdCourse.getText().isEmpty() || stdPhoneNumber.getText().length() != 11)

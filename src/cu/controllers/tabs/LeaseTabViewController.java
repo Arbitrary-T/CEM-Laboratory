@@ -1,7 +1,6 @@
 package cu.controllers.tabs;
 
 import cu.Main;
-import cu.controllers.MainViewController;
 import cu.controllers.dialogues.NewRegistrationDialogueController;
 import cu.controllers.dialogues.ReturnsDialogueController;
 import cu.interfaces.CardInterface;
@@ -38,8 +37,6 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by T on 08/11/2015.
@@ -154,6 +151,9 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         }
     };
 
+    /**
+     * sets up the view-variables and the leasedItems TableView
+     */
     @FXML
     private void initialize()
     {
@@ -195,6 +195,10 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         remarksTableColumn.setCellValueFactory(p-> new ReadOnlyObjectWrapper<>(p.getValue().getRemarks()));
     }
 
+    /**
+     * loads the student into the CurrentStudent singleton, if they do not exist a registration window is opened
+     * @param cardUID the scanned NFC Card's Unique Identification string
+     */
     @Override
     public void onCardScanned(String cardUID)
     {
@@ -213,9 +217,7 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
                     ObservableList<Data> pieChartData = FXCollections.observableArrayList(new Data("Faulty", CurrentStudent.getInstance().getLoadedStudent().getFaultyReturns()), new Data("Functioning", CurrentStudent.getInstance().getLoadedStudent().getTotalReturns() - CurrentStudent.getInstance().getLoadedStudent().getFaultyReturns()));
                     totalNumberOfReturns.setData(pieChartData);
                 }
-
             });
-            System.out.println("TOTAL USAGE TIME = " + CurrentStudent.getInstance().getLoadedStudent().getEquipmentUsageTime() + " FAULTY RETURNS = " + CurrentStudent.getInstance().getLoadedStudent().getFaultyReturns() + " Total Loans = " + CurrentStudent.getInstance().getLoadedStudent().getTotalReturns());
         }
 
         //else if the student is not in the database open a new window and register the student
@@ -266,10 +268,13 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         }
     }
 
+    /**
+     * handles the QR code scan  for a new lease
+     * @param QRCode the QR label scanned
+     */
     @Override
     public void onCodeScanner(String QRCode)
     {
-        System.out.println(QRCode);
         rootPane = (TabPane) mainPane.getParent().getParent().getParent().getChildrenUnmodifiable().get(0);
 
         if(rootPane.getSelectionModel().getSelectedIndex() == 0)
@@ -308,6 +313,10 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         }
     }
 
+    /**
+     * checks if a student has item(s) leased to
+     * @return true if the system already leased equipment
+     */
     private boolean studentExistsInTable()
     {
         for(EquipmentOnLoan equipmentOnLoan:leasedItemsTableView.getItems())
@@ -320,6 +329,11 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         return false;
     }
 
+    /**
+     * checks if an item is already leased
+     * @param scannedItem the QR code scanned by the user
+     * @return true if the item is already leased
+     */
     private boolean itemAlreadyExists(Equipment scannedItem)
     {
         for(EquipmentOnLoan equipmentOnLoan:leasedItemsTableView.getItems())
@@ -332,6 +346,11 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         return false;
     }
 
+    /**
+     * returns the equipment leased by a student
+     * @param student the Student with the intended lease
+     * @return EuipmentOnLoan pojo
+     */
     private EquipmentOnLoan getEquipmentOnLoan(Student student)
     {
         for(EquipmentOnLoan equipmentOnLoan : leasedItemsTableView.getItems())
@@ -344,6 +363,12 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         return null;
     }
 
+    /**
+     * creates a dialog window
+     * @param title of the window
+     * @param header header of the window
+     * @param content of the window
+     */
     private void alertBuilder(String title, String header, String content)
     {
         Alert notifyCardReader = new Alert(Alert.AlertType.INFORMATION);
@@ -352,6 +377,10 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         notifyCardReader.setContentText(content);
         notifyCardReader.show();
     }
+
+    /**
+     * clears the GUI and resets the loaded student
+     */
     private void clearMainStudent()
     {
         CurrentStudent.getInstance().setLoadedStudent(null);
@@ -363,6 +392,10 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
             temp.setText("");
         }
     }
+
+    /**
+     * adds a new entry to the leases tableview
+     */
     @FXML
     private void onConfirmButtonClicked()
     {
@@ -406,6 +439,9 @@ public class LeaseTabViewController implements CardInterface, CodeScannerInterfa
         }
     }
 
+    /**
+     * clears the GUI TextFields
+     */
     @FXML
     private void onClearButtonClicked()
     {

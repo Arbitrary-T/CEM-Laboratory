@@ -12,6 +12,7 @@ import java.util.ArrayList;
  */
 public class StatisticsDatabase extends Database
 {
+    //Refer to StudentsDatabase for comments
     private Connection databaseConnection;
     private PreparedStatement insertData;
     private PreparedStatement deleteData;

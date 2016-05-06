@@ -25,8 +25,8 @@ public class PDFRenderer
     private PDDocument doc;
     private ArrayList<PDPage> pages = new ArrayList<>();
 
-    private int currentWidth = 60;
-    private int currentHeight = 665;
+    private int cursorXPosition = 60;
+    private int cursorYPosition = 665;
     private int counter = 0;
     private int currentPage = 0;
 
@@ -34,9 +34,14 @@ public class PDFRenderer
     {
         doc = new PDDocument();
     }
-    //Could be enhanced by allowing variable image size. :S
+
+    /**
+     * Generate a pdf file composed of QR codes
+     * @param listOfQRCodes the list of equipment to be 'labeled' with QR codes
+     */
     public void createLabelsFromQRCode(List<Equipment> listOfQRCodes)
     {
+        //Could be enhanced by allowing variable image size. It currently is a static 100 x 100.
         try
         {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss");
@@ -61,41 +66,54 @@ public class PDFRenderer
         }
     }
 
+    /**
+     * Adds a QR label as an image into the PDF file.
+     * @param bufferedImage the image (label) to be added
+     * @throws IOException
+     */
     private void addImage(BufferedImage bufferedImage) throws IOException
     {
         PDImageXObject image = JPEGFactory.createFromImage(doc,bufferedImage);
         PDPageContentStream contentStream = new PDPageContentStream(doc, pages.get(currentPage), PDPageContentStream.AppendMode.APPEND, false);
-        contentStream.drawImage(image, currentWidth, currentHeight);
+        contentStream.drawImage(image, cursorXPosition, cursorYPosition);
         contentStream.close();
     }
+
+    /**
+     * Adds text into the PDF file
+     * @param text the text to be added
+     * @throws IOException
+     */
     private void addText(String text) throws IOException
     {
         PDPageContentStream contentStream = new PDPageContentStream(doc, pages.get(currentPage), PDPageContentStream.AppendMode.APPEND, false);
         contentStream.beginText();
         contentStream.setFont(font, 8);
-        contentStream.newLineAtOffset(currentWidth+text.length(), currentHeight);
+        contentStream.newLineAtOffset(cursorXPosition +text.length(), cursorYPosition);
         contentStream.showText(text);
         contentStream.endText();
         contentStream.close();
     }
+
+    /**
+     * called when an image/text is added, it adjusts the current cursor in the PDF document.
+     */
     private void adjustAlignment()
     {
-        //Rows Vs Columns of the labels
-        currentWidth+=95;
-        if(currentWidth >= 450)
+        cursorXPosition +=95;
+        if(cursorXPosition >= 450)
         {
-            currentWidth = 60;
-            currentHeight-=102;
+            cursorXPosition = 60;
+            cursorYPosition -=102;
             counter++;
             if(counter == 7)
             {
                 PDPage newPage = new PDPage();
                 doc.addPage(newPage);
                 pages.add(newPage);
-                currentHeight = 665;
+                cursorYPosition = 665;
                 currentPage++;
                 counter = 0;
-                System.out.println("Page + 1");
             }
         }
     }

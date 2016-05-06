@@ -25,6 +25,9 @@ public class CardListener implements Runnable
         agent = mainAgent;
     }
 
+    /**
+     * runs forever, listening for card scans from the NFC Card Reader and notifies the listener
+     */
     @Override
     public void run()
     {
@@ -37,16 +40,11 @@ public class CardListener implements Runnable
             {
                 Platform.runLater(() ->
                 {
-                    boolean firstTime = true;
-                    if(firstTime)
-                    {
-                        Alert notifyCardReader = new Alert(Alert.AlertType.ERROR);
-                        notifyCardReader.setTitle("NFC Reader");
-                        notifyCardReader.setHeaderText("Error: No NFC reader found.");
-                        notifyCardReader.setContentText("Connect an NFC reader to use all of the features.");
-                        notifyCardReader.show();
-                        firstTime = false;
-                    }
+                    Alert notifyCardReader = new Alert(Alert.AlertType.ERROR);
+                    notifyCardReader.setTitle("NFC Reader");
+                    notifyCardReader.setHeaderText("Error: No NFC reader found.");
+                    notifyCardReader.setContentText("Connect an NFC reader to use all of the features.");
+                    notifyCardReader.show();
                 });
             }
             else

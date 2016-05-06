@@ -10,6 +10,7 @@ import cu.models.statistics.StatisticsDatabase;
 import cu.models.students.CurrentStudent;
 import cu.models.students.Student;
 import cu.models.students.StudentDatabase;
+import cu.validations.TextValidation;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -22,8 +23,6 @@ import org.controlsfx.control.CheckListView;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by T on 29/03/2016.
@@ -36,14 +35,20 @@ public class ReturnsDialogueController implements CodeScannerInterface
     private Label itemsLeftLabel;
     @FXML
     private Button confirmButton;
-    StatisticsDatabase statisticsDatabase = new StatisticsDatabase("stats");
+
+    private int itemCount = -1;
+    private StatisticsDatabase statisticsDatabase = new StatisticsDatabase("stats");
     private StudentDatabase studentDatabase;
     private EquipmentDatabase equipmentDatabase;
     private Stage dialogStage;
-    private int itemCount = -1;
-    EquipmentOnLoan equipmentOnLoan;
-    ArrayList<Equipment> scannedEquipmentList = new ArrayList<>();
-    TableView<EquipmentOnLoan> leasedTableView;
+    private EquipmentOnLoan equipmentOnLoan;
+    private ArrayList<Equipment> scannedEquipmentList = new ArrayList<>();
+    private TableView<EquipmentOnLoan> leasedTableView;
+    private TextValidation textValidation = new TextValidation();
+
+    /**
+     * sets up a listener to the COM port
+     */
     @FXML
     private void initialize()
     {
@@ -51,24 +56,15 @@ public class ReturnsDialogueController implements CodeScannerInterface
         confirmButton.setDisable(true);
     }
 
+    /**
+     * once a qr code is scanned, the items are removed from the 'leased' items list
+     * @param QRCode the QR Code's data
+     */
     @Override
     public void onCodeScanner(String QRCode)
     {
-        System.out.println(QRCode);
-        Pattern intsOnly = Pattern.compile("^[\\d]*");
-        Matcher makeMatch = intsOnly.matcher(QRCode);
-        makeMatch.find();
-        String inputInt = makeMatch.group();
-        int inputToInt = -1;
-        try
-        {
-            inputToInt = Integer.parseInt(inputInt);
-        }
-        catch (NumberFormatException e)
-        {
-            e.printStackTrace();
-        }
-        Equipment scannedEquipment = equipmentDatabase.getItem(inputToInt);
+        int equipmentId = textValidation.textToFirstInt(QRCode);
+        Equipment scannedEquipment = equipmentDatabase.getItem(equipmentId);
         if(scannedEquipment != null)
         {
             if(itemsToScanList.getItems().contains(scannedEquipment) && !scannedEquipmentList.contains(scannedEquipment))
@@ -79,13 +75,19 @@ public class ReturnsDialogueController implements CodeScannerInterface
                 if(itemCount == 0)
                 {
                     confirmButton.setDisable(false);
-
-                    //System.out.println("DEAL WITH REMOVAL OF STUDENT & DATABASE OPERATIONS"); (Method)
                 }
             }
         }
     }
 
+    /**
+     * set's up the dialog
+     * @param dialogStage the dialog itself
+     * @param studentDatabase the database to edit
+     * @param equipmentDatabase the equipment to edit
+     * @param equipmentOnLoan the loaned items object
+     * @param leasedTableView the table to edit
+     */
     public void setup(Stage dialogStage, StudentDatabase studentDatabase, EquipmentDatabase equipmentDatabase,  EquipmentOnLoan equipmentOnLoan, TableView<EquipmentOnLoan> leasedTableView)
     {
         this.dialogStage = dialogStage;
@@ -100,29 +102,28 @@ public class ReturnsDialogueController implements CodeScannerInterface
         itemCount = list.size();
         itemsLeftLabel.setText(itemCount+"");
     }
+
+    /**
+     * the input is validated and the student/equipment databases are updated accordingly
+     */
     @FXML
     private void onConfirm()
     {
         int faultyItems = 0;
         for(int i = 0; i < itemsToScanList.getItems().size(); i++)
         {
-            if(itemsToScanList.getCheckModel().isChecked(i))
-            {
-                System.out.println(itemsToScanList.getItems().get(i) + " is Checked!");
-            }
-            else if(!itemsToScanList.getCheckModel().isChecked(i))
+            if(!itemsToScanList.getCheckModel().isChecked(i))
             {
                 faultyItems++;
                 itemsToScanList.getItems().get(i).setFunctional(false);
                 equipmentDatabase.editEquipmentEntry(itemsToScanList.getItems().get(i), itemsToScanList.getItems().get(i).getItemID());
             }
         }
-        Student temp = CurrentStudent.getInstance().getLoadedStudent();
-        temp.setFaultyReturns(temp.getFaultyReturns()+faultyItems);
-        //another int to check number of returns ONTIME / NOT
-        temp.setTotalReturns(temp.getTotalReturns()+itemsToScanList.getItems().size());
-        temp.setEquipmentUsageTime(temp.getEquipmentUsageTime()+equipmentOnLoan.getLeaseTimeDuration());
-        studentDatabase.editStudentEntry(temp);
+        Student currentStudent = CurrentStudent.getInstance().getLoadedStudent();
+        currentStudent.setFaultyReturns(currentStudent.getFaultyReturns() + faultyItems);
+        currentStudent.setTotalReturns(currentStudent.getTotalReturns()+itemsToScanList.getItems().size());
+        currentStudent.setEquipmentUsageTime(currentStudent.getEquipmentUsageTime()+equipmentOnLoan.getLeaseTimeDuration());
+        studentDatabase.editStudentEntry(currentStudent);
         equipmentOnLoan.stopTimer(true);
         leasedTableView.getItems().remove(equipmentOnLoan);
         Statistics loadStat = statisticsDatabase.doesExist(LocalDate.now());

@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class Student
 {
+    //A generic pojo.
     private SimpleStringProperty cardUID = new SimpleStringProperty();
     private SimpleStringProperty studentName = new SimpleStringProperty();
     private SimpleStringProperty studentEmail = new SimpleStringProperty();

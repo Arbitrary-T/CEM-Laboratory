@@ -12,6 +12,8 @@ import java.sql.*;
  */
 public class EquipmentDatabase extends Database
 {
+    //Refer to StudentsDatabase for comments
+
     private Connection databaseConnection;
     private PreparedStatement insertItem;
     private PreparedStatement deleteItem;
@@ -174,7 +176,6 @@ public class EquipmentDatabase extends Database
                 {
                     while (resultSet.next())
                     {
-                        //System.out.println(resultSet.getInt(1) + resultSet.getString(2) + resultSet.getString(3) + resultSet.getBoolean(4) + resultSet.getString(5));
                         equipmentObservableList.add(new Equipment(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getBoolean(4), resultSet.getString(5)));
                     }
                     resultSet.close();

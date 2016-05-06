@@ -92,9 +92,13 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
     private int equipmentCount;
     private TextValidation textValidation = new TextValidation();
 
+    /**
+     * sets up the students and equipment database
+     */
     @FXML
     void initialize()
     {
+        //Should be refactored by fragmenting this
         StudentDatabase.activateAgent(this);
         EquipmentDatabase.activateAgent(this);
         CodeScannedListener.activateAgent(this);
@@ -454,13 +458,17 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
                 confirmDeletion.setHeaderText("Warning this cannot be undone!");
                 confirmDeletion.setContentText("Do you want to continue?");
                 Optional<ButtonType> result = confirmDeletion.showAndWait();
-                if (result.get() == ButtonType.OK)
+                if(result.isPresent())
                 {
-                    for (Student students : studentTableView.getSelectionModel().getSelectedItems())
+                    if (result.get() == ButtonType.OK)
                     {
-                        studentDatabase.deleteStudentEntry(students.getCardUID());
+                        for (Student students : studentTableView.getSelectionModel().getSelectedItems())
+                        {
+                            studentDatabase.deleteStudentEntry(students.getCardUID());
+                        }
                     }
                 }
+
             }
         });
 
@@ -486,7 +494,7 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
                 {
                     return true;
                 }
-                // Compare first name and last name of every person with filter text.
+                // Compare  name of every student with filter text.
                 if (studentObject.getStudentName().toLowerCase().contains(lowerCaseFilter))
                 {
                     return true; // Filter matches first name.
@@ -504,6 +512,9 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
         studentTableView.setItems(sortedData);
     }
 
+    /**
+     * updates the student tableview when the database updates
+     */
     @Override
     public void onStudentDatabaseUpdate()
     {
@@ -511,6 +522,9 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
         studentsObservableList.addAll(studentDatabase.getAllStudents());
     }
 
+    /**
+     * updates the equipment tableview when the database updates
+     */
     @Override
     public void onEquipmentDatabaseUpdate()
     {
@@ -519,6 +533,10 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
         equipmentCount = equipmentObservableList.size();
     }
 
+    /**
+     * edits the filter textfield with the item id in order to filter the tableview
+     * @param QRCode
+     */
     @Override
     public void onCodeScanner(String QRCode)
     {
@@ -535,11 +553,12 @@ public class DatabaseManagementTabViewController implements DatabaseInterface, C
         });
     }
 
+    /**
+     * initialises a thread in order to print QR codes for the selected fields
+     */
     @FXML
     private void onPrintClicked()
     {
-        System.out.println(mainPane.getParent().getParent().getParent().getChildrenUnmodifiable().get(0).toString());
-
         if(equipmentTableView.getSelectionModel().getSelectedCells().size() > 0)
         {
             Runnable runnable = ()->

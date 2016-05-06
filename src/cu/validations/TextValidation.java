@@ -13,20 +13,42 @@ public class TextValidation
 
     }
 
+    /**
+     * Checks whether an email entered is a valid cov. uni email.
+     * @param email the email to be validated
+     * @return true if valid
+     */
     public boolean checkValidEmail(String email)
     {
         return email.endsWith("@uni.coventry.ac.uk");
     }
+
+    /**
+     * basic check that a number is a 'valid' (not necessary working) UK number
+     * @param phoneNumber the phone number to be validated
+     * @return true if valid
+     */
 
     public boolean isValidPhoneNumber(String phoneNumber)
     {
         return !phoneNumber.isEmpty() && phoneNumber.matches("\\d{11}");
     }
 
+    /**
+     * checks whether a student ID is valid
+     * @param studentID the id to check
+     * @return true if valid
+     */
     public boolean isValidStudentID(String studentID)
     {
         return !studentID.isEmpty() && studentID.matches("\\d*") && studentID.length() < 8;
     }
+
+    /**
+     * extracts the first integer in a string
+     * @param text the text to 'filter'
+     * @return the first integer in the string
+     */
     public int textToFirstInt(String text)
     {
         Pattern intsOnly = Pattern.compile("^[\\d]*");
