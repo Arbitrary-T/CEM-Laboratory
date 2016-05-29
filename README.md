@@ -1,6 +1,6 @@
 # CEM-Laboratory
 Dissertation Project: 
-A complete all in one system that manages a university laboratory, uses NFC and QR Codes to easily integrate the students/equipment into the system, providing an intuitive user experience.
+A complete all in one system that manages a university's laboratory, uses NFC and QR Codes to easily integrate the students/equipment into the system, providing an intuitive user experience.
 
 Developed using Java and JavaFX
 
